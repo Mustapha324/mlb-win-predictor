@@ -12,12 +12,12 @@ router = APIRouter(tags=["metrics"])
 def get_model_metrics() -> ModelMetricsResponse:
     """Return the latest model metrics snapshot."""
     metric = results.get_latest_metric()
+    total_predictions_evaluated = metric.wins + metric.losses
+
     return ModelMetricsResponse(
-        model_name=metric.model_name,
-        version=metric.version,
+        model_version=metric.version,
+        total_predictions_evaluated=total_predictions_evaluated,
+        correct_predictions=metric.wins,
         accuracy=metric.accuracy,
-        precision=metric.accuracy,
-        recall=metric.accuracy,
-        roc_auc=metric.accuracy,
-        last_trained_at=metric.updated_at,
+        brier_score=0.0,
     )
