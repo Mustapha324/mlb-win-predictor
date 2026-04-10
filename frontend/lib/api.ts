@@ -4,8 +4,12 @@ export type TeamPrediction = {
   game_id: string;
   home_team: string;
   away_team: string;
+  game_time_utc?: string | null;
+  home_probable_pitcher?: string | null;
+  away_probable_pitcher?: string | null;
   predicted_winner: string;
-  win_probability: number;
+  home_win_probability: number;
+  away_win_probability: number;
 };
 
 export type TodayPredictionsResponse = {

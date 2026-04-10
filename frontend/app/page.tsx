@@ -5,8 +5,21 @@ import { useEffect, useState } from "react";
 import { GameCard } from "@/components/GameCard";
 import { getErrorMessage, getTodayPredictions, type TeamPrediction } from "@/lib/api";
 
-function toGameTimeLabel(apiDate: string): string {
-  return `${apiDate} · Scheduled`;
+function toGameTimeLabel(dateLabel: string, gameTimeUtc?: string | null): string {
+  if (!gameTimeUtc) {
+    return `${dateLabel} · Scheduled`;
+  }
+
+  const parsedDate = new Date(gameTimeUtc);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return `${dateLabel} · Scheduled`;
+  }
+
+  return parsedDate.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short"
+  });
 }
 
 export default function Home() {
@@ -60,11 +73,15 @@ export default function Home() {
             {games.map((game) => (
               <GameCard
                 key={game.game_id}
+                gameId={game.game_id}
                 awayTeam={game.away_team}
                 homeTeam={game.home_team}
-                gameTime={toGameTimeLabel(dateLabel)}
+                awayPitcher={game.away_probable_pitcher}
+                homePitcher={game.home_probable_pitcher}
+                awayWinPct={game.away_win_probability}
+                homeWinPct={game.home_win_probability}
+                gameTime={toGameTimeLabel(dateLabel, game.game_time_utc)}
                 predictedWinner={game.predicted_winner}
-                confidence={Math.round(game.win_probability * 100)}
               />
             ))}
           </section>
