@@ -27,16 +27,36 @@ BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_PATH = BASE_DIR / "data" / "processed" / "historical_games.csv"
 MODEL_PATH = BASE_DIR / "models" / "logistic_regression.pkl"
 METRICS_PATH = BASE_DIR / "models" / "logistic_regression_metrics.json"
+FEATURES_PATH = BASE_DIR / "models" / "logistic_regression_features.json"
 
 TARGET_COLUMN = "home_team_won"
 DATE_COLUMN = "game_date"
 FEATURE_COLUMNS = [
     "home_team_win_pct_pre_game",
     "away_team_win_pct_pre_game",
-    "home_team_last10_win_pct",
-    "away_team_last10_win_pct",
-    "home_team_run_diff_per_game",
-    "away_team_run_diff_per_game",
+    "home_last10_win_pct",
+    "away_last10_win_pct",
+    "home_runs_scored_per_game",
+    "away_runs_scored_per_game",
+    "home_runs_allowed_per_game",
+    "away_runs_allowed_per_game",
+    "home_run_diff_per_game",
+    "away_run_diff_per_game",
+    "home_home_split_win_pct",
+    "away_away_split_win_pct",
+    "home_team_batting_avg",
+    "away_team_batting_avg",
+    "home_team_obp",
+    "away_team_obp",
+    "home_team_slugging",
+    "away_team_slugging",
+    "home_team_era",
+    "away_team_era",
+    "home_probable_pitcher_era",
+    "away_probable_pitcher_era",
+    "home_probable_pitcher_whip",
+    "away_probable_pitcher_whip",
+    "home_field_indicator",
 ]
 TRAIN_SPLIT_RATIO = 0.8
 
@@ -74,6 +94,11 @@ def _save_metrics(metrics: dict[str, float | str]) -> None:
     METRICS_PATH.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
 
 
+def _save_feature_columns() -> None:
+    FEATURES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    FEATURES_PATH.write_text(json.dumps(FEATURE_COLUMNS, indent=2), encoding="utf-8")
+
+
 def train_model(data_path: Path = DATA_PATH) -> dict[str, float | str]:
     if not data_path.exists():
         raise FileNotFoundError(f"Training data not found: {data_path}")
@@ -97,6 +122,10 @@ def train_model(data_path: Path = DATA_PATH) -> dict[str, float | str]:
     y_test = test_df[TARGET_COLUMN].astype(int)
 
     model = _build_model()
+    missing_train = x_train.isna().sum().to_dict()
+    missing_test = x_test.isna().sum().to_dict()
+    logger.info("Train missing feature counts: %s", missing_train)
+    logger.info("Test missing feature counts: %s", missing_test)
     model.fit(x_train, y_train)
 
     probabilities = model.predict_proba(x_test)[:, 1]
@@ -131,8 +160,10 @@ def train_model(data_path: Path = DATA_PATH) -> dict[str, float | str]:
         pickle.dump(model, model_file)
 
     _save_metrics(metrics)
+    _save_feature_columns()
 
     logger.info("Saved trained model to %s", MODEL_PATH)
+    logger.info("Saved feature columns to %s", FEATURES_PATH)
     logger.info("Model evaluation metrics: %s", metrics)
     print(f"accuracy: {metrics['accuracy']:.6f}")
     print(f"log_loss: {metrics['log_loss']:.6f}")

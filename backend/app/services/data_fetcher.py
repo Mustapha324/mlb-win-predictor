@@ -23,6 +23,7 @@ class MLBDataFetcher:
     """Fetches completed MLB regular-season games from MLB Stats API."""
 
     BASE_URL = "https://statsapi.mlb.com/api/v1/schedule"
+    FEED_URL_TEMPLATE = "https://statsapi.mlb.com/api/v1.1/game/{game_pk}/feed/live"
 
     def __init__(self, timeout_seconds: int = 30) -> None:
         self.timeout_seconds = timeout_seconds
@@ -84,3 +85,14 @@ class MLBDataFetcher:
                 )
 
         return sorted(games, key=lambda g: (g.game_date, g.game_pk))
+
+    def fetch_game_feed(self, game_pk: int) -> dict[str, Any]:
+        response = requests.get(
+            self.FEED_URL_TEMPLATE.format(game_pk=game_pk),
+            timeout=self.timeout_seconds,
+        )
+        response.raise_for_status()
+        payload = response.json()
+        if not isinstance(payload, dict):
+            return {}
+        return payload
