@@ -3,28 +3,29 @@ from datetime import date
 from fastapi import APIRouter
 
 from app.schemas.prediction import TeamPrediction, TodayPredictionsResponse
+from app.services.mlb import fetch_upcoming_games_for_date
 
 router = APIRouter(prefix="/predictions", tags=["predictions"])
 
 
 @router.get("/today", response_model=TodayPredictionsResponse)
 def get_today_predictions() -> TodayPredictionsResponse:
-    """Temporary endpoint returning mock prediction data."""
+    """Return today's upcoming MLB games with placeholder win probabilities."""
+    games = fetch_upcoming_games_for_date(date.today())
+
     predictions = [
         TeamPrediction(
-            game_id="20260410-nyy-bos",
-            home_team="Boston Red Sox",
-            away_team="New York Yankees",
-            predicted_winner="New York Yankees",
-            win_probability=0.57,
-        ),
-        TeamPrediction(
-            game_id="20260410-lad-sf",
-            home_team="San Francisco Giants",
-            away_team="Los Angeles Dodgers",
-            predicted_winner="Los Angeles Dodgers",
-            win_probability=0.62,
-        ),
+            game_id=game["game_id"],
+            home_team=game["home_team"],
+            away_team=game["away_team"],
+            game_time_utc=game.get("game_time_utc"),
+            home_probable_pitcher=game.get("home_probable_pitcher"),
+            away_probable_pitcher=game.get("away_probable_pitcher"),
+            predicted_winner="TBD",
+            home_win_probability=0.50,
+            away_win_probability=0.50,
+        )
+        for game in games
     ]
 
     return TodayPredictionsResponse(date=date.today().isoformat(), predictions=predictions)
