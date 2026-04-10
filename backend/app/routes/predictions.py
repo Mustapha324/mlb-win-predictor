@@ -12,6 +12,7 @@ from app.core.config import settings
 from app.db.database import Base, SessionLocal, engine
 from app.models.prediction import Prediction
 from app.schemas.prediction import TeamPrediction, TodayPredictionsResponse
+from app.services.mlb import fetch_upcoming_games_for_date
 
 router = APIRouter(prefix="/predictions", tags=["predictions"])
 
