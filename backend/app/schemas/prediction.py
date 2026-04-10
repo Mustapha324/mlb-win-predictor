@@ -6,7 +6,8 @@ class TeamPrediction(BaseModel):
     home_team: str
     away_team: str
     predicted_winner: str
-    win_probability: float
+    home_win_probability: float
+    away_win_probability: float
 
 
 class TodayPredictionsResponse(BaseModel):
