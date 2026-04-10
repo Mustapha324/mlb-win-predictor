@@ -15,6 +15,7 @@ class TeamPrediction(BaseModel):
     predicted_winner: str
     home_win_probability: float
     away_win_probability: float
+    prediction_source: str
 
 
 class TodayPredictionsResponse(BaseModel):

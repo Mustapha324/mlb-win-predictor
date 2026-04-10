@@ -113,6 +113,28 @@ def build_features(model, game: dict, team_win_pct: dict[int, float]) -> np.ndar
     return np.array([fallback], dtype=float)
 
 
+def placeholder_home_probability(game: dict, team_win_pct: dict[int, float]) -> float:
+    """Intermediate fallback based on standings win percentage.
+
+    TODO(model-serving): replace this fallback once the production feature
+    pipeline is implemented and we can always call model.predict_proba with
+    fully aligned training features.
+    """
+
+    teams = game.get("teams", {})
+    home_id = teams.get("home", {}).get("team", {}).get("id")
+    away_id = teams.get("away", {}).get("team", {}).get("id")
+
+    home_pct = team_win_pct.get(home_id, 0.5)
+    away_pct = team_win_pct.get(away_id, 0.5)
+    total = home_pct + away_pct
+
+    if total <= 0:
+        return 0.5
+
+    return home_pct / total
+
+
 @router.get("/today", response_model=TodayPredictionsResponse)
 def get_today_predictions() -> TodayPredictionsResponse:
     today = date.today()
@@ -131,13 +153,18 @@ def get_today_predictions() -> TodayPredictionsResponse:
             home_team = teams.get("home", {}).get("team", {}).get("name", "Unknown Home Team")
             away_team = teams.get("away", {}).get("team", {}).get("name", "Unknown Away Team")
 
-            home_prob = 0.5
+            prediction_source = "placeholder"
+            home_prob = placeholder_home_probability(game, team_win_pct)
             if model is not None:
                 try:
+                    # TODO(model-serving): keep this as the primary path once we
+                    # guarantee training/serving feature parity across the stack.
                     features = build_features(model, game, team_win_pct)
                     home_prob = float(model.predict_proba(features)[0][1])
+                    prediction_source = "model"
                 except Exception:
-                    home_prob = 0.5
+                    home_prob = placeholder_home_probability(game, team_win_pct)
+                    prediction_source = "placeholder"
 
             home_prob = max(0.0, min(1.0, home_prob))
             away_prob = 1.0 - home_prob
@@ -150,6 +177,7 @@ def get_today_predictions() -> TodayPredictionsResponse:
                 predicted_winner=predicted_winner,
                 home_win_probability=home_prob,
                 away_win_probability=away_prob,
+                prediction_source=prediction_source,
             )
             predictions.append(prediction)
 
