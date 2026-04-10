@@ -1,3 +1,5 @@
+"""Prediction routes exposed by the API."""
+
 from datetime import date
 
 from fastapi import APIRouter
@@ -9,7 +11,7 @@ router = APIRouter(prefix="/predictions", tags=["predictions"])
 
 @router.get("/today", response_model=TodayPredictionsResponse)
 def get_today_predictions() -> TodayPredictionsResponse:
-    """Temporary endpoint returning mock prediction data."""
+    """Return mock prediction data for the current date."""
     predictions = [
         TeamPrediction(
             game_id="20260410-nyy-bos",

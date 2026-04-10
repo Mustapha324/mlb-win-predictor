@@ -1,18 +1,19 @@
 import Link from "next/link";
 
-const navItems = [
+const navigationItems = [
   { href: "/", label: "Predictions" },
   { href: "/history", label: "History" },
   { href: "/metrics", label: "Metrics" }
 ];
 
+/** Top-level site navigation for dashboard routes. */
 export function Navbar() {
   return (
     <header className="border-b border-slate-800 bg-slate-950/90">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-slate-100">
         <p className="text-lg font-semibold tracking-tight">MLB Win Predictor</p>
         <ul className="flex items-center gap-2">
-          {navItems.map((item) => (
+          {navigationItems.map((item) => (
             <li key={item.href}>
               <Link
                 href={item.href}

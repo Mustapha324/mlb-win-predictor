@@ -1,28 +1,5 @@
 import { GameCard } from "@/components/GameCard";
-
-const recentPredictions = [
-  {
-    awayTeam: "Chicago Cubs",
-    homeTeam: "Milwaukee Brewers",
-    gameTime: "Yesterday · Final",
-    predictedWinner: "Milwaukee Brewers",
-    confidence: 61
-  },
-  {
-    awayTeam: "Seattle Mariners",
-    homeTeam: "Houston Astros",
-    gameTime: "2 days ago · Final",
-    predictedWinner: "Houston Astros",
-    confidence: 57
-  },
-  {
-    awayTeam: "Cleveland Guardians",
-    homeTeam: "Minnesota Twins",
-    gameTime: "3 days ago · Final",
-    predictedWinner: "Cleveland Guardians",
-    confidence: 54
-  }
-];
+import { historicalPredictions } from "@/lib/mockData";
 
 export default function HistoryPage() {
   return (
@@ -33,8 +10,8 @@ export default function HistoryPage() {
       </header>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {recentPredictions.map((game) => (
-          <GameCard key={`${game.awayTeam}-${game.homeTeam}`} {...game} />
+        {historicalPredictions.map((game) => (
+          <GameCard key={`${game.awayTeamName}-${game.homeTeamName}`} {...game} />
         ))}
       </section>
     </main>

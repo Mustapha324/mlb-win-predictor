@@ -1,3 +1,5 @@
+"""Model-performance routes."""
+
 from fastapi import APIRouter
 
 from app.schemas.metrics import ModelMetricsResponse
@@ -7,7 +9,7 @@ router = APIRouter(tags=["metrics"])
 
 @router.get("/metrics", response_model=ModelMetricsResponse)
 def get_model_metrics() -> ModelMetricsResponse:
-    """Temporary endpoint returning mock model metrics."""
+    """Return mock model quality metrics."""
     return ModelMetricsResponse(
         model_name="xgboost_baseline",
         version="0.1.0",
