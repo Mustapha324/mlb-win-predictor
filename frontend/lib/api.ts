@@ -23,6 +23,10 @@ export type ModelMetricsResponse = {
   last_trained_at: string;
 };
 
+type RawModelMetricsResponse = Partial<ModelMetricsResponse> & {
+  model_version?: string;
+};
+
 export class ApiError extends Error {
   status: number | null;
 
@@ -34,15 +38,26 @@ export class ApiError extends Error {
 }
 
 async function fetchJson<T>(path: string): Promise<T> {
+  const url = apiUrl(path);
   let response: Response;
 
   try {
-    response = await fetch(apiUrl(path), {
+    response = await fetch(url, {
       cache: "no-store"
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Network request failed";
-    throw new ApiError(`Could not reach backend at ${apiUrl(path)}. ${message}`);
+    const normalized = message.toLowerCase();
+    const isReachabilityIssue =
+      normalized.includes("failed to fetch") ||
+      normalized.includes("networkerror") ||
+      normalized.includes("load failed");
+
+    if (isReachabilityIssue) {
+      throw new ApiError(`Could not reach backend at ${url}. ${message}`);
+    }
+
+    throw new ApiError(`Request to ${url} failed before a response was received. ${message}`);
   }
 
   if (!response.ok) {
@@ -62,7 +77,15 @@ export function getTodayPredictions(): Promise<TodayPredictionsResponse> {
 }
 
 export function getModelMetrics(): Promise<ModelMetricsResponse> {
-  return fetchJson<ModelMetricsResponse>("/metrics");
+  return fetchJson<RawModelMetricsResponse>("/metrics").then((metrics) => ({
+    model_name: metrics.model_name ?? "MLB Win Predictor",
+    version: metrics.version ?? metrics.model_version ?? "unknown",
+    accuracy: metrics.accuracy ?? 0,
+    precision: metrics.precision ?? metrics.accuracy ?? 0,
+    recall: metrics.recall ?? metrics.accuracy ?? 0,
+    roc_auc: metrics.roc_auc ?? metrics.accuracy ?? 0,
+    last_trained_at: metrics.last_trained_at ?? new Date(0).toISOString()
+  }));
 }
 
 export function getErrorMessage(error: unknown, fallbackMessage: string): string {

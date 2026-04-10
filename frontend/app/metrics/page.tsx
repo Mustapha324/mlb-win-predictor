@@ -16,6 +16,9 @@ function toPercent(value: number): string {
 }
 
 function buildMetricCards(metrics: ModelMetricsResponse): MetricCardItem[] {
+  const parsedDate = new Date(metrics.last_trained_at);
+  const lastTrainedLabel = Number.isNaN(parsedDate.getTime()) ? "Unavailable" : parsedDate.toLocaleDateString();
+
   return [
     {
       label: "Model",
@@ -44,7 +47,7 @@ function buildMetricCards(metrics: ModelMetricsResponse): MetricCardItem[] {
     },
     {
       label: "Last Trained",
-      value: new Date(metrics.last_trained_at).toLocaleDateString(),
+      value: lastTrainedLabel,
       trend: "Most recent training run"
     }
   ];
