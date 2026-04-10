@@ -30,7 +30,10 @@ def _to_float(value: object) -> float | None:
 
 def _extract_stat(records: list[dict], group_name: str, stat_name: str) -> float | None:
     for record in records:
-        if record.get("group", {}).get("displayName") != group_name:
+        group = record.get("group", {})
+        display_name = str(group.get("displayName") or "").strip().lower()
+        internal_name = str(group.get("name") or "").strip().lower()
+        if display_name != group_name and internal_name != group_name:
             continue
         splits = record.get("splits", [])
         if not splits:
@@ -97,6 +100,49 @@ def _as_int(value: object) -> int | None:
         return None
 
 
+def _fetch_schedule_game(game_id: str) -> dict:
+    try:
+        response = requests.get(
+            f"{settings.mlb_stats_api_base}/schedule",
+            params={"sportId": 1, "gamePk": game_id, "hydrate": "probablePitcher,team"},
+            timeout=10,
+        )
+        response.raise_for_status()
+    except requests.RequestException:
+        return {}
+
+    dates = response.json().get("dates", [])
+    if not dates:
+        return {}
+
+    games = dates[0].get("games", [])
+    if not games:
+        return {}
+
+    return games[0]
+
+
+def _fetch_current_team_records() -> dict[int, str]:
+    try:
+        response = requests.get(
+            f"{settings.mlb_stats_api_base}/standings",
+            params={"leagueId": "103,104", "standingsTypes": "regularSeason"},
+            timeout=10,
+        )
+        response.raise_for_status()
+    except requests.RequestException:
+        return {}
+
+    records_by_team: dict[int, str] = {}
+    for record_group in response.json().get("records", []):
+        for team_record in record_group.get("teamRecords", []):
+            team_id = _as_int(team_record.get("team", {}).get("id"))
+            if team_id is None:
+                continue
+            records_by_team[team_id] = _format_record(team_record)
+    return records_by_team
+
+
 @router.get("/{game_id}", response_model=GamePredictionDetail)
 def get_game_by_id(game_id: str) -> GamePredictionDetail:
     """Return game details enriched with live MLB API metadata."""
@@ -122,36 +168,73 @@ def get_game_by_id(game_id: str) -> GamePredictionDetail:
     away_era: float | None = None
     home_era: float | None = None
 
+    schedule_game = _fetch_schedule_game(str(game_id))
+    live_payload = {}
     try:
         response = requests.get(
             f"{settings.mlb_stats_api_base}/game/{game_id}/feed/live",
             timeout=10,
         )
         response.raise_for_status()
-        payload = response.json()
+        live_payload = response.json()
     except requests.RequestException:
-        payload = {}
+        live_payload = {}
 
-    game_data = payload.get("gameData", {})
+    game_data = live_payload.get("gameData", {})
     teams_data = game_data.get("teams", {})
     probable_pitchers_data = game_data.get("probablePitchers", {})
     datetime_data = game_data.get("datetime", {})
     status_data = game_data.get("status", {})
     away_team_data = teams_data.get("away", {})
     home_team_data = teams_data.get("home", {})
+    schedule_teams_data = schedule_game.get("teams", {})
+    schedule_away_team_data = schedule_teams_data.get("away", {})
+    schedule_home_team_data = schedule_teams_data.get("home", {})
 
-    away_team = away_team_data.get("name") or away_team
-    home_team = home_team_data.get("name") or home_team
-    away_probable_pitcher = _resolve_probable_pitcher_name(probable_pitchers_data.get("away", {})) or away_probable_pitcher
-    home_probable_pitcher = _resolve_probable_pitcher_name(probable_pitchers_data.get("home", {})) or home_probable_pitcher
-    game_date = datetime_data.get("officialDate") or game_date
-    status = status_data.get("detailedState") or status
-    away_record = _format_record(away_team_data)
-    home_record = _format_record(home_team_data)
+    away_team = (
+        away_team_data.get("name")
+        or schedule_away_team_data.get("team", {}).get("name")
+        or away_team
+    )
+    home_team = (
+        home_team_data.get("name")
+        or schedule_home_team_data.get("team", {}).get("name")
+        or home_team
+    )
+    away_probable_pitcher = (
+        _resolve_probable_pitcher_name(schedule_away_team_data.get("probablePitcher", {}))
+        or _resolve_probable_pitcher_name(probable_pitchers_data.get("away", {}))
+        or away_probable_pitcher
+    )
+    home_probable_pitcher = (
+        _resolve_probable_pitcher_name(schedule_home_team_data.get("probablePitcher", {}))
+        or _resolve_probable_pitcher_name(probable_pitchers_data.get("home", {}))
+        or home_probable_pitcher
+    )
+    game_date = schedule_game.get("officialDate") or datetime_data.get("officialDate") or game_date
+    status = (
+        status_data.get("detailedState")
+        or schedule_game.get("status", {}).get("detailedState")
+        or status
+    )
 
     season = prediction.game_date.year
-    away_team_id = _as_int(away_team_data.get("id"))
-    home_team_id = _as_int(home_team_data.get("id"))
+    away_team_id = _as_int(away_team_data.get("id")) or _as_int(schedule_away_team_data.get("team", {}).get("id"))
+    home_team_id = _as_int(home_team_data.get("id")) or _as_int(schedule_home_team_data.get("team", {}).get("id"))
+
+    current_records = _fetch_current_team_records()
+    if away_team_id is not None:
+        away_record = (
+            current_records.get(away_team_id)
+            or _format_record(schedule_away_team_data)
+            or away_record
+        )
+    if home_team_id is not None:
+        home_record = (
+            current_records.get(home_team_id)
+            or _format_record(schedule_home_team_data)
+            or home_record
+        )
 
     if away_team_id is not None:
         away_batting_avg, away_era = _fetch_team_season_stats(away_team_id, season)
