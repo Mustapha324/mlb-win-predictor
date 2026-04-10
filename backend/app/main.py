@@ -16,3 +16,4 @@ def create_tables() -> None:
 app.include_router(health.router)
 app.include_router(predictions.router, prefix=settings.api_prefix)
 app.include_router(metrics.router, prefix=settings.api_prefix)
+app.include_router(results.router, prefix=settings.api_prefix)
