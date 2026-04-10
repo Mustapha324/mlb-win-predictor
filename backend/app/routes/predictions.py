@@ -48,7 +48,7 @@ def fetch_todays_games(target_date: date) -> list[dict]:
     try:
         response = requests.get(
             f"{settings.mlb_stats_api_base}/schedule",
-            params={"sportId": 1, "date": target_date.isoformat()},
+            params={"sportId": 1, "date": target_date.isoformat(), "hydrate": "probablePitcher,team"},
             timeout=10,
         )
         response.raise_for_status()
@@ -69,11 +69,40 @@ def fetch_todays_games(target_date: date) -> list[dict]:
     ]
 
 
-def _to_float(value: Any, default: float) -> float:
+def _resolve_probable_pitcher_name(probable_pitcher_payload: dict) -> str | None:
+    full_name = probable_pitcher_payload.get("fullName") or probable_pitcher_payload.get("name")
+    if full_name:
+        return full_name
+
+    pitcher_id = probable_pitcher_payload.get("id")
+    if not isinstance(pitcher_id, int):
+        return None
+
     try:
-        return float(value)
-    except (TypeError, ValueError):
-        return default
+        response = requests.get(
+            f"{settings.mlb_stats_api_base}/people/{pitcher_id}",
+            timeout=10,
+        )
+        response.raise_for_status()
+    except requests.RequestException:
+        return None
+
+    people = response.json().get("people", [])
+    if not people:
+        return None
+
+    person = people[0]
+    return person.get("fullName") or person.get("fullFMLName") or person.get("name")
+
+
+def _extract_last10_win_pct(team_record: dict) -> float:
+    for split in team_record.get("records", {}).get("splitRecords", []):
+        if split.get("type") == "lastTen":
+            wins = split.get("wins", 0)
+            losses = split.get("losses", 0)
+            total = wins + losses
+            return (wins / total) if total else 0.5
+    return 0.5
 
 
 def fetch_team_pregame_stats(game_date: date) -> dict[int, dict[str, float]]:
@@ -273,11 +302,12 @@ def get_today_predictions() -> TodayPredictionsResponse:
         for game in games:
             game_pk = game.get("gamePk")
             teams = game.get("teams", {})
-            home_team = teams.get("home", {}).get("team", {}).get("name", "Unknown Home Team")
-            away_team = teams.get("away", {}).get("team", {}).get("name", "Unknown Away Team")
-            home_pitcher = probable_pitcher_name(game, "home")
-            away_pitcher = probable_pitcher_name(game, "away")
-            game_time_utc = game.get("gameDate")
+            home_team_data = teams.get("home", {})
+            away_team_data = teams.get("away", {})
+            home_team = home_team_data.get("team", {}).get("name", "Unknown Home Team")
+            away_team = away_team_data.get("team", {}).get("name", "Unknown Away Team")
+            away_probable_pitcher = _resolve_probable_pitcher_name(away_team_data.get("probablePitcher", {}))
+            home_probable_pitcher = _resolve_probable_pitcher_name(home_team_data.get("probablePitcher", {}))
 
             prediction_source = "live_weighted_stats"
             home_prob = weighted_home_probability(game, team_stats)
@@ -298,6 +328,11 @@ def get_today_predictions() -> TodayPredictionsResponse:
                 game_id=str(game_pk),
                 home_team=home_team,
                 away_team=away_team,
+                game_time_utc=game.get("gameDate"),
+                away_probable_pitcher=away_probable_pitcher,
+                home_probable_pitcher=home_probable_pitcher,
+                awayProbablePitcher=away_probable_pitcher,
+                homeProbablePitcher=home_probable_pitcher,
                 predicted_winner=predicted_winner,
                 home_win_probability=home_prob,
                 away_win_probability=away_prob,
