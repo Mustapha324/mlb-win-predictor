@@ -1,3 +1,5 @@
+import { BACKEND_BASE_URL } from "@/lib/apiConfig";
+
 export type GameDetail = {
   game_id: string;
   game_time: string;
@@ -22,11 +24,9 @@ export type GameDetail = {
   feature_values: Record<string, number | string | null>;
 };
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
-
 export async function getGameById(gameId: string): Promise<GameDetail | null> {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/games/${gameId}`, {
+    const response = await fetch(`${BACKEND_BASE_URL}/api/games/${gameId}`, {
       cache: "no-store"
     });
 

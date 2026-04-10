@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { MetricsCard } from "@/components/MetricsCard";
-import { getModelMetrics, type ModelMetricsResponse } from "@/lib/api";
+import { getErrorMessage, getModelMetrics, type ModelMetricsResponse } from "@/lib/api";
 
 type MetricCardItem = {
   label: string;
@@ -64,8 +64,7 @@ export default function MetricsPage() {
         const metrics = await getModelMetrics();
         setCards(buildMetricCards(metrics));
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Unknown error";
-        setError(`Unable to load model metrics. ${message}`);
+        setError(getErrorMessage(err, "Unable to load model metrics."));
       } finally {
         setLoading(false);
       }

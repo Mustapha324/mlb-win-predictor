@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { GameCard } from "@/components/GameCard";
-import { getTodayPredictions, type TeamPrediction } from "@/lib/api";
+import { getErrorMessage, getTodayPredictions, type TeamPrediction } from "@/lib/api";
 
 function toGameTimeLabel(apiDate: string): string {
   return `${apiDate} · Scheduled`;
@@ -26,8 +26,7 @@ export default function Home() {
         setGames(data.predictions);
         setDateLabel(data.date);
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Unknown error";
-        setError(`Unable to load today's predictions. ${message}`);
+        setError(getErrorMessage(err, "Unable to load today's predictions."));
       } finally {
         setLoading(false);
       }

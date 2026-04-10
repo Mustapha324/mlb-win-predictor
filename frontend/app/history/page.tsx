@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+import { apiUrl } from "@/lib/apiConfig";
+
 type FilterStatus = "all" | "correct" | "incorrect";
 
 type PredictionHistoryItem = {
@@ -27,7 +29,7 @@ export default function HistoryPage() {
         setIsLoading(true);
         setError(null);
 
-        const response = await fetch("http://localhost:8000/api/predictions/history", {
+        const response = await fetch(apiUrl("/predictions/history"), {
           cache: "no-store"
         });
 

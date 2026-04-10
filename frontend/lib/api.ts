@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:8000/api";
+import { apiUrl } from "@/lib/apiConfig";
 
 export type TeamPrediction = {
   game_id: string;
@@ -23,11 +23,35 @@ export type ModelMetricsResponse = {
   last_trained_at: string;
 };
 
+export class ApiError extends Error {
+  status: number | null;
+
+  constructor(message: string, status: number | null = null) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 async function fetchJson<T>(path: string): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`);
+  let response: Response;
+
+  try {
+    response = await fetch(apiUrl(path), {
+      cache: "no-store"
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Network request failed";
+    throw new ApiError(`Could not reach backend at ${apiUrl(path)}. ${message}`);
+  }
 
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    const rawBody = await response.text();
+    const bodyMessage = rawBody.trim() ? ` - ${rawBody.trim().slice(0, 160)}` : "";
+    throw new ApiError(
+      `Request failed (${response.status} ${response.statusText || "Unknown Status"})${bodyMessage}`,
+      response.status
+    );
   }
 
   return (await response.json()) as T;
@@ -39,4 +63,16 @@ export function getTodayPredictions(): Promise<TodayPredictionsResponse> {
 
 export function getModelMetrics(): Promise<ModelMetricsResponse> {
   return fetchJson<ModelMetricsResponse>("/metrics");
+}
+
+export function getErrorMessage(error: unknown, fallbackMessage: string): string {
+  if (error instanceof ApiError) {
+    return `${fallbackMessage} ${error.message}`;
+  }
+
+  if (error instanceof Error) {
+    return `${fallbackMessage} ${error.message}`;
+  }
+
+  return fallbackMessage;
 }
