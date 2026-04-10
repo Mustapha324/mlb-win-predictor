@@ -47,7 +47,7 @@ export function GameCard({
   const safeHomePitcher = homePitcher?.trim() || "TBD";
   const confidence = Math.max(toPercentNumber(awayWinPct), toPercentNumber(homeWinPct));
   const predictedWinnerTeam =
-    predictedWinner || (homeWinPct >= awayWinPct ? homeTeam : awayTeam);
+    predictedWinner || (homeWinPercent >= awayWinPercent ? homeTeam : awayTeam);
 
   const confidenceLabel =
     confidence <= 56 ? "Low" : confidence <= 64 ? "Medium" : "High";
