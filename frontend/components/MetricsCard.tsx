@@ -5,7 +5,7 @@ type MetricsCardProps = {
 };
 
 /** Card showing one aggregate model performance metric. */
-export function MetricsCard({ metricLabel, metricValue, metricTrend }: DashboardMetricCardData) {
+export function MetricsCard({ label, value, trend }: MetricsCardProps) {
   return (
     <article className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <p className="text-sm font-medium text-slate-500">{label}</p>
