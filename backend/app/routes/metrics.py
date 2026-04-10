@@ -9,11 +9,18 @@ router = APIRouter(tags=["metrics"])
 def get_model_metrics() -> ModelMetricsResponse:
     """Temporary endpoint returning mock model metrics."""
     return ModelMetricsResponse(
-        model_name="xgboost_baseline",
-        version="0.1.0",
-        accuracy=0.683,
-        precision=0.671,
-        recall=0.659,
-        roc_auc=0.721,
-        last_trained_at="2026-04-01T00:00:00Z",
+        total_predictions_evaluated=248,
+        correct_predictions=168,
+        accuracy=0.6774,
+        brier_score=0.212,
+        model_version="v0.2.3",
+        cumulative_accuracy=[
+            {"date": "2026-04-01", "accuracy": 0.625},
+            {"date": "2026-04-02", "accuracy": 0.634},
+            {"date": "2026-04-03", "accuracy": 0.646},
+            {"date": "2026-04-04", "accuracy": 0.652},
+            {"date": "2026-04-05", "accuracy": 0.661},
+            {"date": "2026-04-06", "accuracy": 0.669},
+            {"date": "2026-04-07", "accuracy": 0.6774},
+        ],
     )

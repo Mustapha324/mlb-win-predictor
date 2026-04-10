@@ -1,11 +1,15 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+
+class CumulativeAccuracyPoint(BaseModel):
+    date: str
+    accuracy: float
 
 
 class ModelMetricsResponse(BaseModel):
-    model_name: str
-    version: str
+    total_predictions_evaluated: int
+    correct_predictions: int
     accuracy: float
-    precision: float
-    recall: float
-    roc_auc: float
-    last_trained_at: str
+    brier_score: float
+    model_version: str
+    cumulative_accuracy: list[CumulativeAccuracyPoint] = Field(default_factory=list)
