@@ -389,6 +389,9 @@ def get_prediction_history() -> list[PredictionHistoryItem]:
                 homeWinProbability=0.44,
                 awayWinProbability=0.56,
                 wasCorrect=False,
+                awayScore=5,
+                homeScore=3,
+                status="Final",
             ),
             PredictionHistoryItem(
                 gameId="mock-game-002",
@@ -400,6 +403,9 @@ def get_prediction_history() -> list[PredictionHistoryItem]:
                 homeWinProbability=0.45,
                 awayWinProbability=0.55,
                 wasCorrect=True,
+                awayScore=4,
+                homeScore=2,
+                status="Final",
             ),
         ]
 
@@ -410,10 +416,13 @@ def get_prediction_history() -> list[PredictionHistoryItem]:
             awayTeam=row.away_team,
             homeTeam=row.home_team,
             predictedWinner=row.predicted_winner,
-            actualWinner=None,
+            actualWinner=row.actual_winner,
             homeWinProbability=row.home_win_probability,
             awayWinProbability=row.away_win_probability,
-            wasCorrect=None,
+            wasCorrect=row.was_correct,
+            awayScore=row.away_score,
+            homeScore=row.home_score,
+            status=row.status,
         )
         for row in rows
     ]

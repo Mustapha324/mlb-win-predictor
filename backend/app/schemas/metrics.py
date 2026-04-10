@@ -15,3 +15,4 @@ class ModelMetricsResponse(BaseModel):
     recall: float | None = None
     roc_auc: float | None = None
     last_trained_at: str | None = None
+    last_results_sync: str | None = None
