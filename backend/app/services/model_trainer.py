@@ -9,7 +9,14 @@ from pathlib import Path
 import pandas as pd
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, brier_score_loss, log_loss
+from sklearn.metrics import (
+    accuracy_score,
+    brier_score_loss,
+    log_loss,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
@@ -62,12 +69,12 @@ def _split_train_test_by_date(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFr
     return train_df, test_df
 
 
-def _save_metrics(metrics: dict[str, float]) -> None:
+def _save_metrics(metrics: dict[str, float | str]) -> None:
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
     METRICS_PATH.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
 
 
-def train_model(data_path: Path = DATA_PATH) -> dict[str, float]:
+def train_model(data_path: Path = DATA_PATH) -> dict[str, float | str]:
     if not data_path.exists():
         raise FileNotFoundError(f"Training data not found: {data_path}")
 
@@ -96,16 +103,27 @@ def train_model(data_path: Path = DATA_PATH) -> dict[str, float]:
     predictions = (probabilities >= 0.5).astype(int)
 
     accuracy = accuracy_score(y_test, predictions)
+    precision = precision_score(y_test, predictions, zero_division=0)
+    recall = recall_score(y_test, predictions, zero_division=0)
+    roc_auc = roc_auc_score(y_test, probabilities)
     model_log_loss = log_loss(y_test, probabilities)
     brier = brier_score_loss(y_test, probabilities)
+    now_iso = datetime.now(timezone.utc).isoformat()
 
-    metrics: dict[str, float] = {
+    metrics: dict[str, float | str] = {
         "accuracy": float(accuracy),
+        "precision": float(precision),
+        "recall": float(recall),
+        "roc_auc": float(roc_auc),
         "log_loss": float(model_log_loss),
         "brier_score": float(brier),
         "train_games": float(len(train_df)),
         "test_games": float(len(test_df)),
         "correct_predictions": float((predictions == y_test).sum()),
+        "total_predictions_evaluated": float(len(test_df)),
+        "model_name": "logistic_regression_baseline",
+        "version": "logreg-baseline-v1",
+        "last_trained_at": now_iso,
     }
 
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)

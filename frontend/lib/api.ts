@@ -20,11 +20,14 @@ export type TodayPredictionsResponse = {
 export type ModelMetricsResponse = {
   model_name: string;
   version: string;
+  total_predictions_evaluated: number;
+  correct_predictions: number;
   accuracy: number;
-  precision: number;
-  recall: number;
-  roc_auc: number;
-  last_trained_at: string;
+  brier_score: number | null;
+  precision: number | null;
+  recall: number | null;
+  roc_auc: number | null;
+  last_trained_at: string | null;
 };
 
 type RawModelMetricsResponse = Partial<ModelMetricsResponse> & {
@@ -84,11 +87,14 @@ export function getModelMetrics(): Promise<ModelMetricsResponse> {
   return fetchJson<RawModelMetricsResponse>("/metrics").then((metrics) => ({
     model_name: metrics.model_name ?? "MLB Win Predictor",
     version: metrics.version ?? metrics.model_version ?? "unknown",
+    total_predictions_evaluated: metrics.total_predictions_evaluated ?? 0,
+    correct_predictions: metrics.correct_predictions ?? 0,
     accuracy: metrics.accuracy ?? 0,
-    precision: metrics.precision ?? metrics.accuracy ?? 0,
-    recall: metrics.recall ?? metrics.accuracy ?? 0,
-    roc_auc: metrics.roc_auc ?? metrics.accuracy ?? 0,
-    last_trained_at: metrics.last_trained_at ?? new Date(0).toISOString()
+    brier_score: metrics.brier_score ?? null,
+    precision: metrics.precision ?? null,
+    recall: metrics.recall ?? null,
+    roc_auc: metrics.roc_auc ?? null,
+    last_trained_at: metrics.last_trained_at ?? null
   }));
 }
 
