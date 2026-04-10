@@ -16,41 +16,75 @@ function toPercent(value: number): string {
 }
 
 function buildMetricCards(metrics: ModelMetricsResponse): MetricCardItem[] {
-  const parsedDate = new Date(metrics.last_trained_at);
-  const lastTrainedLabel = Number.isNaN(parsedDate.getTime()) ? "Unavailable" : parsedDate.toLocaleDateString();
+  const parsedDate = metrics.last_trained_at ? new Date(metrics.last_trained_at) : null;
+  const lastTrainedLabel =
+    parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : "Unavailable";
 
-  return [
+  const cards: MetricCardItem[] = [
     {
       label: "Model",
       value: metrics.model_name,
       trend: `Version ${metrics.version}`
     },
     {
+      label: "Predictions Evaluated",
+      value: metrics.total_predictions_evaluated.toLocaleString(),
+      trend: "Total games in the latest evaluation set"
+    },
+    {
+      label: "Correct Predictions",
+      value: metrics.correct_predictions.toLocaleString(),
+      trend: "Correct winner picks in evaluation"
+    },
+    {
       label: "Accuracy",
       value: toPercent(metrics.accuracy),
       trend: "Overall prediction accuracy"
     },
-    {
-      label: "Precision",
-      value: toPercent(metrics.precision),
-      trend: "Positive prediction quality"
-    },
-    {
-      label: "Recall",
-      value: toPercent(metrics.recall),
-      trend: "Coverage of positive outcomes"
-    },
-    {
-      label: "ROC AUC",
-      value: toPercent(metrics.roc_auc),
-      trend: "Model ranking performance"
-    },
+    ...(metrics.brier_score !== null
+      ? [
+          {
+            label: "Brier Score",
+            value: metrics.brier_score.toFixed(4),
+            trend: "Lower is better"
+          }
+        ]
+      : []),
+    ...(metrics.precision !== null
+      ? [
+          {
+            label: "Precision",
+            value: toPercent(metrics.precision),
+            trend: "Positive prediction quality"
+          }
+        ]
+      : []),
+    ...(metrics.recall !== null
+      ? [
+          {
+            label: "Recall",
+            value: toPercent(metrics.recall),
+            trend: "Coverage of positive outcomes"
+          }
+        ]
+      : []),
+    ...(metrics.roc_auc !== null
+      ? [
+          {
+            label: "ROC AUC",
+            value: toPercent(metrics.roc_auc),
+            trend: "Model ranking performance"
+          }
+        ]
+      : []),
     {
       label: "Last Trained",
       value: lastTrainedLabel,
       trend: "Most recent training run"
     }
   ];
+
+  return cards;
 }
 
 export default function MetricsPage() {
