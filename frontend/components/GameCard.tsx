@@ -12,6 +12,10 @@ type GameCardProps = {
   predictedWinner: string;
 };
 
+function toPercent(probability: number): number {
+  return probability <= 1 ? probability * 100 : probability;
+}
+
 /** Card showing one model prediction for a single game matchup. */
 export function GameCard({
   gameId,
@@ -24,9 +28,11 @@ export function GameCard({
   gameTime,
   predictedWinner
 }: GameCardProps) {
-  const confidence = Math.max(awayWinPct, homeWinPct);
+  const awayWinPercent = toPercent(awayWinPct);
+  const homeWinPercent = toPercent(homeWinPct);
+  const confidence = Math.max(awayWinPercent, homeWinPercent);
   const predictedWinnerTeam =
-    predictedWinner || (homeWinPct >= awayWinPct ? homeTeam : awayTeam);
+    predictedWinner || (homeWinPercent >= awayWinPercent ? homeTeam : awayTeam);
 
   const confidenceLabel =
     confidence <= 56 ? "Low" : confidence <= 64 ? "Medium" : "High";
@@ -64,11 +70,11 @@ export function GameCard({
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Away win</p>
-          <p className="mt-1 text-xl font-semibold text-slate-900">{awayWinPct}%</p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">{awayWinPercent.toFixed(1)}%</p>
         </div>
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Home win</p>
-          <p className="mt-1 text-xl font-semibold text-slate-900">{homeWinPct}%</p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">{homeWinPercent.toFixed(1)}%</p>
         </div>
       </div>
 

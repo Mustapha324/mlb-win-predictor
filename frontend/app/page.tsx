@@ -60,11 +60,15 @@ export default function Home() {
             {games.map((game) => (
               <GameCard
                 key={game.game_id}
+                gameId={game.game_id}
                 awayTeam={game.away_team}
                 homeTeam={game.home_team}
+                awayPitcher={game.away_probable_pitcher ?? "TBD"}
+                homePitcher={game.home_probable_pitcher ?? "TBD"}
+                awayWinPct={game.away_win_probability}
+                homeWinPct={game.home_win_probability}
                 gameTime={toGameTimeLabel(dateLabel)}
                 predictedWinner={game.predicted_winner}
-                confidence={Math.round(game.win_probability * 100)}
               />
             ))}
           </section>
