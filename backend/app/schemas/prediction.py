@@ -25,12 +25,15 @@ class TodayPredictionsResponse(BaseModel):
 
 
 class PredictionHistoryItem(BaseModel):
+    gameId: str
     date: str
-    matchup: str
-    predicted_winner: str
-    actual_winner: str | None
-    home_win_probability: float
-    was_correct: bool | None
+    awayTeam: str
+    homeTeam: str
+    predictedWinner: str
+    actualWinner: str | None
+    homeWinProbability: float
+    awayWinProbability: float
+    wasCorrect: bool | None
 
 
 class PredictionHistoryResponse(BaseModel):
