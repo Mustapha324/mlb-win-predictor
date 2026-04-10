@@ -3,6 +3,28 @@
 from pydantic import BaseModel
 
 
+class LiveTeamPregameStats(BaseModel):
+    win_pct: float
+    runs_scored_per_game: float
+    runs_allowed_per_game: float
+    run_diff_per_game: float
+    last_10_win_pct: float
+    home_win_pct: float
+    away_win_pct: float
+    batting_avg: float
+    on_base_pct: float
+    slugging_pct: float
+    era: float
+    probable_pitcher_era: float
+    probable_pitcher_whip: float
+    probable_pitcher_kbb: float
+
+
+class LiveGamePredictionInputs(BaseModel):
+    home: LiveTeamPregameStats
+    away: LiveTeamPregameStats
+
+
 class TeamPrediction(BaseModel):
     """Prediction for a single MLB game."""
 
@@ -18,6 +40,8 @@ class TeamPrediction(BaseModel):
     home_win_probability: float
     away_win_probability: float
     prediction_source: str
+    predictionSource: str | None = None
+    live_stats_used: LiveGamePredictionInputs | None = None
 
 
 class TodayPredictionsResponse(BaseModel):
