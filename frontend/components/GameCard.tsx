@@ -1,4 +1,7 @@
+import Link from "next/link";
+
 type GameCardProps = {
+  gameId: string;
   awayTeam: string;
   homeTeam: string;
   awayPitcher: string;
@@ -10,6 +13,7 @@ type GameCardProps = {
 };
 
 export function GameCard({
+  gameId,
   awayTeam,
   homeTeam,
   awayPitcher,
@@ -68,6 +72,12 @@ export function GameCard({
       <p className="mt-4 text-sm text-slate-600">
         Model pick: <span className="font-semibold text-slate-900">{predictedWinner}</span>
       </p>
+      <Link
+        href={`/games/${gameId}`}
+        className="mt-4 inline-block text-sm font-medium text-blue-700 hover:text-blue-900"
+      >
+        View game details →
+      </Link>
     </article>
   );
 }
