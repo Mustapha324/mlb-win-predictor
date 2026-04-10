@@ -134,7 +134,7 @@ def build_features(game: dict, team_stats: dict[int, dict[str, float]]) -> pd.Da
     )[FEATURE_COLUMNS]
 
 
-def placeholder_home_probability(game: dict, team_win_pct: dict[int, float]) -> float:
+def placeholder_home_probability(game: dict, team_stats: dict[int, dict[str, float]]) -> float:
     """Intermediate fallback based on standings win percentage.
 
     TODO(model-serving): replace this fallback once the production feature
@@ -146,8 +146,8 @@ def placeholder_home_probability(game: dict, team_win_pct: dict[int, float]) -> 
     home_id = teams.get("home", {}).get("team", {}).get("id")
     away_id = teams.get("away", {}).get("team", {}).get("id")
 
-    home_pct = team_win_pct.get(home_id, 0.5)
-    away_pct = team_win_pct.get(away_id, 0.5)
+    home_pct = team_stats.get(home_id, {}).get("win_pct", 0.5)
+    away_pct = team_stats.get(away_id, {}).get("win_pct", 0.5)
     total = home_pct + away_pct
 
     if total <= 0:
@@ -175,16 +175,16 @@ def get_today_predictions() -> TodayPredictionsResponse:
             away_team = teams.get("away", {}).get("team", {}).get("name", "Unknown Away Team")
 
             prediction_source = "placeholder"
-            home_prob = placeholder_home_probability(game, team_win_pct)
+            home_prob = placeholder_home_probability(game, team_stats)
             if model is not None:
                 try:
                     # TODO(model-serving): keep this as the primary path once we
                     # guarantee training/serving feature parity across the stack.
-                    features = build_features(model, game, team_win_pct)
+                    features = build_features(game, team_stats)
                     home_prob = float(model.predict_proba(features)[0][1])
                     prediction_source = "model"
                 except Exception:
-                    home_prob = placeholder_home_probability(game, team_win_pct)
+                    home_prob = placeholder_home_probability(game, team_stats)
                     prediction_source = "placeholder"
 
             home_prob = max(0.0, min(1.0, home_prob))
