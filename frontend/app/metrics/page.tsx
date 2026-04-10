@@ -20,27 +20,41 @@ function buildMetricCards(metrics: ModelMetricsResponse): MetricCardItem[] {
   const lastTrainedLabel =
     parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : "Unavailable";
 
-  const cards: MetricCardItem[] = [
-    {
+  const cards: MetricCardItem[] = [];
+
+  if (metrics.model_name) {
+    cards.push({
       label: "Model",
       value: metrics.model_name,
-      trend: `Version ${metrics.version}`
-    },
-    {
+      trend: metrics.version ? `Version ${metrics.version}` : "Version unavailable"
+    });
+  }
+
+  if (metrics.total_predictions_evaluated !== null) {
+    cards.push({
       label: "Predictions Evaluated",
       value: metrics.total_predictions_evaluated.toLocaleString(),
       trend: "Total games in the latest evaluation set"
-    },
-    {
+    });
+  }
+
+  if (metrics.correct_predictions !== null) {
+    cards.push({
       label: "Correct Predictions",
       value: metrics.correct_predictions.toLocaleString(),
       trend: "Correct winner picks in evaluation"
-    },
-    {
+    });
+  }
+
+  if (metrics.accuracy !== null) {
+    cards.push({
       label: "Accuracy",
       value: toPercent(metrics.accuracy),
       trend: "Overall prediction accuracy"
-    },
+    });
+  }
+
+  cards.push(
     ...(metrics.brier_score !== null
       ? [
           {
@@ -76,19 +90,23 @@ function buildMetricCards(metrics: ModelMetricsResponse): MetricCardItem[] {
             trend: "Model ranking performance"
           }
         ]
-      : []),
-    {
+      : [])
+  );
+
+  if (metrics.last_trained_at !== null) {
+    cards.push({
       label: "Last Trained",
       value: lastTrainedLabel,
       trend: "Most recent training run"
-    }
-  ];
+    });
+  }
 
   return cards;
 }
 
 export default function MetricsPage() {
   const [cards, setCards] = useState<MetricCardItem[]>([]);
+  const [availabilityMessage, setAvailabilityMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,8 +115,15 @@ export default function MetricsPage() {
       try {
         setLoading(true);
         setError(null);
+        setAvailabilityMessage(null);
 
         const metrics = await getModelMetrics();
+        if (!metrics.available) {
+          setCards([]);
+          setAvailabilityMessage(metrics.message ?? "Model metrics are currently unavailable.");
+          return;
+        }
+
         setCards(buildMetricCards(metrics));
       } catch (err) {
         setError(getErrorMessage(err, "Unable to load model metrics."));
@@ -127,7 +152,13 @@ export default function MetricsPage() {
         <section className="rounded-xl border border-rose-200 bg-rose-50 p-5 text-rose-700 shadow-sm">{error}</section>
       )}
 
-      {!loading && !error && (
+      {!loading && !error && availabilityMessage && (
+        <section className="rounded-xl border border-slate-200 bg-white p-5 text-slate-700 shadow-sm">
+          {availabilityMessage}
+        </section>
+      )}
+
+      {!loading && !error && cards.length > 0 && (
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {cards.map((metric) => (
             <MetricsCard key={metric.label} {...metric} />

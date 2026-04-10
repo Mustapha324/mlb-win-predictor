@@ -18,11 +18,14 @@ export type TodayPredictionsResponse = {
 };
 
 export type ModelMetricsResponse = {
-  model_name: string;
-  version: string;
-  total_predictions_evaluated: number;
-  correct_predictions: number;
-  accuracy: number;
+  available: boolean;
+  status: string;
+  message: string | null;
+  model_name: string | null;
+  version: string | null;
+  total_predictions_evaluated: number | null;
+  correct_predictions: number | null;
+  accuracy: number | null;
   brier_score: number | null;
   precision: number | null;
   recall: number | null;
@@ -85,11 +88,14 @@ export function getTodayPredictions(): Promise<TodayPredictionsResponse> {
 
 export function getModelMetrics(): Promise<ModelMetricsResponse> {
   return fetchJson<RawModelMetricsResponse>("/metrics").then((metrics) => ({
-    model_name: metrics.model_name ?? "MLB Win Predictor",
-    version: metrics.version ?? metrics.model_version ?? "unknown",
-    total_predictions_evaluated: metrics.total_predictions_evaluated ?? 0,
-    correct_predictions: metrics.correct_predictions ?? 0,
-    accuracy: metrics.accuracy ?? 0,
+    available: metrics.available ?? false,
+    status: metrics.status ?? "unavailable",
+    message: metrics.message ?? null,
+    model_name: metrics.model_name ?? null,
+    version: metrics.version ?? metrics.model_version ?? null,
+    total_predictions_evaluated: metrics.total_predictions_evaluated ?? null,
+    correct_predictions: metrics.correct_predictions ?? null,
+    accuracy: metrics.accuracy ?? null,
     brier_score: metrics.brier_score ?? null,
     precision: metrics.precision ?? null,
     recall: metrics.recall ?? null,
