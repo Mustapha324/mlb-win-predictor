@@ -1,17 +1,17 @@
+from __future__ import annotations
+
+import json
 import logging
 import pickle
 from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
-from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, brier_score_loss, log_loss
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sqlalchemy import Column, DateTime, Float, Integer, String, create_engine
-from sqlalchemy.orm import Session, declarative_base
+from sklearn.preprocessing import StandardScaler
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s - %(message)s")
@@ -19,135 +19,102 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 BASE_DIR = Path(__file__).resolve().parents[2]
 DATA_PATH = BASE_DIR / "data" / "processed" / "historical_games.csv"
 MODEL_PATH = BASE_DIR / "models" / "logistic_regression.pkl"
-DATABASE_PATH = BASE_DIR / "app.db"
-DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
+METRICS_PATH = BASE_DIR / "models" / "logistic_regression_metrics.json"
 
 TARGET_COLUMN = "home_team_won"
-DATE_COLUMN_CANDIDATES = ["game_date", "date", "game_datetime", "game_day"]
+DATE_COLUMN = "game_date"
+FEATURE_COLUMNS = [
+    "home_team_win_pct_pre_game",
+    "away_team_win_pct_pre_game",
+    "home_team_last10_win_pct",
+    "away_team_last10_win_pct",
+    "home_team_run_diff_per_game",
+    "away_team_run_diff_per_game",
+]
 TRAIN_SPLIT_RATIO = 0.8
 
-Base = declarative_base()
 
-
-class ModelMetric(Base):
-    __tablename__ = "model_metrics"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    model_name = Column(String(128), nullable=False)
-    accuracy = Column(Float, nullable=False)
-    log_loss = Column(Float, nullable=False)
-    brier_score = Column(Float, nullable=False)
-    evaluated_at = Column(DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
-
-
-def _detect_date_column(df: pd.DataFrame) -> str:
-    for candidate in DATE_COLUMN_CANDIDATES:
-        if candidate in df.columns:
-            return candidate
-    raise ValueError(
-        f"Unable to find a date column. Expected one of: {DATE_COLUMN_CANDIDATES}"
-    )
-
-
-def _build_model(features: pd.DataFrame) -> Pipeline:
-    numeric_columns = features.select_dtypes(include=["number", "bool"]).columns.tolist()
-    categorical_columns = [col for col in features.columns if col not in numeric_columns]
-
-    numeric_pipeline = Pipeline(
+def _build_model() -> Pipeline:
+    return Pipeline(
         steps=[
             ("imputer", SimpleImputer(strategy="median")),
             ("scaler", StandardScaler()),
-        ]
-    )
-
-    categorical_pipeline = Pipeline(
-        steps=[
-            ("imputer", SimpleImputer(strategy="most_frequent")),
-            ("encoder", OneHotEncoder(handle_unknown="ignore")),
-        ]
-    )
-
-    preprocessor = ColumnTransformer(
-        transformers=[
-            ("numeric", numeric_pipeline, numeric_columns),
-            ("categorical", categorical_pipeline, categorical_columns),
-        ]
-    )
-
-    model = Pipeline(
-        steps=[
-            ("preprocessor", preprocessor),
             ("classifier", LogisticRegression(max_iter=1000)),
         ]
     )
-    return model
 
 
-def _save_metrics(engine, accuracy: float, model_log_loss: float, brier_score: float) -> None:
-    Base.metadata.create_all(engine)
+def _split_train_test_by_date(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    unique_dates = sorted(df[DATE_COLUMN].dropna().unique())
+    if len(unique_dates) < 2:
+        raise ValueError("Need at least 2 unique game dates for date-based train/test split.")
 
-    with Session(engine) as session:
-        session.add(
-            ModelMetric(
-                model_name="logistic_regression",
-                accuracy=float(accuracy),
-                log_loss=float(model_log_loss),
-                brier_score=float(brier_score),
-            )
-        )
-        session.commit()
+    split_idx = int(len(unique_dates) * TRAIN_SPLIT_RATIO)
+    split_idx = min(max(split_idx, 1), len(unique_dates) - 1)
+    split_date = unique_dates[split_idx]
+
+    train_df = df[df[DATE_COLUMN] < split_date]
+    test_df = df[df[DATE_COLUMN] >= split_date]
+
+    if train_df.empty or test_df.empty:
+        raise ValueError("Date split produced empty train or test set.")
+
+    return train_df, test_df
 
 
-def train_model() -> dict[str, float]:
-    if not DATA_PATH.exists():
-        raise FileNotFoundError(f"Training data not found: {DATA_PATH}")
+def _save_metrics(metrics: dict[str, float]) -> None:
+    METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    METRICS_PATH.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
 
-    df = pd.read_csv(DATA_PATH)
-    if TARGET_COLUMN not in df.columns:
-        raise ValueError(f"Target column '{TARGET_COLUMN}' was not found in {DATA_PATH}")
 
-    date_column = _detect_date_column(df)
-    df[date_column] = pd.to_datetime(df[date_column], errors="coerce")
-    df = df.dropna(subset=[date_column, TARGET_COLUMN]).sort_values(by=date_column)
+def train_model(data_path: Path = DATA_PATH) -> dict[str, float]:
+    if not data_path.exists():
+        raise FileNotFoundError(f"Training data not found: {data_path}")
 
+    df = pd.read_csv(data_path)
+    required_columns = [DATE_COLUMN, TARGET_COLUMN, *FEATURE_COLUMNS]
+    missing_columns = [column for column in required_columns if column not in df.columns]
+    if missing_columns:
+        raise ValueError(f"Missing required columns in dataset: {missing_columns}")
+
+    df[DATE_COLUMN] = pd.to_datetime(df[DATE_COLUMN], errors="coerce")
+    df = df.dropna(subset=[DATE_COLUMN, TARGET_COLUMN]).sort_values(by=DATE_COLUMN)
     if len(df) < 2:
-        raise ValueError("Not enough rows to perform train/test split.")
+        raise ValueError("Not enough rows to train and evaluate model.")
 
-    split_index = int(len(df) * TRAIN_SPLIT_RATIO)
-    split_index = min(max(split_index, 1), len(df) - 1)
+    train_df, test_df = _split_train_test_by_date(df)
 
-    train_df = df.iloc[:split_index]
-    test_df = df.iloc[split_index:]
-
-    feature_columns = [col for col in df.columns if col not in {TARGET_COLUMN, date_column}]
-    x_train = train_df[feature_columns]
+    x_train = train_df[FEATURE_COLUMNS]
     y_train = train_df[TARGET_COLUMN].astype(int)
-    x_test = test_df[feature_columns]
+    x_test = test_df[FEATURE_COLUMNS]
     y_test = test_df[TARGET_COLUMN].astype(int)
 
-    model = _build_model(x_train)
+    model = _build_model()
     model.fit(x_train, y_train)
 
-    predictions = model.predict(x_test)
     probabilities = model.predict_proba(x_test)[:, 1]
+    predictions = (probabilities >= 0.5).astype(int)
 
     accuracy = accuracy_score(y_test, predictions)
     model_log_loss = log_loss(y_test, probabilities)
     brier = brier_score_loss(y_test, probabilities)
 
-    metrics = {
+    metrics: dict[str, float] = {
         "accuracy": float(accuracy),
         "log_loss": float(model_log_loss),
         "brier_score": float(brier),
+        "train_games": float(len(train_df)),
+        "test_games": float(len(test_df)),
+        "correct_predictions": float((predictions == y_test).sum()),
     }
 
     MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     with MODEL_PATH.open("wb") as model_file:
         pickle.dump(model, model_file)
 
-    engine = create_engine(DATABASE_URL)
-    _save_metrics(engine, accuracy=accuracy, model_log_loss=model_log_loss, brier_score=brier)
+    _save_metrics(metrics)
 
+    logger.info("Saved trained model to %s", MODEL_PATH)
     logger.info("Model evaluation metrics: %s", metrics)
     print(f"accuracy: {metrics['accuracy']:.6f}")
     print(f"log_loss: {metrics['log_loss']:.6f}")
