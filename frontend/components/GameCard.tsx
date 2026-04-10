@@ -25,6 +25,8 @@ export function GameCard({
   predictedWinner
 }: GameCardProps) {
   const confidence = Math.max(awayWinPct, homeWinPct);
+  const predictedWinnerTeam =
+    predictedWinner || (homeWinPct >= awayWinPct ? homeTeam : awayTeam);
 
   const confidenceLabel =
     confidence <= 56 ? "Low" : confidence <= 64 ? "Medium" : "High";
