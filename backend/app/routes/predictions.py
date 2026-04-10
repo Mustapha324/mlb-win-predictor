@@ -44,6 +44,15 @@ def load_model():
     return joblib.load(model_path)
 
 
+def _to_float(value, default):
+    try:
+        if value is None:
+            return default
+        return float(value)
+    except (ValueError, TypeError):
+        return default
+
+
 def fetch_todays_games(target_date: date) -> list[dict]:
     try:
         response = requests.get(
