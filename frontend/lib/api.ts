@@ -5,6 +5,8 @@ export type TeamPrediction = {
   home_team: string;
   away_team: string;
   game_time_utc?: string | null;
+  homeProbablePitcher?: string | null;
+  awayProbablePitcher?: string | null;
   home_probable_pitcher?: string | null;
   away_probable_pitcher?: string | null;
   predicted_winner: string;

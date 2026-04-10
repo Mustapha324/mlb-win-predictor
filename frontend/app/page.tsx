@@ -76,8 +76,8 @@ export default function Home() {
                 gameId={game.game_id}
                 awayTeam={game.away_team}
                 homeTeam={game.home_team}
-                awayPitcher={game.away_probable_pitcher}
-                homePitcher={game.home_probable_pitcher}
+                awayPitcher={game.awayProbablePitcher ?? game.away_probable_pitcher}
+                homePitcher={game.homeProbablePitcher ?? game.home_probable_pitcher}
                 awayWinPct={game.away_win_probability}
                 homeWinPct={game.home_win_probability}
                 gameTime={toGameTimeLabel(dateLabel, game.game_time_utc)}
