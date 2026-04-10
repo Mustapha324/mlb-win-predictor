@@ -20,7 +20,8 @@ python -m app.services.training_pipeline
 
 This will:
 - build a historical one-row-per-game dataset at `backend/data/processed/historical_games.csv`
-- train a `LogisticRegression` model with the six baseline pregame features
+- train a `LogisticRegression` model with richer pregame features (team form, splits, run production/prevention, batting/pitching rates, probable-pitcher ERA/WHIP, and home-field indicator)
 - save the model to `backend/models/logistic_regression.pkl`
 - print accuracy, log loss, and Brier score
 - store metrics at `backend/models/logistic_regression_metrics.json`
+- store feature columns used at `backend/models/logistic_regression_features.json`
