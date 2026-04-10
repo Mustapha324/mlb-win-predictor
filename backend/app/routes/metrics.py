@@ -3,19 +3,21 @@
 from fastapi import APIRouter
 
 from app.schemas.metrics import ModelMetricsResponse
+from app.services import results
 
 router = APIRouter(tags=["metrics"])
 
 
 @router.get("/metrics", response_model=ModelMetricsResponse)
 def get_model_metrics() -> ModelMetricsResponse:
-    """Return mock model quality metrics."""
+    """Return the latest model metrics snapshot."""
+    metric = results.get_latest_metric()
     return ModelMetricsResponse(
-        model_name="xgboost_baseline",
-        version="0.1.0",
-        accuracy=0.683,
-        precision=0.671,
-        recall=0.659,
-        roc_auc=0.721,
-        last_trained_at="2026-04-01T00:00:00Z",
+        model_name=metric.model_name,
+        version=metric.version,
+        accuracy=metric.accuracy,
+        precision=metric.accuracy,
+        recall=metric.accuracy,
+        roc_auc=metric.accuracy,
+        last_trained_at=metric.updated_at,
     )

@@ -1,15 +1,15 @@
-"""Model metrics response schemas."""
+from pydantic import BaseModel, Field
 
-from pydantic import BaseModel
+
+class CumulativeAccuracyPoint(BaseModel):
+    date: str
+    accuracy: float
 
 
 class ModelMetricsResponse(BaseModel):
-    """Aggregated quality metrics for the active model release."""
-
-    model_name: str
-    version: str
+    total_predictions_evaluated: int
+    correct_predictions: int
     accuracy: float
-    precision: float
-    recall: float
-    roc_auc: float
-    last_trained_at: str
+    brier_score: float
+    model_version: str
+    cumulative_accuracy: list[CumulativeAccuracyPoint] = Field(default_factory=list)
