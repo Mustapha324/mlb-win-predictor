@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.db.database import Base, engine
-from app.routes import health, metrics, predictions, results
+from app.routes import games, health, metrics, predictions, results
 
 app = FastAPI(title=settings.app_name)
 
@@ -27,3 +27,4 @@ app.include_router(health.router)
 app.include_router(predictions.router, prefix=settings.api_prefix)
 app.include_router(metrics.router, prefix=settings.api_prefix)
 app.include_router(results.router, prefix=settings.api_prefix)
+app.include_router(games.router, prefix=settings.api_prefix)

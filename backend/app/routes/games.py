@@ -1,5 +1,10 @@
+import requests
 from fastapi import APIRouter, HTTPException
+from sqlalchemy import select
 
+from app.core.config import settings
+from app.db.database import SessionLocal
+from app.models.prediction import Prediction
 from app.schemas.game import ActualResult, GamePredictionDetail, PredictedProbabilities, ProbablePitchers, Teams
 
 router = APIRouter(prefix="/games", tags=["games"])
@@ -63,6 +68,47 @@ MOCK_GAMES: dict[str, GamePredictionDetail] = {
 def get_game_by_id(game_id: str) -> GamePredictionDetail:
     """Return detailed prediction context for a single game."""
     game = MOCK_GAMES.get(game_id)
-    if not game:
+    if game:
+        return game
+
+    prediction: Prediction | None = None
+    with SessionLocal() as session:
+        prediction = session.execute(
+            select(Prediction).where(Prediction.game_id == str(game_id))
+        ).scalar_one_or_none()
+
+    if prediction is None:
         raise HTTPException(status_code=404, detail=f"Game '{game_id}' not found")
-    return game
+
+    try:
+        response = requests.get(
+            f"{settings.mlb_stats_api_base}/game/{game_id}/feed/live",
+            timeout=10,
+        )
+        response.raise_for_status()
+        payload = response.json()
+    except requests.RequestException:
+        payload = {}
+
+    game_data = payload.get("gameData", {})
+    probable_pitchers_data = game_data.get("probablePitchers", {})
+    datetime_data = game_data.get("datetime", {})
+    status_data = game_data.get("status", {})
+
+    away_pitcher = probable_pitchers_data.get("away", {}).get("fullName") or "TBD"
+    home_pitcher = probable_pitchers_data.get("home", {}).get("fullName") or "TBD"
+    game_time = datetime_data.get("officialDate") or prediction.game_date.isoformat()
+    game_status = status_data.get("detailedState") or "Scheduled"
+
+    return GamePredictionDetail(
+        game_id=prediction.game_id,
+        game_time=game_time,
+        teams=Teams(away=prediction.away_team, home=prediction.home_team),
+        probable_pitchers=ProbablePitchers(away=away_pitcher, home=home_pitcher),
+        predicted_probabilities=PredictedProbabilities(
+            away_win=prediction.away_win_probability,
+            home_win=prediction.home_win_probability,
+        ),
+        actual_result=ActualResult(status=game_status),
+        feature_values={},
+    )
