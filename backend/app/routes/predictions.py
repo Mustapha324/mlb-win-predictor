@@ -337,9 +337,6 @@ def get_today_predictions() -> TodayPredictionsResponse:
                 home_win_probability=home_prob,
                 away_win_probability=away_prob,
                 prediction_source=prediction_source,
-                game_time_utc=game_time_utc,
-                away_probable_pitcher=away_pitcher,
-                home_probable_pitcher=home_pitcher,
             )
             predictions.append(prediction)
 
