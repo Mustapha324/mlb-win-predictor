@@ -1,3 +1,5 @@
+"""Model-performance routes."""
+
 from fastapi import APIRouter
 
 from app.schemas.metrics import ModelMetricsResponse

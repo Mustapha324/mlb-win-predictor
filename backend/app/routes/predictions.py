@@ -1,3 +1,5 @@
+"""Prediction routes exposed by the API."""
+
 from datetime import date
 from functools import lru_cache
 from pathlib import Path

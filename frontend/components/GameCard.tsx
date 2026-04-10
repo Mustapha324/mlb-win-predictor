@@ -12,6 +12,7 @@ type GameCardProps = {
   predictedWinner: string;
 };
 
+/** Card showing one model prediction for a single game matchup. */
 export function GameCard({
   gameId,
   awayTeam,
@@ -70,7 +71,7 @@ export function GameCard({
       </div>
 
       <p className="mt-4 text-sm text-slate-600">
-        Model pick: <span className="font-semibold text-slate-900">{predictedWinner}</span>
+        Model pick: <span className="font-semibold text-slate-900">{predictedWinnerTeam}</span>
       </p>
       <Link
         href={`/games/${gameId}`}
