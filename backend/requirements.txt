@@ -1,2 +1,8 @@
-fastapi==0.116.1
-uvicorn[standard]==0.35.0
+fastapi
+uvicorn
+pandas
+numpy
+scikit-learn
+requests
+SQLAlchemy
+python-dotenv

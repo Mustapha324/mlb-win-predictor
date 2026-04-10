@@ -1,13 +1,10 @@
 from fastapi import FastAPI
 
-app = FastAPI(title="MLB Win Predictor API")
+from app.core.config import settings
+from app.routes import health, metrics, predictions
 
+app = FastAPI(title=settings.app_name)
 
-@app.get("/")
-def read_root() -> dict[str, str]:
-    return {"message": "Welcome to the MLB Win Predictor API"}
-
-
-@app.get("/health")
-def health_check() -> dict[str, str]:
-    return {"status": "ok"}
+app.include_router(health.router)
+app.include_router(predictions.router, prefix=settings.api_prefix)
+app.include_router(metrics.router, prefix=settings.api_prefix)
