@@ -35,6 +35,28 @@ export type ModelMetricsResponse = {
   last_trained_at: string | null;
 };
 
+export type PredictionHistoryItem = {
+  gameId: string;
+  date: string;
+  awayTeam: string;
+  homeTeam: string;
+  predictedWinner: string;
+  actualWinner: string | null;
+  homeWinProbability: number;
+  awayWinProbability: number;
+  wasCorrect: boolean | null;
+};
+
+export type ResultsUpdateResponse = {
+  updated_predictions: number;
+  finalized_predictions: number;
+  correct_predictions: number;
+  accuracy: number;
+  model_name: string;
+  version: string;
+  updated_at: string;
+};
+
 type RawModelMetricsResponse = Partial<ModelMetricsResponse> & {
   model_version?: string;
 };
@@ -49,13 +71,14 @@ export class ApiError extends Error {
   }
 }
 
-async function fetchJson<T>(path: string): Promise<T> {
+async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const url = apiUrl(path);
   let response: Response;
 
   try {
     response = await fetch(url, {
-      cache: "no-store"
+      cache: "no-store",
+      ...init
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Network request failed";
@@ -104,6 +127,16 @@ export function getModelMetrics(): Promise<ModelMetricsResponse> {
     roc_auc: metrics.roc_auc ?? null,
     last_trained_at: metrics.last_trained_at ?? null
   }));
+}
+
+export function getPredictionHistory(): Promise<PredictionHistoryItem[]> {
+  return fetchJson<PredictionHistoryItem[]>("/predictions/history");
+}
+
+export function syncCompletedResults(): Promise<ResultsUpdateResponse> {
+  return fetchJson<ResultsUpdateResponse>("/results/update", {
+    method: "POST"
+  });
 }
 
 export function getErrorMessage(error: unknown, fallbackMessage: string): string {

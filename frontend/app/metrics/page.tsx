@@ -1,9 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { MetricsCard } from "@/components/MetricsCard";
-import { getErrorMessage, getModelMetrics, type ModelMetricsResponse } from "@/lib/api";
+import {
+  getErrorMessage,
+  getModelMetrics,
+  getPredictionHistory,
+  syncCompletedResults,
+  type ModelMetricsResponse
+} from "@/lib/api";
 
 type MetricCardItem = {
   label: string;
@@ -109,31 +115,54 @@ export default function MetricsPage() {
   const [availabilityMessage, setAvailabilityMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [syncMessage, setSyncMessage] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(null);
+
+  const loadMetrics = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setAvailabilityMessage(null);
+
+      const metrics = await getModelMetrics();
+      if (!metrics.available) {
+        setCards([]);
+        setAvailabilityMessage(metrics.message ?? "Model metrics are currently unavailable.");
+        return;
+      }
+
+      setCards(buildMetricCards(metrics));
+    } catch (err) {
+      setError(getErrorMessage(err, "Unable to load model metrics."));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const loadMetrics = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        setAvailabilityMessage(null);
-
-        const metrics = await getModelMetrics();
-        if (!metrics.available) {
-          setCards([]);
-          setAvailabilityMessage(metrics.message ?? "Model metrics are currently unavailable.");
-          return;
-        }
-
-        setCards(buildMetricCards(metrics));
-      } catch (err) {
-        setError(getErrorMessage(err, "Unable to load model metrics."));
-      } finally {
-        setLoading(false);
-      }
-    };
-
     void loadMetrics();
-  }, []);
+  }, [loadMetrics]);
+
+  const handleSyncCompletedResults = useCallback(async () => {
+    try {
+      setIsSyncing(true);
+      setSyncError(null);
+      setSyncMessage(null);
+
+      const update = await syncCompletedResults();
+      const history = await getPredictionHistory();
+      await loadMetrics();
+
+      setSyncMessage(
+        `Sync complete: updated ${update.updated_predictions} games. History records: ${history.length}.`
+      );
+    } catch (err) {
+      setSyncError(getErrorMessage(err, "Failed to sync completed results."));
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [loadMetrics]);
 
   return (
     <main className="space-y-6">
@@ -141,6 +170,21 @@ export default function MetricsPage() {
         <h1 className="text-3xl font-bold tracking-tight">Model Metrics</h1>
         <p className="mt-2 text-slate-600">Live performance metrics from the FastAPI backend.</p>
       </header>
+
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={() => void handleSyncCompletedResults()}
+            disabled={isSyncing}
+            className="rounded-md border border-slate-900 bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {isSyncing ? "Syncing..." : "Sync Completed Results"}
+          </button>
+          {syncMessage && <p className="text-sm text-emerald-700">{syncMessage}</p>}
+          {syncError && <p className="text-sm text-rose-700">{syncError}</p>}
+        </div>
+      </section>
 
       {loading && (
         <section className="rounded-xl border border-slate-200 bg-white p-5 text-slate-600 shadow-sm">
