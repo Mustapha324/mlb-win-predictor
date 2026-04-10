@@ -1,27 +1,22 @@
 import { BACKEND_BASE_URL } from "@/lib/apiConfig";
 
 export type GameDetail = {
-  game_id: string;
-  game_time: string;
-  teams: {
-    away: string;
-    home: string;
-  };
-  probable_pitchers: {
-    away: string;
-    home: string;
-  };
-  predicted_probabilities: {
-    away_win: number;
-    home_win: number;
-  };
-  actual_result: {
-    status: string;
-    winner: string | null;
-    away_runs: number | null;
-    home_runs: number | null;
-  } | null;
-  feature_values: Record<string, number | string | null>;
+  gameId: string;
+  date: string;
+  status: string;
+  awayTeam: string;
+  homeTeam: string;
+  awayProbablePitcher: string;
+  homeProbablePitcher: string;
+  awayWinProbability: number | null;
+  homeWinProbability: number | null;
+  predictedWinner: string;
+  awayTeamRecord: string;
+  homeTeamRecord: string;
+  awayTeamBattingAverage: number | null;
+  homeTeamBattingAverage: number | null;
+  awayTeamEra: number | null;
+  homeTeamEra: number | null;
 };
 
 export async function getGameById(gameId: string): Promise<GameDetail | null> {
@@ -44,19 +39,4 @@ export async function getFeaturedGames(): Promise<GameDetail[]> {
   const gameIds = ["20260410-nyy-bos", "20260410-lad-sf"];
   const results = await Promise.all(gameIds.map((id) => getGameById(id)));
   return results.filter((game): game is GameDetail => Boolean(game));
-}
-
-export function summarizeLeanFactors(featureValues: GameDetail["feature_values"]): string[] {
-  const differentialFeatures = Object.entries(featureValues)
-    .filter(([feature, value]) => feature.endsWith("_diff") && typeof value === "number")
-    .map(([feature, value]) => ({
-      feature,
-      value
-    }))
-    .sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
-
-  return differentialFeatures.slice(0, 4).map(({ feature, value }) => {
-    const direction = value > 0 ? "away side" : "home side";
-    return `${feature}: ${value.toFixed(2)} (${direction})`;
-  });
 }
