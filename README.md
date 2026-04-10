@@ -1,26 +1,61 @@
-# mlb-win-predictor
+# MLB Win Predictor
 
-A full-stack starter project with:
+A portfolio-ready full-stack baseball analytics project that serves model predictions from a FastAPI backend and renders a clean dashboard with Next.js.
 
-- **Backend:** FastAPI (Python)
-- **Frontend:** Next.js App Router + TypeScript
+## Project Overview
 
-## Project structure
+MLB Win Predictor is designed as a production-style starter for sports prediction products. It includes:
 
-```text
-mlb-win-predictor/
-  backend/
-  frontend/
-  README.md
-```
+- A **FastAPI API** for health checks, mock daily predictions, and model performance metrics.
+- A **Next.js dashboard** with routes for featured picks, prediction history, and model metrics.
+- A clear, typed structure that is ready for real data ingestion, model integration, and deployment.
 
-## Prerequisites
+## Tech Stack
+
+### Backend
+- Python 3.10+
+- FastAPI
+- Pydantic
+- Uvicorn
+
+### Frontend
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+
+## Features
+
+- Dashboard view for today’s MLB picks
+- Historical prediction cards
+- Model metrics cards
+- Typed frontend mock-data layer for easy API swap-in
+- REST API endpoints with documented schemas
+- Health endpoint for infrastructure monitoring
+
+## Screenshots
+
+> Add screenshots here after UI updates.
+
+- `![Predictions Dashboard](docs/screenshots/predictions-dashboard.png)`
+- `![Prediction History](docs/screenshots/prediction-history.png)`
+- `![Model Metrics](docs/screenshots/model-metrics.png)`
+
+## Local Setup Instructions
+
+### Prerequisites
 
 - Python 3.10+
 - Node.js 20+
 - npm 10+
 
-## Backend setup (FastAPI)
+### 1) Clone and enter the repository
+
+```bash
+git clone <your-repo-url>
+cd mlb-win-predictor
+```
+
+### 2) Start the backend
 
 ```bash
 cd backend
@@ -30,15 +65,11 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Backend will run at: <http://localhost:8000>
+Backend runs at: <http://localhost:8000>
 
-Useful endpoints:
+### 3) Start the frontend
 
-- Root: <http://localhost:8000/>
-- Health check: <http://localhost:8000/health>
-- API docs (Swagger): <http://localhost:8000/docs>
-
-## Frontend setup (Next.js + TypeScript)
+Open a new terminal window:
 
 ```bash
 cd frontend
@@ -46,13 +77,30 @@ npm install
 npm run dev
 ```
 
-Frontend will run at: <http://localhost:3000>
+Frontend runs at: <http://localhost:3000>
 
-## Run both together
+## API Routes
 
-Open two terminal windows:
+Base URL (local): `http://localhost:8000`
 
-1. Terminal A (backend): run FastAPI on port 8000.
-2. Terminal B (frontend): run Next.js on port 3000.
+- `GET /health`
+  - Service health probe.
+  - Example response: `{ "status": "ok" }`
 
-Then open <http://localhost:3000>.
+- `GET /api/predictions/today`
+  - Returns mock predictions for the current date.
+
+- `GET /api/metrics`
+  - Returns mock model performance metrics.
+
+- `GET /docs`
+  - Interactive Swagger documentation.
+
+## Future Improvements
+
+- Replace mock responses with live MLB schedule, odds, and results ingestion
+- Add model training pipeline and experiment tracking
+- Persist predictions and outcomes in a relational database
+- Add authentication and per-user watchlists
+- Add CI/CD, linting, formatting checks, and containerized deployment
+- Add automated frontend and backend test suites
