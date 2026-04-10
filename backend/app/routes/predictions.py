@@ -56,9 +56,9 @@ DEFAULT_TEAM_STATS = {
 }
 
 DEFAULT_PITCHER_STATS = {
-    "era": 4.10,
+    "era": 4.20,
     "whip": 1.30,
-    "kbb": 2.30,
+    "kbb": 2.50,
 }
 
 
@@ -292,8 +292,21 @@ def fetch_probable_pitcher_stats(games: list[dict[str, Any]], game_date: date) -
             continue
 
         payload = response.json()
-        splits = payload.get("stats", [{}])[0].get("splits", [])
-        stat_block = splits[0].get("stat", {}) if splits else {}
+        if not isinstance(payload, dict):
+            pitcher_stats[pitcher_id] = dict(DEFAULT_PITCHER_STATS)
+            continue
+        stats_list = payload.get("stats", [])
+        if not stats_list:
+            pitcher_stats[pitcher_id] = dict(DEFAULT_PITCHER_STATS)
+            continue
+
+        stat_block_wrapper = stats_list[0] if isinstance(stats_list[0], dict) else {}
+        splits = stat_block_wrapper.get("splits", [])
+        if not splits:
+            pitcher_stats[pitcher_id] = dict(DEFAULT_PITCHER_STATS)
+            continue
+
+        stat_block = splits[0].get("stat", {}) if isinstance(splits[0], dict) else {}
 
         kbb_raw = stat_block.get("strikeoutWalkRatio")
         if kbb_raw in (None, ""):
