@@ -5,7 +5,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import joblib
-import numpy as np
+import pandas as pd
 import requests
 from fastapi import APIRouter
 from sqlalchemy import delete, select
@@ -14,11 +14,19 @@ from app.core.config import settings
 from app.db.database import Base, SessionLocal, engine
 from app.models.prediction import Prediction
 from app.schemas.prediction import PredictionHistoryItem, TeamPrediction, TodayPredictionsResponse
-from app.services.mlb import fetch_upcoming_games_for_date
 
 router = APIRouter(prefix="/predictions", tags=["predictions"])
 
 Base.metadata.create_all(bind=engine)
+
+FEATURE_COLUMNS = [
+    "home_team_win_pct_pre_game",
+    "away_team_win_pct_pre_game",
+    "home_team_last10_win_pct",
+    "away_team_last10_win_pct",
+    "home_team_run_diff_per_game",
+    "away_team_run_diff_per_game",
+]
 
 
 @lru_cache(maxsize=1)
@@ -54,7 +62,17 @@ def fetch_todays_games(target_date: date) -> list[dict]:
     ]
 
 
-def fetch_team_win_pct() -> dict[int, float]:
+def _extract_last10_win_pct(team_record: dict) -> float:
+    for split in team_record.get("records", {}).get("splitRecords", []):
+        if split.get("type") == "lastTen":
+            wins = split.get("wins", 0)
+            losses = split.get("losses", 0)
+            total = wins + losses
+            return (wins / total) if total else 0.5
+    return 0.5
+
+
+def fetch_team_pregame_stats() -> dict[int, dict[str, float]]:
     try:
         response = requests.get(
             f"{settings.mlb_stats_api_base}/standings",
@@ -65,52 +83,55 @@ def fetch_team_win_pct() -> dict[int, float]:
     except requests.RequestException:
         return {}
 
-    records = response.json().get("records", [])
-    win_pct: dict[int, float] = {}
-    for record in records:
+    stats: dict[int, dict[str, float]] = {}
+    for record in response.json().get("records", []):
         for team_record in record.get("teamRecords", []):
-            team = team_record.get("team", {})
-            team_id = team.get("id")
-            pct = team_record.get("winningPercentage")
+            team_id = team_record.get("team", {}).get("id")
             if team_id is None:
                 continue
-            try:
-                win_pct[team_id] = float(pct)
-            except (TypeError, ValueError):
-                win_pct[team_id] = 0.5
-    return win_pct
+
+            wins = team_record.get("wins", 0) or 0
+            losses = team_record.get("losses", 0) or 0
+            games_played = wins + losses
+
+            runs_scored = team_record.get("runsScored", 0) or 0
+            runs_allowed = team_record.get("runsAllowed", 0) or 0
+
+            win_pct = float(team_record.get("winningPercentage") or 0.5)
+            last10_win_pct = _extract_last10_win_pct(team_record)
+            run_diff_per_game = ((runs_scored - runs_allowed) / games_played) if games_played else 0.0
+
+            stats[int(team_id)] = {
+                "win_pct": win_pct,
+                "last10_win_pct": float(last10_win_pct),
+                "run_diff_per_game": float(run_diff_per_game),
+            }
+
+    return stats
 
 
-def build_features(model, game: dict, team_win_pct: dict[int, float]) -> np.ndarray:
+def build_features(game: dict, team_stats: dict[int, dict[str, float]]) -> pd.DataFrame:
     home = game.get("teams", {}).get("home", {}).get("team", {})
     away = game.get("teams", {}).get("away", {}).get("team", {})
 
-    home_id = home.get("id", 0)
-    away_id = away.get("id", 0)
-    home_pct = team_win_pct.get(home_id, 0.5)
-    away_pct = team_win_pct.get(away_id, 0.5)
+    home_id = int(home.get("id", 0) or 0)
+    away_id = int(away.get("id", 0) or 0)
 
-    context = {
-        "home_team_id": float(home_id),
-        "away_team_id": float(away_id),
-        "home_win_pct": home_pct,
-        "away_win_pct": away_pct,
-        "win_pct_diff": home_pct - away_pct,
-        "home_advantage": 1.0,
-    }
+    home_stats = team_stats.get(home_id, {"win_pct": 0.5, "last10_win_pct": 0.5, "run_diff_per_game": 0.0})
+    away_stats = team_stats.get(away_id, {"win_pct": 0.5, "last10_win_pct": 0.5, "run_diff_per_game": 0.0})
 
-    feature_names = list(getattr(model, "feature_names_in_", []))
-    n_features = int(getattr(model, "n_features_in_", len(feature_names) or 1))
-
-    if feature_names:
-        values = [float(context.get(name, 0.0)) for name in feature_names]
-        return np.array([values], dtype=float)
-
-    fallback = [0.0] * n_features
-    for idx, key in enumerate(["home_win_pct", "away_win_pct", "win_pct_diff", "home_advantage"]):
-        if idx < n_features:
-            fallback[idx] = context[key]
-    return np.array([fallback], dtype=float)
+    return pd.DataFrame(
+        [
+            {
+                "home_team_win_pct_pre_game": home_stats["win_pct"],
+                "away_team_win_pct_pre_game": away_stats["win_pct"],
+                "home_team_last10_win_pct": home_stats["last10_win_pct"],
+                "away_team_last10_win_pct": away_stats["last10_win_pct"],
+                "home_team_run_diff_per_game": home_stats["run_diff_per_game"],
+                "away_team_run_diff_per_game": away_stats["run_diff_per_game"],
+            }
+        ]
+    )[FEATURE_COLUMNS]
 
 
 def placeholder_home_probability(game: dict, team_win_pct: dict[int, float]) -> float:
@@ -140,7 +161,7 @@ def get_today_predictions() -> TodayPredictionsResponse:
     today = date.today()
     games = fetch_todays_games(today)
     model = load_model()
-    team_win_pct = fetch_team_win_pct()
+    team_stats = fetch_team_pregame_stats()
 
     predictions: list[TeamPrediction] = []
 
