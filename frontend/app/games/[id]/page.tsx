@@ -12,6 +12,22 @@ function asPercent(value: number | null | undefined): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+function asBattingAverage(value: number | null | undefined): string {
+  if (typeof value !== "number") {
+    return "N/A";
+  }
+
+  return value.toFixed(3).replace(/^0/, "");
+}
+
+function asEra(value: number | null | undefined): string {
+  if (typeof value !== "number") {
+    return "N/A";
+  }
+
+  return value.toFixed(2);
+}
+
 function withFallback(value: string | null | undefined, fallback = "TBD"): string {
   return value && value.trim() ? value : fallback;
 }
@@ -24,17 +40,14 @@ export default async function GameDetailsPage({ params }: GamePageProps) {
     notFound();
   }
 
-  const awayTeam = withFallback(game.teams?.away, "Unknown Away Team");
-  const homeTeam = withFallback(game.teams?.home, "Unknown Home Team");
-  const awayPitcher = withFallback(game.probable_pitchers?.away);
-  const homePitcher = withFallback(game.probable_pitchers?.home);
-  const awayWin = asPercent(game.predicted_probabilities?.away_win);
-  const homeWin = asPercent(game.predicted_probabilities?.home_win);
-  const predictedWinner =
-    game.predicted_probabilities?.home_win >= game.predicted_probabilities?.away_win
-      ? homeTeam
-      : awayTeam;
-  const gameStatus = withFallback(game.actual_result?.status, "Scheduled");
+  const awayTeam = withFallback(game.awayTeam, "Unknown Away Team");
+  const homeTeam = withFallback(game.homeTeam, "Unknown Home Team");
+  const awayPitcher = withFallback(game.awayProbablePitcher, "N/A");
+  const homePitcher = withFallback(game.homeProbablePitcher, "N/A");
+  const awayWin = asPercent(game.awayWinProbability);
+  const homeWin = asPercent(game.homeWinProbability);
+  const predictedWinner = withFallback(game.predictedWinner, "N/A");
+  const gameStatus = withFallback(game.status, "Scheduled");
 
   return (
     <main className="space-y-6">
@@ -42,16 +55,18 @@ export default async function GameDetailsPage({ params }: GamePageProps) {
       <section className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <dl className="grid gap-2 text-slate-900">
           <div>
-            <dt className="text-sm text-slate-500">Game date</dt>
-            <dd>{withFallback(game.game_time, "Unknown date")}</dd>
+            <dt className="text-sm text-slate-500">Matchup</dt>
+            <dd>
+              {awayTeam} at {homeTeam}
+            </dd>
           </div>
           <div>
-            <dt className="text-sm text-slate-500">Away team</dt>
-            <dd>{awayTeam}</dd>
+            <dt className="text-sm text-slate-500">Date</dt>
+            <dd>{withFallback(game.date, "Unknown date")}</dd>
           </div>
           <div>
-            <dt className="text-sm text-slate-500">Home team</dt>
-            <dd>{homeTeam}</dd>
+            <dt className="text-sm text-slate-500">Status</dt>
+            <dd>{gameStatus}</dd>
           </div>
           <div>
             <dt className="text-sm text-slate-500">Probable pitchers</dt>
@@ -72,8 +87,24 @@ export default async function GameDetailsPage({ params }: GamePageProps) {
             <dd>{predictedWinner}</dd>
           </div>
           <div>
-            <dt className="text-sm text-slate-500">Game status</dt>
-            <dd>{gameStatus}</dd>
+            <dt className="text-sm text-slate-500">Team records</dt>
+            <dd>
+              {awayTeam}: {withFallback(game.awayTeamRecord, "N/A")} · {homeTeam}:{" "}
+              {withFallback(game.homeTeamRecord, "N/A")}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-sm text-slate-500">Team batting average</dt>
+            <dd>
+              {awayTeam}: {asBattingAverage(game.awayTeamBattingAverage)} · {homeTeam}:{" "}
+              {asBattingAverage(game.homeTeamBattingAverage)}
+            </dd>
+          </div>
+          <div>
+            <dt className="text-sm text-slate-500">Team ERA</dt>
+            <dd>
+              {awayTeam}: {asEra(game.awayTeamEra)} · {homeTeam}: {asEra(game.homeTeamEra)}
+            </dd>
           </div>
         </dl>
       </section>
