@@ -42,8 +42,8 @@ export default async function GameDetailsPage({ params }: GamePageProps) {
 
   const awayTeam = withFallback(game.awayTeam, "Unknown Away Team");
   const homeTeam = withFallback(game.homeTeam, "Unknown Home Team");
-  const awayPitcher = withFallback(game.awayProbablePitcher, "N/A");
-  const homePitcher = withFallback(game.homeProbablePitcher, "N/A");
+  const awayPitcher = withFallback(game.awayProbablePitcher, "TBD");
+  const homePitcher = withFallback(game.homeProbablePitcher, "TBD");
   const awayWin = asPercent(game.awayWinProbability);
   const homeWin = asPercent(game.homeWinProbability);
   const predictedWinner = withFallback(game.predictedWinner, "N/A");
