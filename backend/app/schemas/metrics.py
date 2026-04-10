@@ -2,11 +2,14 @@ from pydantic import BaseModel
 
 
 class ModelMetricsResponse(BaseModel):
-    model_name: str
-    version: str
-    total_predictions_evaluated: int
-    correct_predictions: int
-    accuracy: float
+    available: bool = False
+    status: str = "unavailable"
+    message: str | None = None
+    model_name: str | None = None
+    version: str | None = None
+    total_predictions_evaluated: int | None = None
+    correct_predictions: int | None = None
+    accuracy: float | None = None
     brier_score: float | None = None
     precision: float | None = None
     recall: float | None = None
