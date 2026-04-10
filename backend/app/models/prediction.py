@@ -1,6 +1,6 @@
-from datetime import date
+from datetime import date, datetime
 
-from sqlalchemy import Date, Float, Integer, String, UniqueConstraint
+from sqlalchemy import Boolean, Date, DateTime, Float, Integer, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.database import Base
@@ -18,3 +18,9 @@ class Prediction(Base):
     predicted_winner: Mapped[str] = mapped_column(String(128), nullable=False)
     home_win_probability: Mapped[float] = mapped_column(Float, nullable=False)
     away_win_probability: Mapped[float] = mapped_column(Float, nullable=False)
+    actual_winner: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    away_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    home_score: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    was_correct: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    status: Mapped[str] = mapped_column(String(64), nullable=False, default="Scheduled")
+    results_synced_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

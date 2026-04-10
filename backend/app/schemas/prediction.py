@@ -37,6 +37,9 @@ class PredictionHistoryItem(BaseModel):
     homeWinProbability: float
     awayWinProbability: float
     wasCorrect: bool | None
+    awayScore: int | None = None
+    homeScore: int | None = None
+    status: str | None = None
 
 
 class PredictionHistoryResponse(BaseModel):
@@ -44,10 +47,7 @@ class PredictionHistoryResponse(BaseModel):
 
 
 class ResultsUpdateResponse(BaseModel):
+    checked_predictions: int
     updated_predictions: int
-    finalized_predictions: int
-    correct_predictions: int
-    accuracy: float
-    model_name: str
-    version: str
-    updated_at: str
+    unresolved_predictions: int
+    updated_metrics: dict
