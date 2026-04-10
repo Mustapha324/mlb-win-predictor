@@ -8,12 +8,12 @@ import joblib
 import numpy as np
 import requests
 from fastapi import APIRouter
-from sqlalchemy import delete
+from sqlalchemy import delete, select
 
 from app.core.config import settings
 from app.db.database import Base, SessionLocal, engine
 from app.models.prediction import Prediction
-from app.schemas.prediction import TeamPrediction, TodayPredictionsResponse
+from app.schemas.prediction import PredictionHistoryItem, TeamPrediction, TodayPredictionsResponse
 from app.services.mlb import fetch_upcoming_games_for_date
 
 router = APIRouter(prefix="/predictions", tags=["predictions"])
@@ -168,3 +168,56 @@ def get_today_predictions() -> TodayPredictionsResponse:
         session.commit()
 
     return TodayPredictionsResponse(date=today.isoformat(), predictions=predictions)
+
+
+@router.get("/history", response_model=list[PredictionHistoryItem])
+def get_prediction_history() -> list[PredictionHistoryItem]:
+    with SessionLocal() as session:
+        rows = (
+            session.execute(
+                select(Prediction).order_by(Prediction.game_date.desc(), Prediction.id.desc()).limit(100)
+            )
+            .scalars()
+            .all()
+        )
+
+    if not rows:
+        return [
+            PredictionHistoryItem(
+                gameId="mock-game-001",
+                date="2026-04-08",
+                awayTeam="New York Yankees",
+                homeTeam="Boston Red Sox",
+                predictedWinner="New York Yankees",
+                actualWinner="Boston Red Sox",
+                homeWinProbability=0.44,
+                awayWinProbability=0.56,
+                wasCorrect=False,
+            ),
+            PredictionHistoryItem(
+                gameId="mock-game-002",
+                date="2026-04-07",
+                awayTeam="Los Angeles Dodgers",
+                homeTeam="San Diego Padres",
+                predictedWinner="Los Angeles Dodgers",
+                actualWinner="Los Angeles Dodgers",
+                homeWinProbability=0.45,
+                awayWinProbability=0.55,
+                wasCorrect=True,
+            ),
+        ]
+
+    return [
+        PredictionHistoryItem(
+            gameId=row.game_id,
+            date=row.game_date.isoformat(),
+            awayTeam=row.away_team,
+            homeTeam=row.home_team,
+            predictedWinner=row.predicted_winner,
+            actualWinner=None,
+            homeWinProbability=row.home_win_probability,
+            awayWinProbability=row.away_win_probability,
+            wasCorrect=None,
+        )
+        for row in rows
+    ]

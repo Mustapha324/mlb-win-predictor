@@ -4,16 +4,31 @@ type GameCardProps = {
   gameId: string;
   awayTeam: string;
   homeTeam: string;
-  awayPitcher: string;
-  homePitcher: string;
+  awayPitcher?: string | null;
+  homePitcher?: string | null;
   awayWinPct: number;
   homeWinPct: number;
   gameTime: string;
   predictedWinner: string;
 };
 
-function toPercent(probability: number): number {
-  return probability <= 1 ? probability * 100 : probability;
+function formatProbability(value: number): string {
+  if (!Number.isFinite(value)) {
+    return "0%";
+  }
+
+  const normalizedPercent = value <= 1 ? value * 100 : value;
+  const boundedPercent = Math.max(0, Math.min(100, normalizedPercent));
+  return `${Math.round(boundedPercent)}%`;
+}
+
+function toPercentNumber(value: number): number {
+  if (!Number.isFinite(value)) {
+    return 0;
+  }
+
+  const normalizedPercent = value <= 1 ? value * 100 : value;
+  return Math.max(0, Math.min(100, normalizedPercent));
 }
 
 /** Card showing one model prediction for a single game matchup. */
@@ -28,9 +43,9 @@ export function GameCard({
   gameTime,
   predictedWinner
 }: GameCardProps) {
-  const awayWinPercent = toPercent(awayWinPct);
-  const homeWinPercent = toPercent(homeWinPct);
-  const confidence = Math.max(awayWinPercent, homeWinPercent);
+  const safeAwayPitcher = awayPitcher?.trim() || "TBD";
+  const safeHomePitcher = homePitcher?.trim() || "TBD";
+  const confidence = Math.max(toPercentNumber(awayWinPct), toPercentNumber(homeWinPct));
   const predictedWinnerTeam =
     predictedWinner || (homeWinPercent >= awayWinPercent ? homeTeam : awayTeam);
 
@@ -62,7 +77,7 @@ export function GameCard({
         <p className="text-sm text-slate-600">
           Probable pitchers:{" "}
           <span className="font-medium text-slate-800">
-            {awayPitcher} vs {homePitcher}
+            {safeAwayPitcher} vs {safeHomePitcher}
           </span>
         </p>
       </div>
@@ -70,11 +85,11 @@ export function GameCard({
       <div className="mt-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Away win</p>
-          <p className="mt-1 text-xl font-semibold text-slate-900">{awayWinPercent.toFixed(1)}%</p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">{formatProbability(awayWinPct)}</p>
         </div>
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-3">
           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Home win</p>
-          <p className="mt-1 text-xl font-semibold text-slate-900">{homeWinPercent.toFixed(1)}%</p>
+          <p className="mt-1 text-xl font-semibold text-slate-900">{formatProbability(homeWinPct)}</p>
         </div>
       </div>
 

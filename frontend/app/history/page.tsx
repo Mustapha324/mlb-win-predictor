@@ -7,12 +7,15 @@ import { apiUrl } from "@/lib/apiConfig";
 type FilterStatus = "all" | "correct" | "incorrect";
 
 type PredictionHistoryItem = {
+  gameId: string;
   date: string;
-  away_team: string;
-  home_team: string;
-  predicted_winner: string;
-  actual_winner: string;
-  probability: number;
+  awayTeam: string;
+  homeTeam: string;
+  predictedWinner: string;
+  actualWinner: string | null;
+  homeWinProbability: number;
+  awayWinProbability: number;
+  wasCorrect: boolean | null;
 };
 
 const filterOptions: FilterStatus[] = ["all", "correct", "incorrect"];
@@ -56,7 +59,10 @@ export default function HistoryPage() {
     }
 
     return history.filter((prediction) => {
-      const isCorrect = prediction.predicted_winner === prediction.actual_winner;
+      const isCorrect = prediction.wasCorrect;
+      if (isCorrect === null) {
+        return false;
+      }
       return statusFilter === "correct" ? isCorrect : !isCorrect;
     });
   }, [history, statusFilter]);
@@ -119,22 +125,30 @@ export default function HistoryPage() {
               </tr>
             ) : (
               filteredHistory.map((prediction, index) => {
-                const isCorrect = prediction.predicted_winner === prediction.actual_winner;
+                const probability =
+                  prediction.predictedWinner === prediction.homeTeam
+                    ? prediction.homeWinProbability
+                    : prediction.awayWinProbability;
+                const isCorrect = prediction.wasCorrect;
 
                 return (
-                  <tr key={`${prediction.date}-${prediction.away_team}-${prediction.home_team}-${index}`}>
+                  <tr key={`${prediction.gameId}-${index}`}>
                     <td className="px-4 py-3 text-slate-700">{prediction.date}</td>
-                    <td className="px-4 py-3 text-slate-700">{prediction.away_team}</td>
-                    <td className="px-4 py-3 text-slate-700">{prediction.home_team}</td>
-                    <td className="px-4 py-3 text-slate-700">{prediction.predicted_winner}</td>
-                    <td className="px-4 py-3 text-slate-700">{prediction.actual_winner}</td>
-                    <td className="px-4 py-3 text-slate-700">{(prediction.probability * 100).toFixed(1)}%</td>
+                    <td className="px-4 py-3 text-slate-700">{prediction.awayTeam}</td>
+                    <td className="px-4 py-3 text-slate-700">{prediction.homeTeam}</td>
+                    <td className="px-4 py-3 text-slate-700">{prediction.predictedWinner}</td>
+                    <td className="px-4 py-3 text-slate-700">{prediction.actualWinner ?? "Pending"}</td>
+                    <td className="px-4 py-3 text-slate-700">{(probability * 100).toFixed(1)}%</td>
                     <td
                       className={`px-4 py-3 font-medium ${
-                        isCorrect ? "text-emerald-600" : "text-rose-600"
+                        isCorrect === null
+                          ? "text-slate-500"
+                          : isCorrect
+                            ? "text-emerald-600"
+                            : "text-rose-600"
                       }`}
                     >
-                      {isCorrect ? "Correct" : "Incorrect"}
+                      {isCorrect === null ? "Pending" : isCorrect ? "Correct" : "Incorrect"}
                     </td>
                   </tr>
                 );
