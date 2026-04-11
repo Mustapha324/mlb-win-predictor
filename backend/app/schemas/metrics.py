@@ -15,4 +15,8 @@ class ModelMetricsResponse(BaseModel):
     recall: float | None = None
     roc_auc: float | None = None
     last_trained_at: str | None = None
+    total_training_examples: int | None = None
+    calibration_method: str | None = None
+    calibrated_log_loss: float | None = None
+    calibrated_brier_score: float | None = None
     last_results_sync: str | None = None

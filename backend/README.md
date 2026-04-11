@@ -21,7 +21,25 @@ python -m app.services.training_pipeline
 This will:
 - build a historical one-row-per-game dataset at `backend/data/processed/historical_games.csv`
 - train a `LogisticRegression` model with richer pregame features (team form, splits, run production/prevention, batting/pitching rates, probable-pitcher ERA/WHIP, and home-field indicator)
-- save the model to `backend/models/logistic_regression.pkl`
+- calibrate probabilities (isotonic when enough training rows, otherwise Platt/sigmoid)
+- save the calibrated model to `backend/models/logistic_regression.pkl`
 - print accuracy, log loss, and Brier score
 - store metrics at `backend/models/logistic_regression_metrics.json`
 - store feature columns used at `backend/models/logistic_regression_features.json`
+
+## Daily retraining after results update
+
+When `POST /api/results/update` finalizes completed games, the backend now:
+1. appends newly completed games into `backend/data/processed/historical_games.csv`
+2. retrains the baseline model on the expanded dataset
+3. persists:
+   - model artifact
+   - feature column list
+   - evaluation metrics (including calibration-aware metrics)
+   - `last_trained_at` timestamp
+
+You can also run retraining manually from `backend/`:
+
+```bash
+python -c "from datetime import date; from app.services.training_pipeline import run_training_pipeline; print(run_training_pipeline(start_date=date(2026,4,10), end_date=date(2026,4,10)))"
+```
