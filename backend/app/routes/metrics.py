@@ -22,6 +22,10 @@ def get_model_metrics() -> ModelMetricsResponse:
     model_name: str | None = None
     version: str | None = None
     last_trained_at: str | None = None
+    total_training_examples: int | None = None
+    calibration_method: str | None = None
+    calibrated_log_loss: float | None = None
+    calibrated_brier_score: float | None = None
 
     if METRICS_PATH.exists():
         try:
@@ -29,6 +33,10 @@ def get_model_metrics() -> ModelMetricsResponse:
             model_name = _as_optional_str(raw_metrics.get("model_name"))
             version = _as_optional_str(raw_metrics.get("version")) or _as_optional_str(raw_metrics.get("model_version"))
             last_trained_at = _as_optional_str(raw_metrics.get("last_trained_at"))
+            total_training_examples = _as_optional_int(raw_metrics.get("total_training_examples"))
+            calibration_method = _as_optional_str(raw_metrics.get("calibration_method"))
+            calibrated_log_loss = _as_optional_float(raw_metrics.get("calibrated_log_loss"))
+            calibrated_brier_score = _as_optional_float(raw_metrics.get("calibrated_brier_score"))
         except json.JSONDecodeError:
             pass
 
@@ -44,6 +52,10 @@ def get_model_metrics() -> ModelMetricsResponse:
         accuracy=derived["accuracy"],
         brier_score=derived["brier_score"],
         last_trained_at=last_trained_at,
+        total_training_examples=total_training_examples,
+        calibration_method=calibration_method,
+        calibrated_log_loss=calibrated_log_loss,
+        calibrated_brier_score=calibrated_brier_score,
         last_results_sync=derived["last_results_sync"],
     )
 
@@ -52,3 +64,21 @@ def _as_optional_str(value: object) -> str | None:
     if value is None:
         return None
     return str(value)
+
+
+def _as_optional_int(value: object) -> int | None:
+    if value is None:
+        return None
+    try:
+        return int(float(str(value)))
+    except (TypeError, ValueError):
+        return None
+
+
+def _as_optional_float(value: object) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None

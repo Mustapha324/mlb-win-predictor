@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import joblib
+import json
 import math
 import pandas as pd
 import requests
@@ -30,15 +31,29 @@ Base.metadata.create_all(bind=engine)
 FEATURE_COLUMNS = [
     "home_team_win_pct_pre_game",
     "away_team_win_pct_pre_game",
-    "home_team_run_diff_per_game",
-    "away_team_run_diff_per_game",
+    "home_last10_win_pct",
+    "away_last10_win_pct",
+    "home_runs_scored_per_game",
+    "away_runs_scored_per_game",
+    "home_runs_allowed_per_game",
+    "away_runs_allowed_per_game",
+    "home_run_diff_per_game",
+    "away_run_diff_per_game",
+    "home_home_split_win_pct",
+    "away_away_split_win_pct",
     "home_team_batting_avg",
     "away_team_batting_avg",
+    "home_team_obp",
+    "away_team_obp",
+    "home_team_slugging",
+    "away_team_slugging",
     "home_team_era",
     "away_team_era",
-    "home_field_advantage",
-    "home_probable_pitcher_present",
-    "away_probable_pitcher_present",
+    "home_probable_pitcher_era",
+    "away_probable_pitcher_era",
+    "home_probable_pitcher_whip",
+    "away_probable_pitcher_whip",
+    "home_field_indicator",
 ]
 
 DEFAULT_TEAM_STATS = {
@@ -390,15 +405,29 @@ def build_features(
             {
                 "home_team_win_pct_pre_game": home_stats["win_pct"],
                 "away_team_win_pct_pre_game": away_stats["win_pct"],
-                "home_team_run_diff_per_game": home_stats["run_diff_per_game"],
-                "away_team_run_diff_per_game": away_stats["run_diff_per_game"],
+                "home_last10_win_pct": home_stats["last_10_win_pct"],
+                "away_last10_win_pct": away_stats["last_10_win_pct"],
+                "home_runs_scored_per_game": home_stats["runs_scored_per_game"],
+                "away_runs_scored_per_game": away_stats["runs_scored_per_game"],
+                "home_runs_allowed_per_game": home_stats["runs_allowed_per_game"],
+                "away_runs_allowed_per_game": away_stats["runs_allowed_per_game"],
+                "home_run_diff_per_game": home_stats["run_diff_per_game"],
+                "away_run_diff_per_game": away_stats["run_diff_per_game"],
+                "home_home_split_win_pct": home_stats["home_win_pct"],
+                "away_away_split_win_pct": away_stats["away_win_pct"],
                 "home_team_batting_avg": home_stats["batting_avg"],
                 "away_team_batting_avg": away_stats["batting_avg"],
+                "home_team_obp": home_stats["on_base_pct"],
+                "away_team_obp": away_stats["on_base_pct"],
+                "home_team_slugging": home_stats["slugging_pct"],
+                "away_team_slugging": away_stats["slugging_pct"],
                 "home_team_era": home_stats["era"],
                 "away_team_era": away_stats["era"],
-                "home_field_advantage": 1.0,
-                "home_probable_pitcher_present": 1.0 if game.get("teams", {}).get("home", {}).get("probablePitcher") else 0.0,
-                "away_probable_pitcher_present": 1.0 if game.get("teams", {}).get("away", {}).get("probablePitcher") else 0.0,
+                "home_probable_pitcher_era": home_stats["probable_pitcher_era"],
+                "away_probable_pitcher_era": away_stats["probable_pitcher_era"],
+                "home_probable_pitcher_whip": home_stats["probable_pitcher_whip"],
+                "away_probable_pitcher_whip": away_stats["probable_pitcher_whip"],
+                "home_field_indicator": 1.0,
             }
         ]
     )[FEATURE_COLUMNS]
@@ -457,7 +486,18 @@ def can_use_model(model: Any) -> bool:
         return False
     expected = set(FEATURE_COLUMNS)
     model_features = set(getattr(model, "feature_names_in_", []))
-    return model_features == expected
+    if model_features == expected:
+        return True
+
+    features_path = Path(settings.model_path).with_name("logistic_regression_features.json")
+    if features_path.exists():
+        try:
+            persisted = json.loads(features_path.read_text(encoding="utf-8"))
+            if isinstance(persisted, list):
+                return set(persisted) == expected
+        except json.JSONDecodeError:
+            return False
+    return False
 
 
 def _build_live_stats_payload(game_snapshot: dict[str, dict[str, float]]) -> LiveGamePredictionInputs:

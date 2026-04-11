@@ -75,3 +75,4 @@ class ResultsUpdateResponse(BaseModel):
     updated_predictions: int
     unresolved_predictions: int
     updated_metrics: dict
+    retraining: dict | None = None

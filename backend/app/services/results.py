@@ -10,6 +10,7 @@ from sqlalchemy import select
 from app.core.config import settings
 from app.db.database import SessionLocal
 from app.models.prediction import Prediction
+from app.services.training_pipeline import run_training_pipeline
 
 FINAL_STATES = {"F", "O"}
 POSTPONED_STATES = {"D", "S", "C"}
@@ -185,6 +186,7 @@ def update_pending_results() -> dict[str, Any]:
 
         updated_predictions = 0
         still_unresolved = 0
+        finalized_dates: set[date] = set()
 
         for game_date, predictions in by_date.items():
             schedule_games = _fetch_schedule_for_date(game_date)
@@ -231,13 +233,37 @@ def update_pending_results() -> dict[str, Any]:
                 prediction.was_correct = prediction.actual_winner == prediction.predicted_winner
                 prediction.results_synced_at = datetime.now(timezone.utc)
                 updated_predictions += 1
+                finalized_dates.add(prediction.game_date)
 
         session.commit()
 
     metrics = compute_metrics_snapshot()
+    retraining_summary: dict[str, Any] | None = None
+    if finalized_dates:
+        start_date = min(finalized_dates)
+        end_date = max(finalized_dates)
+        try:
+            training_metrics = run_training_pipeline(start_date=start_date, end_date=end_date)
+            retraining_summary = {
+                "status": "ok",
+                "start_date": start_date.isoformat(),
+                "end_date": end_date.isoformat(),
+                "last_trained_at": training_metrics.get("last_trained_at"),
+                "total_training_examples": training_metrics.get("total_training_examples"),
+                "calibration_method": training_metrics.get("calibration_method"),
+            }
+        except Exception as exc:
+            retraining_summary = {
+                "status": "failed",
+                "start_date": start_date.isoformat(),
+                "end_date": end_date.isoformat(),
+                "error": str(exc),
+            }
+
     return {
         "checked_predictions": len(unresolved_predictions),
         "updated_predictions": updated_predictions,
         "unresolved_predictions": still_unresolved,
         "updated_metrics": metrics,
+        "retraining": retraining_summary,
     }
