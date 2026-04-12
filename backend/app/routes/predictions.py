@@ -1,9 +1,11 @@
 """Prediction routes exposed by the API."""
 
-from datetime import date
+from datetime import date, datetime
 from functools import lru_cache
+import logging
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 import joblib
 import json
@@ -25,6 +27,7 @@ from app.schemas.prediction import (
 )
 
 router = APIRouter(prefix="/predictions", tags=["predictions"])
+logger = logging.getLogger(__name__)
 
 Base.metadata.create_all(bind=engine)
 
@@ -100,7 +103,9 @@ def _safe_divide(numerator: float, denominator: float, default: float = 0.0) -> 
     return numerator / denominator
 
 
-def _normalize_ratio(value: float, lower: float, upper: float, default: float = 0.5) -> float:
+def _normalize_ratio(
+    value: float, lower: float, upper: float, default: float = 0.5
+) -> float:
     if upper <= lower:
         return default
     bounded = max(lower, min(upper, value))
@@ -112,7 +117,9 @@ def _logistic(score: float, floor: float = 0.12, ceiling: float = 0.88) -> float
     return max(floor, min(ceiling, probability))
 
 
-def _extract_split_win_pct(team_record: dict[str, Any], split_type: str, default: float = 0.5) -> float:
+def _extract_split_win_pct(
+    team_record: dict[str, Any], split_type: str, default: float = 0.5
+) -> float:
     split_records = team_record.get("records", {}).get("splitRecords", [])
     for split in split_records:
         if split.get("type") != split_type:
@@ -144,15 +151,39 @@ def fetch_todays_games(target_date: date) -> list[dict[str, Any]]:
     payload = response.json()
     dates = payload.get("dates", [])
     if not dates:
+        logger.info(
+            "predictions.today schedule returned 0 date buckets for %s",
+            target_date.isoformat(),
+        )
         return []
 
     games = dates[0].get("games", [])
-    upcoming_states = {"S", "P", "PW"}
-    return [game for game in games if game.get("status", {}).get("codedGameState") in upcoming_states]
+    logger.info(
+        "predictions.today schedule raw games=%d for %s",
+        len(games),
+        target_date.isoformat(),
+    )
+
+    playable_abstract_states = {"Preview", "Live"}
+    playable_coded_states = {"S", "P", "PW", "I", "M", "N"}
+    filtered_games = [
+        game
+        for game in games
+        if (
+            game.get("status", {}).get("abstractGameState") in playable_abstract_states
+            or game.get("status", {}).get("codedGameState") in playable_coded_states
+        )
+    ]
+    logger.info("predictions.today after status filter=%d", len(filtered_games))
+    return filtered_games
 
 
-def _resolve_probable_pitcher_name(probable_pitcher_payload: dict[str, Any]) -> str | None:
-    full_name = probable_pitcher_payload.get("fullName") or probable_pitcher_payload.get("name")
+def _resolve_probable_pitcher_name(
+    probable_pitcher_payload: dict[str, Any],
+) -> str | None:
+    full_name = probable_pitcher_payload.get(
+        "fullName"
+    ) or probable_pitcher_payload.get("name")
     if full_name:
         return full_name
 
@@ -210,9 +241,19 @@ def fetch_team_pregame_stats(game_date: date) -> dict[int, dict[str, float]]:
 
             stats[int(team_id)] = {
                 "win_pct": win_pct,
-                "runs_scored_per_game": _safe_divide(runs_scored, games_played, DEFAULT_TEAM_STATS["runs_scored_per_game"]),
-                "runs_allowed_per_game": _safe_divide(runs_allowed, games_played, DEFAULT_TEAM_STATS["runs_allowed_per_game"]),
-                "run_diff_per_game": _safe_divide(runs_scored - runs_allowed, games_played, 0.0),
+                "runs_scored_per_game": _safe_divide(
+                    runs_scored,
+                    games_played,
+                    DEFAULT_TEAM_STATS["runs_scored_per_game"],
+                ),
+                "runs_allowed_per_game": _safe_divide(
+                    runs_allowed,
+                    games_played,
+                    DEFAULT_TEAM_STATS["runs_allowed_per_game"],
+                ),
+                "run_diff_per_game": _safe_divide(
+                    runs_scored - runs_allowed, games_played, 0.0
+                ),
                 "last_10_win_pct": _extract_split_win_pct(team_record, "lastTen", 0.5),
                 "home_win_pct": _extract_split_win_pct(team_record, "home", 0.5),
                 "away_win_pct": _extract_split_win_pct(team_record, "away", 0.5),
@@ -255,16 +296,26 @@ def fetch_team_rate_stats(game_date: date) -> dict[int, dict[str, float]]:
             stat_block = split.get("stat", {})
 
             if group_name == "hitting":
-                team_rates[team_id_int]["batting_avg"] = _to_float(stat_block.get("avg"), DEFAULT_TEAM_STATS["batting_avg"])
-                team_rates[team_id_int]["on_base_pct"] = _to_float(stat_block.get("obp"), DEFAULT_TEAM_STATS["on_base_pct"])
-                team_rates[team_id_int]["slugging_pct"] = _to_float(stat_block.get("slg"), DEFAULT_TEAM_STATS["slugging_pct"])
+                team_rates[team_id_int]["batting_avg"] = _to_float(
+                    stat_block.get("avg"), DEFAULT_TEAM_STATS["batting_avg"]
+                )
+                team_rates[team_id_int]["on_base_pct"] = _to_float(
+                    stat_block.get("obp"), DEFAULT_TEAM_STATS["on_base_pct"]
+                )
+                team_rates[team_id_int]["slugging_pct"] = _to_float(
+                    stat_block.get("slg"), DEFAULT_TEAM_STATS["slugging_pct"]
+                )
             elif group_name == "pitching":
-                team_rates[team_id_int]["era"] = _to_float(stat_block.get("era"), DEFAULT_TEAM_STATS["era"])
+                team_rates[team_id_int]["era"] = _to_float(
+                    stat_block.get("era"), DEFAULT_TEAM_STATS["era"]
+                )
 
     return team_rates
 
 
-def merge_team_stats(base_stats: dict[int, dict[str, float]], rates: dict[int, dict[str, float]]) -> dict[int, dict[str, float]]:
+def merge_team_stats(
+    base_stats: dict[int, dict[str, float]], rates: dict[int, dict[str, float]]
+) -> dict[int, dict[str, float]]:
     merged: dict[int, dict[str, float]] = {}
     team_ids = set(base_stats) | set(rates)
 
@@ -277,7 +328,9 @@ def merge_team_stats(base_stats: dict[int, dict[str, float]], rates: dict[int, d
     return merged
 
 
-def fetch_probable_pitcher_stats(games: list[dict[str, Any]], game_date: date) -> dict[int, dict[str, float]]:
+def fetch_probable_pitcher_stats(
+    games: list[dict[str, Any]], game_date: date
+) -> dict[int, dict[str, float]]:
     pitcher_ids: set[int] = set()
 
     for game in games:
@@ -338,7 +391,9 @@ def fetch_probable_pitcher_stats(games: list[dict[str, Any]], game_date: date) -
     return pitcher_stats
 
 
-def _team_stats_for(team_id: int | None, team_stats: dict[int, dict[str, float]]) -> dict[str, float]:
+def _team_stats_for(
+    team_id: int | None, team_stats: dict[int, dict[str, float]]
+) -> dict[str, float]:
     if team_id is None:
         return dict(DEFAULT_TEAM_STATS)
     merged = dict(DEFAULT_TEAM_STATS)
@@ -346,7 +401,9 @@ def _team_stats_for(team_id: int | None, team_stats: dict[int, dict[str, float]]
     return merged
 
 
-def _pitcher_stats_for(pitcher_id: int | None, pitcher_stats: dict[int, dict[str, float]]) -> dict[str, float]:
+def _pitcher_stats_for(
+    pitcher_id: int | None, pitcher_stats: dict[int, dict[str, float]]
+) -> dict[str, float]:
     if pitcher_id is None:
         return dict(DEFAULT_PITCHER_STATS)
     merged = dict(DEFAULT_PITCHER_STATS)
@@ -447,9 +504,9 @@ def weighted_home_probability(
     split_edge = home["home_win_pct"] - away["away_win_pct"]
 
     run_diff_edge = home["run_diff_per_game"] - away["run_diff_per_game"]
-    matchup_run_edge = (home["runs_scored_per_game"] - away["runs_allowed_per_game"]) - (
-        away["runs_scored_per_game"] - home["runs_allowed_per_game"]
-    )
+    matchup_run_edge = (
+        home["runs_scored_per_game"] - away["runs_allowed_per_game"]
+    ) - (away["runs_scored_per_game"] - home["runs_allowed_per_game"])
 
     batting_edge = home["batting_avg"] - away["batting_avg"]
     obp_edge = home["on_base_pct"] - away["on_base_pct"]
@@ -489,7 +546,9 @@ def can_use_model(model: Any) -> bool:
     if model_features == expected:
         return True
 
-    features_path = Path(settings.model_path).with_name("logistic_regression_features.json")
+    features_path = Path(settings.model_path).with_name(
+        "logistic_regression_features.json"
+    )
     if features_path.exists():
         try:
             persisted = json.loads(features_path.read_text(encoding="utf-8"))
@@ -500,7 +559,9 @@ def can_use_model(model: Any) -> bool:
     return False
 
 
-def _build_live_stats_payload(game_snapshot: dict[str, dict[str, float]]) -> LiveGamePredictionInputs:
+def _build_live_stats_payload(
+    game_snapshot: dict[str, dict[str, float]],
+) -> LiveGamePredictionInputs:
     home_stats = game_snapshot["home"]
     away_stats = game_snapshot["away"]
 
@@ -512,14 +573,28 @@ def _build_live_stats_payload(game_snapshot: dict[str, dict[str, float]]) -> Liv
 
 @router.get("/today", response_model=TodayPredictionsResponse)
 def get_today_predictions() -> TodayPredictionsResponse:
-    today = date.today()
+    mlb_tz = ZoneInfo("America/New_York")
+    today = datetime.now(mlb_tz).date()
+    logger.info(
+        "predictions.today requested_date=%s timezone=%s", today.isoformat(), mlb_tz.key
+    )
     games = fetch_todays_games(today)
     model = load_model()
+    logger.info("predictions.today games_after_fetch=%d", len(games))
 
     standings_stats = fetch_team_pregame_stats(today)
     rate_stats = fetch_team_rate_stats(today)
     team_stats = merge_team_stats(standings_stats, rate_stats)
+    logger.info(
+        "predictions.today team_stats standings=%d rates=%d merged=%d",
+        len(standings_stats),
+        len(rate_stats),
+        len(team_stats),
+    )
     probable_pitcher_stats = fetch_probable_pitcher_stats(games, today)
+    logger.info(
+        "predictions.today probable_pitcher_stats=%d", len(probable_pitcher_stats)
+    )
     model_is_compatible = can_use_model(model)
 
     predictions: list[TeamPrediction] = []
@@ -528,61 +603,148 @@ def get_today_predictions() -> TodayPredictionsResponse:
         session.execute(delete(Prediction).where(Prediction.game_date == today))
 
         for game in games:
-            game_pk = game.get("gamePk")
-            teams = game.get("teams", {})
-            home_team_data = teams.get("home", {})
-            away_team_data = teams.get("away", {})
-            home_team = home_team_data.get("team", {}).get("name", "Unknown Home Team")
-            away_team = away_team_data.get("team", {}).get("name", "Unknown Away Team")
-            away_probable_pitcher = _resolve_probable_pitcher_name(away_team_data.get("probablePitcher", {}))
-            home_probable_pitcher = _resolve_probable_pitcher_name(home_team_data.get("probablePitcher", {}))
+            try:
+                game_pk = game.get("gamePk")
+                teams = game.get("teams", {})
+                home_team_data = teams.get("home", {})
+                away_team_data = teams.get("away", {})
+                home_team = home_team_data.get("team", {}).get(
+                    "name", "Unknown Home Team"
+                )
+                away_team = away_team_data.get("team", {}).get(
+                    "name", "Unknown Away Team"
+                )
+                away_probable_pitcher = _resolve_probable_pitcher_name(
+                    away_team_data.get("probablePitcher", {})
+                )
+                home_probable_pitcher = _resolve_probable_pitcher_name(
+                    home_team_data.get("probablePitcher", {})
+                )
+                game_status = (
+                    game.get("status", {}).get("detailedState")
+                    or game.get("status", {}).get("abstractGameState")
+                    or "Scheduled"
+                )
 
-            live_snapshot = build_live_feature_snapshot(game, team_stats, probable_pitcher_stats)
+                prediction_source = "live_weighted_stats_v2"
+                live_snapshot = build_live_feature_snapshot(
+                    game, team_stats, probable_pitcher_stats
+                )
+                home_prob = weighted_home_probability(
+                    game, team_stats, probable_pitcher_stats
+                )
+                if model_is_compatible:
+                    try:
+                        features = build_features(
+                            game, team_stats, probable_pitcher_stats
+                        )
+                        home_prob = float(model.predict_proba(features)[0][1])
+                        prediction_source = "trained_model_live_features"
+                    except Exception:
+                        home_prob = weighted_home_probability(
+                            game, team_stats, probable_pitcher_stats
+                        )
+                        prediction_source = "live_weighted_stats_v2"
 
-            prediction_source = "live_weighted_stats_v2"
-            home_prob = weighted_home_probability(game, team_stats, probable_pitcher_stats)
-            if model_is_compatible:
-                try:
-                    features = build_features(game, team_stats, probable_pitcher_stats)
-                    home_prob = float(model.predict_proba(features)[0][1])
-                    prediction_source = "trained_model_live_features"
-                except Exception:
-                    home_prob = weighted_home_probability(game, team_stats, probable_pitcher_stats)
-                    prediction_source = "live_weighted_stats_v2"
+                home_prob = max(0.0, min(1.0, home_prob))
+                away_prob = 1.0 - home_prob
+                predicted_winner = home_team if home_prob >= away_prob else away_team
 
-            home_prob = max(0.0, min(1.0, home_prob))
-            away_prob = 1.0 - home_prob
-            predicted_winner = home_team if home_prob >= away_prob else away_team
+                prediction = TeamPrediction(
+                    game_id=str(game_pk),
+                    gameId=str(game_pk),
+                    home_team=home_team,
+                    away_team=away_team,
+                    homeTeam=home_team,
+                    awayTeam=away_team,
+                    game_time_utc=game.get("gameDate"),
+                    gameTime=game.get("gameDate"),
+                    status=game_status,
+                    away_probable_pitcher=away_probable_pitcher,
+                    home_probable_pitcher=home_probable_pitcher,
+                    awayProbablePitcher=away_probable_pitcher,
+                    homeProbablePitcher=home_probable_pitcher,
+                    predicted_winner=predicted_winner,
+                    home_win_probability=home_prob,
+                    away_win_probability=away_prob,
+                    homeWinProbability=home_prob,
+                    awayWinProbability=away_prob,
+                    prediction_source=prediction_source,
+                    predictionSource=prediction_source,
+                    live_stats_used=_build_live_stats_payload(live_snapshot),
+                )
+            except Exception as exc:
+                logger.exception(
+                    "predictions.today game_enrichment_failed gamePk=%s error=%s",
+                    game.get("gamePk"),
+                    exc,
+                )
+                teams = game.get("teams", {})
+                home_team = (
+                    teams.get("home", {})
+                    .get("team", {})
+                    .get("name", "Unknown Home Team")
+                )
+                away_team = (
+                    teams.get("away", {})
+                    .get("team", {})
+                    .get("name", "Unknown Away Team")
+                )
+                game_pk = game.get("gamePk")
+                game_status = (
+                    game.get("status", {}).get("detailedState")
+                    or game.get("status", {}).get("abstractGameState")
+                    or "Scheduled"
+                )
+                prediction = TeamPrediction(
+                    game_id=str(game_pk),
+                    gameId=str(game_pk),
+                    home_team=home_team,
+                    away_team=away_team,
+                    homeTeam=home_team,
+                    awayTeam=away_team,
+                    game_time_utc=game.get("gameDate"),
+                    gameTime=game.get("gameDate"),
+                    status=game_status,
+                    predicted_winner=home_team,
+                    home_win_probability=0.5,
+                    away_win_probability=0.5,
+                    homeWinProbability=0.5,
+                    awayWinProbability=0.5,
+                    prediction_source="fallback_due_to_enrichment_error",
+                    predictionSource="fallback_due_to_enrichment_error",
+                    live_stats_used=_build_live_stats_payload(
+                        {
+                            "home": {
+                                **DEFAULT_TEAM_STATS,
+                                "probable_pitcher_era": DEFAULT_PITCHER_STATS["era"],
+                                "probable_pitcher_whip": DEFAULT_PITCHER_STATS["whip"],
+                                "probable_pitcher_kbb": DEFAULT_PITCHER_STATS["kbb"],
+                            },
+                            "away": {
+                                **DEFAULT_TEAM_STATS,
+                                "probable_pitcher_era": DEFAULT_PITCHER_STATS["era"],
+                                "probable_pitcher_whip": DEFAULT_PITCHER_STATS["whip"],
+                                "probable_pitcher_kbb": DEFAULT_PITCHER_STATS["kbb"],
+                            },
+                        }
+                    ),
+                )
 
-            prediction = TeamPrediction(
-                game_id=str(game_pk),
-                home_team=home_team,
-                away_team=away_team,
-                game_time_utc=game.get("gameDate"),
-                away_probable_pitcher=away_probable_pitcher,
-                home_probable_pitcher=home_probable_pitcher,
-                awayProbablePitcher=away_probable_pitcher,
-                homeProbablePitcher=home_probable_pitcher,
-                predicted_winner=predicted_winner,
-                home_win_probability=home_prob,
-                away_win_probability=away_prob,
-                prediction_source=prediction_source,
-                predictionSource=prediction_source,
-                live_stats_used=_build_live_stats_payload(live_snapshot),
-            )
             predictions.append(prediction)
-
             session.add(
                 Prediction(
                     game_id=prediction.game_id,
                     game_date=today,
-                    home_team=home_team,
-                    away_team=away_team,
-                    predicted_winner=predicted_winner,
-                    home_win_probability=home_prob,
-                    away_win_probability=away_prob,
+                    home_team=prediction.home_team,
+                    away_team=prediction.away_team,
+                    predicted_winner=prediction.predicted_winner,
+                    home_win_probability=prediction.home_win_probability,
+                    away_win_probability=prediction.away_win_probability,
                 )
             )
+
+        logger.info("predictions.today final_predictions=%d", len(predictions))
 
         session.commit()
 
@@ -594,7 +756,9 @@ def get_prediction_history() -> list[PredictionHistoryItem]:
     with SessionLocal() as session:
         rows = (
             session.execute(
-                select(Prediction).order_by(Prediction.game_date.desc(), Prediction.id.desc()).limit(100)
+                select(Prediction)
+                .order_by(Prediction.game_date.desc(), Prediction.id.desc())
+                .limit(100)
             )
             .scalars()
             .all()

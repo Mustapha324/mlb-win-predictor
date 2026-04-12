@@ -29,9 +29,14 @@ class TeamPrediction(BaseModel):
     """Prediction for a single MLB game."""
 
     game_id: str
+    gameId: str | None = None
     home_team: str
     away_team: str
+    homeTeam: str | None = None
+    awayTeam: str | None = None
     game_time_utc: str | None = None
+    gameTime: str | None = None
+    status: str | None = None
     home_probable_pitcher: str | None = None
     away_probable_pitcher: str | None = None
     homeProbablePitcher: str | None = None
@@ -39,6 +44,8 @@ class TeamPrediction(BaseModel):
     predicted_winner: str
     home_win_probability: float
     away_win_probability: float
+    homeWinProbability: float | None = None
+    awayWinProbability: float | None = None
     prediction_source: str
     predictionSource: str | None = None
     live_stats_used: LiveGamePredictionInputs | None = None
