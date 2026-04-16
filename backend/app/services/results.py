@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 import requests
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.core.config import settings
 from app.db.database import SessionLocal
@@ -130,6 +130,7 @@ def _is_prediction_finalized(prediction: Prediction) -> bool:
 def compute_metrics_snapshot() -> dict[str, Any]:
     """Compute metrics from finalized predictions only."""
     with SessionLocal() as session:
+        total_predictions = session.execute(select(func.count()).select_from(Prediction)).scalar_one()
         finalized = (
             session.execute(
                 select(Prediction).where(Prediction.actual_winner.is_not(None))
@@ -166,6 +167,7 @@ def compute_metrics_snapshot() -> dict[str, Any]:
         "accuracy": round(accuracy, 4),
         "brier_score": round(brier_score, 4) if brier_score is not None else None,
         "last_results_sync": latest_updated.isoformat() if latest_updated else None,
+        "unresolved_predictions_remaining": max(total_predictions - total, 0),
     }
 
 

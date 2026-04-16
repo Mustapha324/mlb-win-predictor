@@ -20,3 +20,4 @@ class ModelMetricsResponse(BaseModel):
     calibrated_log_loss: float | None = None
     calibrated_brier_score: float | None = None
     last_results_sync: str | None = None
+    unresolved_predictions_remaining: int | None = None
