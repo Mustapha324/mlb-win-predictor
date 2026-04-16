@@ -21,6 +21,17 @@ function toPercent(value: number): string {
   return `${(value * 100).toFixed(1)}%`;
 }
 
+function toLocalDateTime(value: string | null): string {
+  if (!value) {
+    return "Not synced yet";
+  }
+  const parsedDate = new Date(value);
+  if (Number.isNaN(parsedDate.getTime())) {
+    return "Unavailable";
+  }
+  return parsedDate.toLocaleString();
+}
+
 function buildMetricCards(metrics: ModelMetricsResponse): MetricCardItem[] {
   const parsedDate = metrics.last_trained_at ? new Date(metrics.last_trained_at) : null;
   const lastTrainedLabel =
@@ -107,6 +118,21 @@ function buildMetricCards(metrics: ModelMetricsResponse): MetricCardItem[] {
     });
   }
 
+  cards.push({
+    label: "Last Results Sync",
+    value: toLocalDateTime(metrics.last_results_sync),
+    trend: "Latest completed results sync"
+  });
+
+  cards.push({
+    label: "Unresolved Predictions",
+    value:
+      metrics.unresolved_predictions_remaining !== null
+        ? metrics.unresolved_predictions_remaining.toLocaleString()
+        : "Unavailable",
+    trend: "Predictions still awaiting final game results"
+  });
+
   return cards;
 }
 
@@ -127,9 +153,7 @@ export default function MetricsPage() {
 
       const metrics = await getModelMetrics();
       if (!metrics.available) {
-        setCards([]);
         setAvailabilityMessage(metrics.message ?? "Model metrics are currently unavailable.");
-        return;
       }
 
       setCards(buildMetricCards(metrics));

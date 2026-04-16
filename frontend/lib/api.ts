@@ -33,6 +33,8 @@ export type ModelMetricsResponse = {
   recall: number | null;
   roc_auc: number | null;
   last_trained_at: string | null;
+  last_results_sync: string | null;
+  unresolved_predictions_remaining: number | null;
 };
 
 export type PredictionHistoryItem = {
@@ -125,7 +127,9 @@ export function getModelMetrics(): Promise<ModelMetricsResponse> {
     precision: metrics.precision ?? null,
     recall: metrics.recall ?? null,
     roc_auc: metrics.roc_auc ?? null,
-    last_trained_at: metrics.last_trained_at ?? null
+    last_trained_at: metrics.last_trained_at ?? null,
+    last_results_sync: metrics.last_results_sync ?? null,
+    unresolved_predictions_remaining: metrics.unresolved_predictions_remaining ?? null
   }));
 }
 

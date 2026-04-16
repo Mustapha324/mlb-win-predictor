@@ -6,7 +6,7 @@ import logging
 from typing import Any
 
 import requests
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.core.config import settings
 from app.db.database import SessionLocal
