@@ -79,14 +79,11 @@ class PredictionHistoryResponse(BaseModel):
 
 class ResultsUpdateResponse(BaseModel):
     total_history_records: int
-    total_evaluated_records: int
-    unresolved_records: int
-    already_final_records: int
+    unresolved_records_checked: int
+    dates_queried: int
     newly_updated_records: int
+    already_final_records: int
     unmatched_records: int
     postponed_or_suspended_records: int
-    checked_predictions: int
-    updated_predictions: int
-    unresolved_predictions: int
     updated_metrics: dict
     retraining: dict | None = None

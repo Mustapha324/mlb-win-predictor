@@ -57,6 +57,7 @@ def get_model_metrics() -> ModelMetricsResponse:
         calibrated_log_loss=calibrated_log_loss,
         calibrated_brier_score=calibrated_brier_score,
         last_results_sync=derived["last_results_sync"],
+        unresolved_predictions_remaining=derived["unresolved_predictions_remaining"],
     )
 
 
