@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 import logging
 from typing import Any
 
@@ -20,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 def _normalize_team(value: str | None) -> str:
     return (value or "").strip().lower()
-
 
 
 def _fetch_schedule_for_date(target_date: date) -> list[dict[str, Any]]:
@@ -128,18 +127,11 @@ def _is_prediction_finalized(prediction: Prediction) -> bool:
 
 
 def compute_metrics_snapshot() -> dict[str, Any]:
-    """Compute metrics from finalized predictions only."""
+    """Compute metrics from finalized predictions and expose unresolved sync status."""
     with SessionLocal() as session:
-        total_predictions = session.execute(select(func.count()).select_from(Prediction)).scalar_one()
-        finalized = (
-            session.execute(
-                select(Prediction).where(Prediction.actual_winner.is_not(None))
-            )
-            .scalars()
-            .all()
-        )
+        all_predictions = session.execute(select(Prediction)).scalars().all()
 
-    finalized_predictions = [p for p in finalized if _is_prediction_finalized(p)]
+    finalized_predictions = [p for p in all_predictions if _is_prediction_finalized(p)]
     total = len(finalized_predictions)
     correct = sum(1 for p in finalized_predictions if p.was_correct is True)
     accuracy = (correct / total) if total else 0.0
@@ -159,7 +151,8 @@ def compute_metrics_snapshot() -> dict[str, Any]:
             total_sq_err += (float(p.home_win_probability) - actual_home) ** 2
         brier_score = total_sq_err / len(usable_for_brier)
 
-    latest_updated = max((p.results_synced_at for p in finalized_predictions if p.results_synced_at), default=None)
+    latest_updated = max((p.results_synced_at for p in all_predictions if p.results_synced_at), default=None)
+    unresolved_predictions_remaining = sum(1 for p in all_predictions if not _is_prediction_finalized(p))
 
     return {
         "total_predictions_evaluated": total,
@@ -167,130 +160,121 @@ def compute_metrics_snapshot() -> dict[str, Any]:
         "accuracy": round(accuracy, 4),
         "brier_score": round(brier_score, 4) if brier_score is not None else None,
         "last_results_sync": latest_updated.isoformat() if latest_updated else None,
-        "unresolved_predictions_remaining": max(total_predictions - total, 0),
+        "unresolved_predictions_remaining": unresolved_predictions_remaining,
     }
 
 
-def update_pending_results() -> dict[str, Any]:
-    """Sync unresolved predictions with final MLB scores and refresh derived metrics."""
+def _match_result(
+    prediction: Prediction,
+    by_game_id: dict[str, dict[str, Any]],
+    by_teams: dict[tuple[str, str, str], dict[str, Any]],
+) -> dict[str, Any] | None:
+    result = by_game_id.get(str(prediction.game_id))
+    if result is not None:
+        return result
+
+    team_key = (
+        prediction.game_date.isoformat(),
+        _normalize_team(prediction.away_team),
+        _normalize_team(prediction.home_team),
+    )
+    return by_teams.get(team_key)
+
+
+def _apply_result_update(prediction: Prediction, result: dict[str, Any], now: datetime) -> None:
+    prediction.actual_winner = result.get("actual_winner")
+    prediction.away_score = result.get("away_score")
+    prediction.home_score = result.get("home_score")
+    prediction.status = result.get("status")
+    prediction.was_correct = prediction.actual_winner == prediction.predicted_winner
+    prediction.results_synced_at = now
+
+
+def update_pending_results(recent_days: int | None = None, include_correction_checks: bool = True) -> dict[str, Any]:
+    """Sync unresolved predictions, optionally checking recent finalized rows for score corrections."""
+    lookback_start: date | None = None
+    if recent_days is not None and recent_days > 0:
+        lookback_start = date.today() - timedelta(days=recent_days)
+
     with SessionLocal() as session:
-        total_history_records = session.execute(select(Prediction)).scalars().all()
-        already_final_records = sum(1 for p in total_history_records if _is_prediction_finalized(p))
+        all_predictions = session.execute(select(Prediction)).scalars().all()
+        total_history_records = len(all_predictions)
 
-        unresolved_predictions = (
-            session.execute(
-                select(Prediction).where(Prediction.actual_winner.is_(None))
-            )
-            .scalars()
-            .all()
-        )
-
-        if not unresolved_predictions:
-            metrics = compute_metrics_snapshot()
-            return {
-                "total_history_records": len(total_history_records),
-                "total_evaluated_records": metrics["total_predictions_evaluated"],
-                "unresolved_records": len(total_history_records) - metrics["total_predictions_evaluated"],
-                "already_final_records": already_final_records,
-                "newly_updated_records": 0,
-                "unmatched_records": 0,
-                "postponed_or_suspended_records": 0,
-                "checked_predictions": 0,
-                "updated_predictions": 0,
-                "unresolved_predictions": 0,
-                "updated_metrics": metrics,
-            }
+        unresolved_stmt = select(Prediction).where(Prediction.actual_winner.is_(None))
+        if lookback_start is not None:
+            unresolved_stmt = unresolved_stmt.where(Prediction.game_date >= lookback_start)
+        unresolved_predictions = session.execute(unresolved_stmt).scalars().all()
 
         by_date: dict[date, list[Prediction]] = defaultdict(list)
         for prediction in unresolved_predictions:
             by_date[prediction.game_date].append(prediction)
 
-        updated_predictions = 0
-        newly_finalized_records = 0
-        still_unresolved = 0
+        correction_candidates: list[Prediction] = []
+        if include_correction_checks and by_date:
+            correction_stmt = select(Prediction).where(
+                Prediction.actual_winner.is_not(None),
+                Prediction.game_date.in_(list(by_date.keys())),
+            )
+            correction_candidates = session.execute(correction_stmt).scalars().all()
+            for prediction in correction_candidates:
+                by_date[prediction.game_date].append(prediction)
+
+        if not by_date:
+            metrics = compute_metrics_snapshot()
+            return {
+                "total_history_records": total_history_records,
+                "unresolved_records_checked": 0,
+                "dates_queried": 0,
+                "newly_updated_records": 0,
+                "already_final_records": 0,
+                "unmatched_records": 0,
+                "postponed_or_suspended_records": 0,
+                "updated_metrics": metrics,
+                "retraining": None,
+            }
+
+        newly_updated_records = 0
         unmatched_records = 0
         postponed_or_suspended_records = 0
+        already_final_records = 0
         finalized_dates: set[date] = set()
+        now = datetime.now(timezone.utc)
 
         for game_date, predictions in by_date.items():
             schedule_games = _fetch_schedule_for_date(game_date)
             if not schedule_games:
-                still_unresolved += len(predictions)
-                for prediction in predictions:
-                    logger.info(
-                        "Skipping prediction sync: no schedule data returned for game_date=%s game_id=%s away=%s home=%s",
-                        prediction.game_date,
-                        prediction.game_id,
-                        prediction.away_team,
-                        prediction.home_team,
-                    )
+                logger.info("results.sync no schedule data for %s", game_date.isoformat())
+                unmatched_records += len(predictions)
                 continue
 
             by_game_id, by_teams = _build_results_index(schedule_games)
 
             for prediction in predictions:
-                result = by_game_id.get(str(prediction.game_id))
+                result = _match_result(prediction, by_game_id, by_teams)
                 if result is None:
-                    team_key = (
-                        prediction.game_date.isoformat(),
-                        _normalize_team(prediction.away_team),
-                        _normalize_team(prediction.home_team),
-                    )
-                    result = by_teams.get(team_key)
-
-                if result is None:
-                    still_unresolved += 1
                     unmatched_records += 1
-                    logger.info(
-                        "Skipping prediction sync: unmatched prediction for game_date=%s game_id=%s away=%s home=%s",
-                        prediction.game_date,
-                        prediction.game_id,
-                        prediction.away_team,
-                        prediction.home_team,
-                    )
                     continue
 
                 coded_state = result.get("coded_state")
                 status = result.get("status")
 
                 if _is_non_playable(coded_state, status):
-                    prediction.status = status
-                    prediction.results_synced_at = datetime.now(timezone.utc)
-                    updated_predictions += 1
+                    if prediction.status != status:
+                        prediction.status = status
+                        prediction.results_synced_at = now
+                        newly_updated_records += 1
                     postponed_or_suspended_records += 1
-                    logger.info(
-                        "Skipping prediction evaluation: non-playable game state for game_id=%s state=%s status=%s",
-                        prediction.game_id,
-                        coded_state,
-                        status,
-                    )
                     continue
 
                 if not _is_final(coded_state, status):
-                    still_unresolved += 1
-                    logger.info(
-                        "Skipping prediction evaluation: game not final for game_id=%s state=%s status=%s",
-                        prediction.game_id,
-                        coded_state,
-                        status,
-                    )
                     continue
 
                 if not _prediction_needs_update(prediction, result):
-                    logger.info(
-                        "Skipping prediction update: finalized result already up to date for game_id=%s",
-                        prediction.game_id,
-                    )
+                    already_final_records += 1
                     continue
 
-                prediction.actual_winner = result.get("actual_winner")
-                prediction.away_score = result.get("away_score")
-                prediction.home_score = result.get("home_score")
-                prediction.status = result.get("status")
-                prediction.was_correct = prediction.actual_winner == prediction.predicted_winner
-                prediction.results_synced_at = datetime.now(timezone.utc)
-                updated_predictions += 1
-                newly_finalized_records += 1
+                _apply_result_update(prediction, result, now)
+                newly_updated_records += 1
                 finalized_dates.add(prediction.game_date)
 
         session.commit()
@@ -319,16 +303,13 @@ def update_pending_results() -> dict[str, Any]:
             }
 
     return {
-        "total_history_records": len(total_history_records),
-        "total_evaluated_records": metrics["total_predictions_evaluated"],
-        "unresolved_records": len(total_history_records) - metrics["total_predictions_evaluated"],
+        "total_history_records": total_history_records,
+        "unresolved_records_checked": len(unresolved_predictions),
+        "dates_queried": len(by_date),
+        "newly_updated_records": newly_updated_records,
         "already_final_records": already_final_records,
-        "newly_updated_records": newly_finalized_records,
         "unmatched_records": unmatched_records,
         "postponed_or_suspended_records": postponed_or_suspended_records,
-        "checked_predictions": len(unresolved_predictions),
-        "updated_predictions": updated_predictions,
-        "unresolved_predictions": still_unresolved,
         "updated_metrics": metrics,
         "retraining": retraining_summary,
     }
