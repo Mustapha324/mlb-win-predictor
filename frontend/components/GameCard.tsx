@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { TeamBadge } from "@/components/TeamBadge";
 import type { TeamPrediction } from "@/lib/api";
 
@@ -22,12 +25,16 @@ function isInProgress(status: string): boolean {
 }
 
 export function GameCard({ game }: { game: TeamPrediction }) {
+  const [showReason, setShowReason] = useState(false);
   const homeIsPick = game.predicted_winner === game.home_team;
   const pick = homeIsPick ? game.homeTeam : game.awayTeam;
   const pickProbability = homeIsPick ? game.home_win_probability : game.away_win_probability;
   const finished = isFinished(game.status);
   const showScore = finished || isInProgress(game.status);
   const gameStatusLabel = !finished && game.inning ? game.inning : game.status;
+  const firstReason = game.factors[0] ?? `${pick.name} has the stronger overall profile`;
+  const secondReason = game.factors[1] ?? "The remaining inputs are closely balanced";
+  const reasonSummary = `The model gives ${pick.name} a ${percent(pickProbability)} win probability; ${firstReason}. ${secondReason}, with the overall call rated as ${game.confidence.toLowerCase()} rather than a certainty.`;
   const statusTone = /live|progress|delay/i.test(game.status)
     ? "border-amber-300/25 bg-amber-300/10 text-amber-200"
     : finished
@@ -85,9 +92,17 @@ export function GameCard({ game }: { game: TeamPrediction }) {
         <p className="mt-3 line-clamp-1 text-xs text-slate-500">{game.factors[0] ?? "Balanced matchup"}</p>
       </div>
 
-      <Link href={`/games/${game.gameId}`} className="relative mt-4 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-400 transition hover:text-cyan-300">
-        Matchup breakdown <span aria-hidden="true">→</span>
-      </Link>
+      {showReason ? (
+        <p className="relative mt-4 rounded-xl border border-cyan-300/10 bg-cyan-300/[0.04] p-3 text-xs leading-5 text-slate-300">{reasonSummary}</p>
+      ) : null}
+      <div className="relative mt-4 flex flex-wrap items-center gap-4">
+        <button type="button" onClick={() => setShowReason((value) => !value)} className="text-xs font-bold uppercase tracking-[0.12em] text-cyan-300 transition hover:text-cyan-100" aria-expanded={showReason}>
+          {showReason ? "Hide reason" : "Why this pick?"}
+        </button>
+        <Link href={`/games/${game.gameId}`} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-slate-500 transition hover:text-white">
+          Full breakdown <span aria-hidden="true">→</span>
+        </Link>
+      </div>
     </article>
   );
 }

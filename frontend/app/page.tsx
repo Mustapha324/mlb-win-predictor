@@ -70,7 +70,7 @@ export default function Home() {
           <div className="max-w-3xl">
             <div className="mb-5 flex flex-wrap items-center gap-2">
               <span className="rounded-full border border-emerald-300/20 bg-emerald-300/8 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-emerald-200">● Live MLB data</span>
-              <span className="rounded-full border border-white/8 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">12,171 training games</span>
+              <span className="rounded-full border border-white/8 bg-white/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-slate-400">{data ? `${data.games_trained.toLocaleString()} training games` : "20 seasons of training data"}</span>
             </div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-cyan-300">Daily matchup intelligence</p>
             <h1 className="mt-3 max-w-2xl text-4xl font-black uppercase leading-[0.94] tracking-[-0.055em] text-white sm:text-6xl lg:text-7xl">The edge, before first pitch.</h1>
@@ -114,7 +114,7 @@ export default function Home() {
             ["Games", String(data.predictions.length)],
             ["Avg. pick", averageConfidence ? `${Math.round(averageConfidence * 100)}%` : "—"],
             ["Strong edges", String(strongEdges)],
-            ["Data seasons", "2021–26"]
+            ["Data seasons", "2006–26"]
           ].map(([label, value]) => (
             <div key={label} className="rounded-2xl border border-white/[0.07] bg-white/[0.025] px-4 py-3">
               <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-slate-600">{label}</p>

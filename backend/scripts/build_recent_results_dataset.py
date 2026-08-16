@@ -23,7 +23,7 @@ from urllib.request import Request, urlopen
 
 
 SCHEDULE_URL = "https://statsapi.mlb.com/api/v1/schedule"
-DEFAULT_START_SEASON = 2021
+DEFAULT_START_SEASON = 2006
 DEFAULT_END_SEASON = 2025
 DEFAULT_DATASET = Path("backend/data/processed/recent_game_results.csv")
 DEFAULT_SNAPSHOT = Path("frontend/data/model-snapshot.json")
