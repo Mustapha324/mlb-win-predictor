@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import date
 from pathlib import Path
-from tempfile import NamedTemporaryFile
+from tempfile import TemporaryDirectory
 
 import pandas as pd
 
@@ -19,8 +19,15 @@ def append_completed_games_to_dataset(
     dataset_path: Path = DEFAULT_DATASET_PATH,
 ) -> int:
     """Append newly completed games into the persisted historical dataset."""
-    with NamedTemporaryFile(suffix=".csv") as tmp_file:
-        incremental_df = build_historical_dataset(start_date=start_date, end_date=end_date, output_path=tmp_file.name)
+    # TemporaryDirectory works on Windows too; NamedTemporaryFile remains locked
+    # there and prevents pandas from reopening the path for writing.
+    with TemporaryDirectory() as temporary_directory:
+        temporary_path = Path(temporary_directory) / "incremental_games.csv"
+        incremental_df = build_historical_dataset(
+            start_date=start_date,
+            end_date=end_date,
+            output_path=temporary_path,
+        )
     if incremental_df.empty:
         return 0
 

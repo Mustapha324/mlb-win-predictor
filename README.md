@@ -1,75 +1,34 @@
-# MLB Win Predictor
+# Diamond Dugout — MLB Win Predictor
 
-A portfolio-ready full-stack baseball analytics project that serves model predictions from a FastAPI backend and renders a clean dashboard with Next.js.
+Diamond Dugout is a production-ready MLB prediction dashboard. It combines a portable, chronologically trained baseball model with live schedule and probable-pitcher data from the public MLB Stats API.
 
-## Project Overview
+## What changed
 
-MLB Win Predictor is designed as a production-style starter for sports prediction products. It includes:
+- Dark, responsive scoreboard-style interface with original team-color badges (no official club logos)
+- Live daily slates, game status, probable pitchers, prediction factors, results history, and model details
+- Self-contained web API routes, so the deployed app no longer depends on a backend running on `localhost`
+- Reproducible 20-season dataset covering completed regular-season games from 2006–2025
+- Leakage-free Elo + live-form model with an untouched 2025 holdout
+- Current-season chronological replay on every refresh, plus a small probable-pitcher adjustment
+- Cloudflare Workers-compatible build and production hosting configuration
 
-- A **FastAPI API** for health checks, mock daily predictions, and model performance metrics.
-- A **Next.js dashboard** with routes for featured picks, prediction history, and model metrics.
-- A clear, typed structure that is ready for real data ingestion, model integration, and deployment.
+## Honest model performance
 
-## Tech Stack
+The portable model is evaluated on 2,434 held-out 2025 games. The majority-class baseline simply chooses every home team. Baseball is noisy; these probabilities are context, not certainty or betting advice. Current measured scores are displayed in the app’s Model page and generated directly from the versioned snapshot.
 
-### Backend
-- Python 3.10+
-- FastAPI
-- Pydantic
-- Uvicorn
+Signals include long-term Elo strength, season record, last-10 form, run differential, home/road splits, probable-starter ERA, and probable-starter WHIP. The model does not yet fully account for confirmed lineups, weather, injuries, or bullpen availability.
 
-### Frontend
-- Next.js (App Router)
-- TypeScript
-- Tailwind CSS
+## Project layout
 
-## Features
+- `frontend/` — Vinext/React web app, API routes, live model replay, and Sites deployment files
+- `backend/` — FastAPI/scikit-learn research backend and richer feature-engineering pipeline
+- `backend/data/processed/recent_game_results.csv` — compact 20-season source dataset
+- `backend/scripts/build_recent_results_dataset.py` — reproducible dataset and portable model builder
+- `frontend/data/model-snapshot.json` — versioned model coefficients, ratings, and holdout metrics
 
-- Dashboard view for today’s MLB picks
-- Historical prediction cards
-- Model metrics cards
-- Typed frontend mock-data layer for easy API swap-in
-- REST API endpoints with documented schemas
-- Health endpoint for infrastructure monitoring
+## Run locally
 
-## Screenshots
-
-> Add screenshots here after UI updates.
-
-- `![Predictions Dashboard](docs/screenshots/predictions-dashboard.png)`
-- `![Prediction History](docs/screenshots/prediction-history.png)`
-- `![Model Metrics](docs/screenshots/model-metrics.png)`
-
-## Local Setup Instructions
-
-### Prerequisites
-
-- Python 3.10+
-- Node.js 20+
-- npm 10+
-
-### 1) Clone and enter the repository
-
-```bash
-git clone <your-repo-url>
-cd mlb-win-predictor
-```
-
-### 2) Start the backend
-
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate  # Windows PowerShell: .venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-uvicorn app.main:app --reload
-```
-
-Backend runs at: <http://localhost:8000>
-
-### 3) Start the frontend
-
-Open a new terminal window:
+Requirements: Node.js 22.13+ and npm.
 
 ```bash
 cd frontend
@@ -77,30 +36,41 @@ npm install
 npm run dev
 ```
 
-Frontend runs at: <http://localhost:3000>
+Open <http://localhost:3000>.
 
-## API Routes
+Production checks:
 
-Base URL (local): `http://localhost:8000`
+```bash
+npm run lint
+npm run build
+npm run start
+```
 
-- `GET /health`
-  - Service health probe.
-  - Example response: `{ "status": "ok" }`
+## Refresh the completed-season dataset
 
-- `GET /api/predictions/today`
-  - Returns mock predictions for the current date.
+Run this after a season is complete. The end season must be earlier than the current year because current-season games are replayed live by the web app.
 
-- `GET /api/metrics`
-  - Returns mock model performance metrics.
+```bash
+python backend/scripts/build_recent_results_dataset.py --start-season 2006 --end-season 2025
+```
 
-- `GET /docs`
-  - Interactive Swagger documentation.
+The script downloads one compact schedule payload per season, writes the CSV, tunes Elo parameters on a chronological validation season, trains the portable logistic layer, and evaluates the final model on the untouched last season.
 
-## Future Improvements
+## Optional research backend
 
-- Replace mock responses with live MLB schedule, odds, and results ingestion
-- Add model training pipeline and experiment tracking
-- Persist predictions and outcomes in a relational database
-- Add authentication and per-user watchlists
-- Add CI/CD, linting, formatting checks, and containerized deployment
-- Add automated frontend and backend test suites
+The FastAPI backend remains available for experiments with richer team batting, pitching, and starter features.
+
+```bash
+cd backend
+python -m venv .venv
+# Windows: .venv\Scripts\activate
+# macOS/Linux: source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+API documentation is available at <http://localhost:8000/docs>.
+
+## Data and identity
+
+Game results, schedules, team information, and probable pitchers come from the MLB Stats API. MLB data and trademarks remain the property of their respective owners. Diamond Dugout is independent and uses original text-and-color team badges rather than official logos.

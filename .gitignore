@@ -14,6 +14,7 @@ venv/
 node_modules/
 .npm/
 .next/
+.wrangler/
 out/
 dist/
 coverage/

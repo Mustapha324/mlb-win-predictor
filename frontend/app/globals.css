@@ -1,16 +1,58 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-:root {
-  color-scheme: light;
-}
+:root { color-scheme: dark; }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
+
+html { background: #060914; }
 
 body {
   margin: 0;
-  background: radial-gradient(circle at top, #f8fafc 0%, #f1f5f9 45%, #e2e8f0 100%);
+  background:
+    radial-gradient(circle at 8% -10%, rgba(34, 211, 238, 0.09), transparent 30rem),
+    radial-gradient(circle at 92% 18%, rgba(99, 102, 241, 0.07), transparent 28rem),
+    linear-gradient(180deg, #060914 0%, #080c17 52%, #060914 100%);
+  font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .17;
+  background-image: linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(to bottom, black, transparent 72%);
+}
+
+button, input { font: inherit; }
+
+button:not(:disabled), a { cursor: pointer; }
+
+::selection { background: rgba(103, 232, 249, .25); color: white; }
+
+.font-mono { font-family: "Cascadia Mono", "SFMono-Regular", Consolas, monospace; }
+
+.team-badge::after {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 140%;
+  border-left: 1px dashed currentColor;
+  border-right: 1px dashed currentColor;
+  border-radius: 50%;
+  opacity: .16;
+  transform: rotate(18deg);
+}
+
+.diamond-mark > span { transform: rotate(-45deg); }
+
+.scoreboard-dots {
+  background-image: radial-gradient(circle, rgba(103,232,249,.22) 1px, transparent 1.5px);
+  background-size: 8px 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
