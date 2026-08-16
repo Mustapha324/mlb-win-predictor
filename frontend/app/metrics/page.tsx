@@ -1,238 +1,72 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
 import { MetricsCard } from "@/components/MetricsCard";
-import {
-  getErrorMessage,
-  getModelMetrics,
-  getPredictionHistory,
-  syncCompletedResults,
-  type ModelMetricsResponse
-} from "@/lib/api";
-
-type MetricCardItem = {
-  label: string;
-  value: string;
-  trend: string;
-};
-
-function toPercent(value: number): string {
-  return `${(value * 100).toFixed(1)}%`;
-}
-
-function toLocalDateTime(value: string | null): string {
-  if (!value) {
-    return "Not synced yet";
-  }
-  const parsedDate = new Date(value);
-  if (Number.isNaN(parsedDate.getTime())) {
-    return "Unavailable";
-  }
-  return parsedDate.toLocaleString();
-}
-
-function buildMetricCards(metrics: ModelMetricsResponse): MetricCardItem[] {
-  const parsedDate = metrics.last_trained_at ? new Date(metrics.last_trained_at) : null;
-  const lastTrainedLabel =
-    parsedDate && !Number.isNaN(parsedDate.getTime()) ? parsedDate.toLocaleDateString() : "Unavailable";
-
-  const cards: MetricCardItem[] = [];
-
-  if (metrics.model_name) {
-    cards.push({
-      label: "Model",
-      value: metrics.model_name,
-      trend: metrics.version ? `Version ${metrics.version}` : "Version unavailable"
-    });
-  }
-
-  if (metrics.total_predictions_evaluated !== null) {
-    cards.push({
-      label: "Predictions Evaluated",
-      value: metrics.total_predictions_evaluated.toLocaleString(),
-      trend: "Total games in the latest evaluation set"
-    });
-  }
-
-  if (metrics.correct_predictions !== null) {
-    cards.push({
-      label: "Correct Predictions",
-      value: metrics.correct_predictions.toLocaleString(),
-      trend: "Correct winner picks in evaluation"
-    });
-  }
-
-  if (metrics.accuracy !== null) {
-    cards.push({
-      label: "Accuracy",
-      value: toPercent(metrics.accuracy),
-      trend: "Overall prediction accuracy"
-    });
-  }
-
-  cards.push(
-    ...(metrics.brier_score !== null
-      ? [
-          {
-            label: "Brier Score",
-            value: metrics.brier_score.toFixed(4),
-            trend: "Lower is better"
-          }
-        ]
-      : []),
-    ...(metrics.precision !== null
-      ? [
-          {
-            label: "Precision",
-            value: toPercent(metrics.precision),
-            trend: "Positive prediction quality"
-          }
-        ]
-      : []),
-    ...(metrics.recall !== null
-      ? [
-          {
-            label: "Recall",
-            value: toPercent(metrics.recall),
-            trend: "Coverage of positive outcomes"
-          }
-        ]
-      : []),
-    ...(metrics.roc_auc !== null
-      ? [
-          {
-            label: "ROC AUC",
-            value: toPercent(metrics.roc_auc),
-            trend: "Model ranking performance"
-          }
-        ]
-      : [])
-  );
-
-  if (metrics.last_trained_at !== null) {
-    cards.push({
-      label: "Last Trained",
-      value: lastTrainedLabel,
-      trend: "Most recent training run"
-    });
-  }
-
-  cards.push({
-    label: "Last Results Sync",
-    value: toLocalDateTime(metrics.last_results_sync),
-    trend: "Latest completed results sync"
-  });
-
-  cards.push({
-    label: "Unresolved Predictions",
-    value:
-      metrics.unresolved_predictions_remaining !== null
-        ? metrics.unresolved_predictions_remaining.toLocaleString()
-        : "Unavailable",
-    trend: "Predictions still awaiting final game results"
-  });
-
-  return cards;
-}
+import { getErrorMessage, getModelMetrics, type ModelMetricsResponse } from "@/lib/api";
 
 export default function MetricsPage() {
-  const [cards, setCards] = useState<MetricCardItem[]>([]);
-  const [availabilityMessage, setAvailabilityMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [metrics, setMetrics] = useState<ModelMetricsResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const [syncMessage, setSyncMessage] = useState<string | null>(null);
-  const [syncError, setSyncError] = useState<string | null>(null);
-
-  const loadMetrics = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      setAvailabilityMessage(null);
-
-      const metrics = await getModelMetrics();
-      if (!metrics.available) {
-        setAvailabilityMessage(metrics.message ?? "Model metrics are currently unavailable.");
-      }
-
-      setCards(buildMetricCards(metrics));
-    } catch (err) {
-      setError(getErrorMessage(err, "Unable to load model metrics."));
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
   useEffect(() => {
-    void loadMetrics();
-  }, [loadMetrics]);
-
-  const handleSyncCompletedResults = useCallback(async () => {
-    try {
-      setIsSyncing(true);
-      setSyncError(null);
-      setSyncMessage(null);
-
-      const update = await syncCompletedResults();
-      const history = await getPredictionHistory();
-      await loadMetrics();
-
-      setSyncMessage(
-        `Sync complete: updated ${update.updated_predictions} games. History records: ${history.length}.`
-      );
-    } catch (err) {
-      setSyncError(getErrorMessage(err, "Failed to sync completed results."));
-    } finally {
-      setIsSyncing(false);
-    }
-  }, [loadMetrics]);
+    getModelMetrics().then(setMetrics).catch((requestError) => setError(getErrorMessage(requestError, "Unable to load model metrics.")));
+  }, []);
 
   return (
-    <main className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold tracking-tight">Model Metrics</h1>
-        <p className="mt-2 text-slate-600">Live performance metrics from the FastAPI backend.</p>
+    <main>
+      <header className="max-w-4xl border-b border-white/[0.08] pb-8">
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-300">Transparent by design</p>
+        <h1 className="mt-2 text-4xl font-black uppercase tracking-[-0.045em] text-white sm:text-6xl">Inside the model.</h1>
+        <p className="mt-4 max-w-3xl text-sm leading-6 text-slate-500">No mystery accuracy claims. The main score below comes from an untouched 2025 holdout after the model was tuned on earlier seasons.</p>
       </header>
 
-      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={() => void handleSyncCompletedResults()}
-            disabled={isSyncing}
-            className="rounded-md border border-slate-900 bg-slate-900 px-3 py-2 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {isSyncing ? "Syncing..." : "Sync Completed Results"}
-          </button>
-          {syncMessage && <p className="text-sm text-emerald-700">{syncMessage}</p>}
-          {syncError && <p className="text-sm text-rose-700">{syncError}</p>}
-        </div>
-      </section>
+      {error ? <section className="mt-6 rounded-[22px] border border-rose-300/20 bg-rose-300/[0.06] p-6 text-rose-100">{error}</section> : null}
+      {!metrics && !error ? <section className="mt-6 h-48 animate-pulse rounded-[24px] bg-white/[0.025]" /> : null}
 
-      {loading && (
-        <section className="rounded-xl border border-slate-200 bg-white p-5 text-slate-600 shadow-sm">
-          Loading model metrics...
-        </section>
-      )}
+      {metrics ? (
+        <>
+          <section className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <MetricsCard label="Holdout accuracy" value={`${(metrics.accuracy * 100).toFixed(1)}%`} trend={`${metrics.correct_predictions.toLocaleString()} of ${metrics.total_predictions_evaluated.toLocaleString()} games correct`} accent />
+            <MetricsCard label="Home baseline" value={`${(metrics.majority_baseline_accuracy * 100).toFixed(1)}%`} trend="Accuracy from simply choosing every home team" />
+            <MetricsCard label="Brier score" value={metrics.brier_score.toFixed(3)} trend="Probability error; lower is better" />
+            <MetricsCard label="Training games" value={metrics.total_training_examples.toLocaleString()} trend={`${metrics.seasons[0]}–${metrics.seasons.at(-1)} regular seasons`} />
+          </section>
 
-      {error && (
-        <section className="rounded-xl border border-rose-200 bg-rose-50 p-5 text-rose-700 shadow-sm">{error}</section>
-      )}
+          <section className="mt-7 grid gap-5 lg:grid-cols-[1.05fr_.95fr]">
+            <article className="rounded-[24px] border border-white/[0.08] bg-[#0c1120] p-6 sm:p-8">
+              <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-slate-600">How it works</p>
+              <h2 className="mt-2 text-2xl font-black text-white">Chronological, not random.</h2>
+              <p className="mt-4 text-sm leading-7 text-slate-400">{metrics.description}</p>
+              <div className="mt-6 space-y-4">
+                {[
+                  ["01", "Baseline", "Five complete seasons establish durable team strength without peeking ahead."],
+                  ["02", "Replay", "The current season is replayed in order so every game only sees earlier results."],
+                  ["03", "Game day", "Probable-starter ERA and WHIP make a small, reliability-weighted adjustment."],
+                  ["04", "Calibration", "Probabilities are capped to avoid false certainty in a high-variance sport."]
+                ].map(([number, title, description]) => (
+                  <div key={number} className="grid grid-cols-[36px_1fr] gap-3 border-t border-white/[0.06] pt-4">
+                    <span className="font-mono text-xs font-black text-cyan-300">{number}</span>
+                    <div><p className="text-sm font-bold text-white">{title}</p><p className="mt-1 text-xs leading-5 text-slate-500">{description}</p></div>
+                  </div>
+                ))}
+              </div>
+            </article>
 
-      {!loading && !error && availabilityMessage && (
-        <section className="rounded-xl border border-slate-200 bg-white p-5 text-slate-700 shadow-sm">
-          {availabilityMessage}
-        </section>
-      )}
-
-      {!loading && !error && cards.length > 0 && (
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {cards.map((metric) => (
-            <MetricsCard key={metric.label} {...metric} />
-          ))}
-        </section>
-      )}
+            <article className="rounded-[24px] border border-white/[0.08] bg-[#0c1120] p-6 sm:p-8">
+              <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-slate-600">Signals used</p>
+              <h2 className="mt-2 text-2xl font-black text-white">Six compact inputs.</h2>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {metrics.features.map((feature) => <span key={feature} className="rounded-full border border-white/[0.09] bg-white/[0.03] px-3 py-2 text-xs font-semibold text-slate-300">{feature.replaceAll("_", " ")}</span>)}
+              </div>
+              <div className="mt-8 rounded-2xl border border-amber-300/15 bg-amber-300/[0.05] p-5">
+                <p className="text-xs font-black uppercase tracking-[0.13em] text-amber-200">Important limitation</p>
+                <p className="mt-2 text-xs leading-6 text-slate-400">A 56% baseball model still misses often. Lineups, weather, bullpen availability, injuries, and market information are not fully modeled. Use probabilities as context, never certainty.</p>
+              </div>
+              <p className="mt-6 text-xs text-slate-600">Model {metrics.version} · training data {metrics.training_start} through {metrics.trained_through}</p>
+            </article>
+          </section>
+        </>
+      ) : null}
     </main>
   );
 }

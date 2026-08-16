@@ -1,0 +1,344 @@
+{
+  "model_name": "Diamond Elo + live form",
+  "version": "diamond-elo-v4",
+  "description": "Leakage-free Elo, season form, last-10 form, run differential, and home/away splits trained chronologically on completed regular-season games, then adjusted with live probable-pitcher form.",
+  "training_start": "2021-04-01",
+  "trained_through": "2025-09-28",
+  "seasons": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+  ],
+  "games_trained": 12171,
+  "validation_season": 2024,
+  "validation_metrics": {
+    "games": 2432,
+    "correct": 1353,
+    "accuracy": 0.556332,
+    "brier_score": 0.246625,
+    "log_loss": 0.686489,
+    "home_win_rate": 0.521382,
+    "majority_baseline_accuracy": 0.521382
+  },
+  "holdout_season": 2025,
+  "holdout_metrics": {
+    "games": 2434,
+    "correct": 1373,
+    "accuracy": 0.564092,
+    "brier_score": 0.244725,
+    "log_loss": 0.6824,
+    "home_win_rate": 0.543139,
+    "majority_baseline_accuracy": 0.543139
+  },
+  "hyperparameters": {
+    "k_factor": 12.0,
+    "home_advantage": 20.0,
+    "season_regression": 0.35
+  },
+  "portable_model": {
+    "feature_names": [
+      "elo_logit",
+      "season_win_pct_edge",
+      "last_10_win_pct_edge",
+      "season_run_diff_per_game_edge",
+      "home_away_split_edge"
+    ],
+    "means": [
+      0.11305333,
+      -3.69e-05,
+      -0.00912287,
+      0.00135545,
+      0.04601478
+    ],
+    "scales": [
+      0.48159184,
+      0.18630805,
+      0.28676396,
+      1.77928652,
+      0.22322914
+    ],
+    "weights": [
+      0.11654004,
+      0.34119785,
+      -0.00067603,
+      -0.077731,
+      0.1224241,
+      -0.08232169
+    ],
+    "trained_through_season": 2024
+  },
+  "teams": {
+    "108": {
+      "name": "Los Angeles Angels",
+      "abbreviation": "LAA",
+      "primary": "#ba0021",
+      "accent": "#ffffff",
+      "rating": 1407.18,
+      "last_30_win_pct": 0.3333,
+      "last_30_run_diff_per_game": -2.533
+    },
+    "109": {
+      "name": "Arizona Diamondbacks",
+      "abbreviation": "AZ",
+      "primary": "#a71930",
+      "accent": "#e3d4ad",
+      "rating": 1498.8,
+      "last_30_win_pct": 0.5333,
+      "last_30_run_diff_per_game": -0.067
+    },
+    "110": {
+      "name": "Baltimore Orioles",
+      "abbreviation": "BAL",
+      "primary": "#df4601",
+      "accent": "#000000",
+      "rating": 1495.72,
+      "last_30_win_pct": 0.5,
+      "last_30_run_diff_per_game": -1.1
+    },
+    "111": {
+      "name": "Boston Red Sox",
+      "abbreviation": "BOS",
+      "primary": "#bd3039",
+      "accent": "#0c2340",
+      "rating": 1559.36,
+      "last_30_win_pct": 0.5667,
+      "last_30_run_diff_per_game": 0.3
+    },
+    "112": {
+      "name": "Chicago Cubs",
+      "abbreviation": "CHC",
+      "primary": "#0e3386",
+      "accent": "#cc3433",
+      "rating": 1532.28,
+      "last_30_win_pct": 0.5333,
+      "last_30_run_diff_per_game": 0.7
+    },
+    "113": {
+      "name": "Cincinnati Reds",
+      "abbreviation": "CIN",
+      "primary": "#c6011f",
+      "accent": "#ffffff",
+      "rating": 1517.94,
+      "last_30_win_pct": 0.5,
+      "last_30_run_diff_per_game": -0.2
+    },
+    "114": {
+      "name": "Cleveland Guardians",
+      "abbreviation": "CLE",
+      "primary": "#e31937",
+      "accent": "#0c2340",
+      "rating": 1558.26,
+      "last_30_win_pct": 0.7333,
+      "last_30_run_diff_per_game": 1.633
+    },
+    "115": {
+      "name": "Colorado Rockies",
+      "abbreviation": "COL",
+      "primary": "#333366",
+      "accent": "#c4ced4",
+      "rating": 1323.86,
+      "last_30_win_pct": 0.1667,
+      "last_30_run_diff_per_game": -2.667
+    },
+    "116": {
+      "name": "Detroit Tigers",
+      "abbreviation": "DET",
+      "primary": "#0c2340",
+      "accent": "#fa4616",
+      "rating": 1463.03,
+      "last_30_win_pct": 0.3,
+      "last_30_run_diff_per_game": -1.033
+    },
+    "117": {
+      "name": "Houston Astros",
+      "abbreviation": "HOU",
+      "primary": "#002d62",
+      "accent": "#eb6e1f",
+      "rating": 1504.15,
+      "last_30_win_pct": 0.5,
+      "last_30_run_diff_per_game": 0.233
+    },
+    "118": {
+      "name": "Kansas City Royals",
+      "abbreviation": "KC",
+      "primary": "#004687",
+      "accent": "#bd9b60",
+      "rating": 1517.33,
+      "last_30_win_pct": 0.5,
+      "last_30_run_diff_per_game": 0.8
+    },
+    "119": {
+      "name": "Los Angeles Dodgers",
+      "abbreviation": "LAD",
+      "primary": "#005a9c",
+      "accent": "#ef3e42",
+      "rating": 1571.46,
+      "last_30_win_pct": 0.6,
+      "last_30_run_diff_per_game": 1.367
+    },
+    "120": {
+      "name": "Washington Nationals",
+      "abbreviation": "WSH",
+      "primary": "#ab0003",
+      "accent": "#14225a",
+      "rating": 1420.07,
+      "last_30_win_pct": 0.4333,
+      "last_30_run_diff_per_game": -1.667
+    },
+    "121": {
+      "name": "New York Mets",
+      "abbreviation": "NYM",
+      "primary": "#002d72",
+      "accent": "#ff5910",
+      "rating": 1474.12,
+      "last_30_win_pct": 0.4,
+      "last_30_run_diff_per_game": -0.233
+    },
+    "133": {
+      "name": "Athletics",
+      "abbreviation": "ATH",
+      "primary": "#003831",
+      "accent": "#efb21e",
+      "rating": 1508.75,
+      "last_30_win_pct": 0.5333,
+      "last_30_run_diff_per_game": 0.267
+    },
+    "134": {
+      "name": "Pittsburgh Pirates",
+      "abbreviation": "PIT",
+      "primary": "#27251f",
+      "accent": "#fdb827",
+      "rating": 1490.56,
+      "last_30_win_pct": 0.4667,
+      "last_30_run_diff_per_game": 0.3
+    },
+    "135": {
+      "name": "San Diego Padres",
+      "abbreviation": "SD",
+      "primary": "#2f241d",
+      "accent": "#ffc425",
+      "rating": 1531.41,
+      "last_30_win_pct": 0.5333,
+      "last_30_run_diff_per_game": 0.9
+    },
+    "136": {
+      "name": "Seattle Mariners",
+      "abbreviation": "SEA",
+      "primary": "#0c2c56",
+      "accent": "#005c5c",
+      "rating": 1560.76,
+      "last_30_win_pct": 0.6333,
+      "last_30_run_diff_per_game": 1.567
+    },
+    "137": {
+      "name": "San Francisco Giants",
+      "abbreviation": "SF",
+      "primary": "#fd5a1e",
+      "accent": "#27251f",
+      "rating": 1485.93,
+      "last_30_win_pct": 0.5667,
+      "last_30_run_diff_per_game": 0.933
+    },
+    "138": {
+      "name": "St. Louis Cardinals",
+      "abbreviation": "STL",
+      "primary": "#c41e3a",
+      "accent": "#0c2340",
+      "rating": 1457.11,
+      "last_30_win_pct": 0.4333,
+      "last_30_run_diff_per_game": -1.133
+    },
+    "139": {
+      "name": "Tampa Bay Rays",
+      "abbreviation": "TB",
+      "primary": "#092c5c",
+      "accent": "#8fbce6",
+      "rating": 1459.38,
+      "last_30_win_pct": 0.4333,
+      "last_30_run_diff_per_game": -0.267
+    },
+    "140": {
+      "name": "Texas Rangers",
+      "abbreviation": "TEX",
+      "primary": "#003278",
+      "accent": "#c0111f",
+      "rating": 1493.49,
+      "last_30_win_pct": 0.5,
+      "last_30_run_diff_per_game": 0.533
+    },
+    "141": {
+      "name": "Toronto Blue Jays",
+      "abbreviation": "TOR",
+      "primary": "#134a8e",
+      "accent": "#e8291c",
+      "rating": 1562.66,
+      "last_30_win_pct": 0.5667,
+      "last_30_run_diff_per_game": 0.533
+    },
+    "142": {
+      "name": "Minnesota Twins",
+      "abbreviation": "MIN",
+      "primary": "#002b5c",
+      "accent": "#d31145",
+      "rating": 1421.31,
+      "last_30_win_pct": 0.3333,
+      "last_30_run_diff_per_game": -1.133
+    },
+    "143": {
+      "name": "Philadelphia Phillies",
+      "abbreviation": "PHI",
+      "primary": "#e81828",
+      "accent": "#002d72",
+      "rating": 1576.17,
+      "last_30_win_pct": 0.6667,
+      "last_30_run_diff_per_game": 1.333
+    },
+    "144": {
+      "name": "Atlanta Braves",
+      "abbreviation": "ATL",
+      "primary": "#ce1141",
+      "accent": "#13274f",
+      "rating": 1511.26,
+      "last_30_win_pct": 0.5333,
+      "last_30_run_diff_per_game": 0.1
+    },
+    "145": {
+      "name": "Chicago White Sox",
+      "abbreviation": "CWS",
+      "primary": "#27251f",
+      "accent": "#c4ced4",
+      "rating": 1424.87,
+      "last_30_win_pct": 0.4,
+      "last_30_run_diff_per_game": -0.967
+    },
+    "146": {
+      "name": "Miami Marlins",
+      "abbreviation": "MIA",
+      "primary": "#00a3e0",
+      "accent": "#ef3340",
+      "rating": 1513.49,
+      "last_30_win_pct": 0.5667,
+      "last_30_run_diff_per_game": -0.567
+    },
+    "147": {
+      "name": "New York Yankees",
+      "abbreviation": "NYY",
+      "primary": "#0c2340",
+      "accent": "#c4ced3",
+      "rating": 1596.85,
+      "last_30_win_pct": 0.7333,
+      "last_30_run_diff_per_game": 1.8
+    },
+    "158": {
+      "name": "Milwaukee Brewers",
+      "abbreviation": "MIL",
+      "primary": "#12284b",
+      "accent": "#ffc52f",
+      "rating": 1562.4,
+      "last_30_win_pct": 0.5,
+      "last_30_run_diff_per_game": 0.367
+    }
+  }
+}
