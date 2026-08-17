@@ -1,7 +1,8 @@
+import "server-only";
 import { getMarketConsensus, type MarketConsensus } from "@/lib/server/marketOdds";
 import type { ModelMetricsResponse, PredictionHistoryItem, TeamIdentity, TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
+import { fetchEspnNflSeason } from "@/lib/server/espnNflFeed";
 
-const ESPN_SCOREBOARD = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard";
 const HOME_ADVANTAGE = 48;
 const K_FACTOR = 22;
 const SEASON_REGRESSION = 0.35;
@@ -42,7 +43,6 @@ type EspnEvent = {
   }>;
 };
 
-type EspnPayload = { events?: EspnEvent[] };
 type TeamState = { games: number; wins: number; pointDiff: number; recent: number[] };
 type ModelState = { ratings: Map<string, number>; teams: Map<string, TeamState> };
 type ParsedGame = {
@@ -105,14 +105,7 @@ function weekWindow(value: string): { start: string; end: string } {
 }
 
 async function fetchSeason(year: number): Promise<EspnEvent[]> {
-  const query = new URLSearchParams({ dates: String(year), limit: "1000" });
-  const response = await fetch(`${ESPN_SCOREBOARD}?${query}`, {
-    next: { revalidate: 300 },
-    headers: { Accept: "application/json", "User-Agent": "sport-iq/1.0" }
-  });
-  if (!response.ok) throw new Error(`NFL schedule service returned ${response.status}.`);
-  const payload = (await response.json()) as EspnPayload;
-  return payload.events ?? [];
+  return fetchEspnNflSeason<EspnEvent>(year);
 }
 
 function parseScore(value: string | undefined): number | null {

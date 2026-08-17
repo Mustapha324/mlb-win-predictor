@@ -1,11 +1,26 @@
+import "server-only";
 import type { PlayerPick, PlayerPicksResponse, TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
 import type { AccessState } from "@/lib/server/access";
 import { getPredictions } from "@/lib/server/mlbModel";
 import { getNflPredictions } from "@/lib/server/nflModel";
+import { ESPN_NFL_BASE, ESPN_NFL_HEADERS, fetchEspnNflSeason } from "@/lib/server/espnNflFeed";
+import {
+  applyPlayerPickAccess,
+  applyResultAccess,
+  FREE_PLAYER_PICK_COUNT,
+  MAX_PLAYER_PICK_COUNT,
+  TOP_PLAYER_PICK_COUNT
+} from "@/lib/server/playerPickAccess";
+import { calculatePerformance, confidenceFromEdge, gradePlayerPick, pickStatus } from "@/lib/server/playerPickScoring";
+import {
+  loadPlayerPickSnapshots,
+  loadRecentPlayerPickResults,
+  storeInitialPlayerPicks,
+  updatePlayerPickResults
+} from "@/lib/server/playerPickStore";
 import type { Sport } from "@/lib/sports";
 
 const MLB_API = "https://statsapi.mlb.com/api/v1";
-const ESPN_SUMMARY = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/summary";
 
 type MlbStat = Record<string, number | string | undefined>;
 type MlbSplit = {
@@ -15,19 +30,53 @@ type MlbSplit = {
   stat?: MlbStat;
 };
 type MlbStatsPayload = { stats?: Array<{ splits?: MlbSplit[] }> };
+type MlbBoxscorePlayer = { person?: { id?: number }; stats?: { batting?: MlbStat; pitching?: MlbStat } };
+type MlbBoxscore = { teams?: { away?: { players?: Record<string, MlbBoxscorePlayer> }; home?: { players?: Record<string, MlbBoxscorePlayer> } } };
 
-type EspnLeader = {
-  athlete?: { id?: string; displayName?: string; position?: { abbreviation?: string } };
-  displayValue?: string;
-  value?: number;
-  statistics?: Array<{ name?: string; displayName?: string; value?: number; displayValue?: string }>;
+type EspnAthlete = {
+  id?: string;
+  displayName?: string;
+  fullName?: string;
+  headshot?: { href?: string };
+  position?: { abbreviation?: string };
 };
-type EspnLeaderCategory = { name?: string; displayName?: string; leaders?: EspnLeader[] };
-type EspnSummary = {
-  leaders?: Array<{ team?: { id?: string; displayName?: string }; leaders?: EspnLeaderCategory[] }>;
+type EspnBoxscoreGroup = {
+  team?: { id?: string; displayName?: string };
+  statistics?: Array<{
+    name?: string;
+    labels?: string[];
+    athletes?: Array<{ athlete?: EspnAthlete; stats?: string[] }>;
+  }>;
+};
+type EspnSummary = { boxscore?: { players?: EspnBoxscoreGroup[] } };
+type EspnEvent = {
+  id?: string;
+  date?: string;
+  season?: { year?: number };
+  status?: { type?: { state?: "pre" | "in" | "post"; completed?: boolean } };
+  competitions?: Array<{ competitors?: Array<{ id?: string; homeAway?: "home" | "away"; team?: { id?: string; displayName?: string } }> }>;
+};
+type Candidate = Omit<PlayerPick, "rank" | "isTopFive" | "is_locked"> & {
+  recentRate?: number;
+  seasonRate?: number;
+  group?: "hitting" | "pitching";
 };
 
-type Candidate = Omit<PlayerPick, "rank" | "is_locked"> & { recentRate?: number; seasonRate?: number; group?: "hitting" | "pitching" };
+type MlbContext = {
+  gameId: string;
+  opponent: string;
+  probability: number;
+  gameTime: string | null;
+  opponentId: number;
+};
+
+type NflPlayerForm = {
+  playerId: string;
+  playerName: string;
+  headshotUrl: string | null;
+  position: string | null;
+  values: Map<string, number[]>;
+};
 
 function numberValue(stat: MlbStat | undefined, key: string): number {
   const value = Number(stat?.[key] ?? 0);
@@ -45,8 +94,8 @@ function poissonOver(mean: number, line: number): number {
   return Math.max(0.02, Math.min(0.98, 1 - cumulative));
 }
 
-function candidate(
-  base: Omit<Candidate, "selection" | "confidence" | "projection" | "supportingStats" | "explanation">,
+function baseCandidate(
+  base: Omit<Candidate, "selection" | "confidence" | "projection" | "supportingStats" | "explanation" | "modelEdge">,
   projection: number,
   seasonRate: number,
   recentRate: number,
@@ -54,35 +103,29 @@ function candidate(
 ): Candidate {
   const overProbability = poissonOver(Math.max(0.01, projection), base.line);
   const selection = overProbability >= 0.5 ? "Over" : "Under";
-  const confidence = Math.max(overProbability, 1 - overProbability);
-  const lineLabel = Number.isInteger(base.line) ? base.line.toFixed(1) : String(base.line);
-  const confidenceCap = base.market === "Home runs" && selection === "Under" ? 0.78 : 0.91;
+  const confidenceCap = base.market === "Home runs" && selection === "Under" ? 0.78 : 0.88;
+  const confidence = Math.min(confidenceCap, Math.max(0.51, Math.max(overProbability, 1 - overProbability)));
+  const edge = projection - base.line;
   return {
     ...base,
     selection,
     projection: Number(projection.toFixed(2)),
-    confidence: Number(Math.min(confidenceCap, Math.max(0.51, confidence)).toFixed(4)),
+    confidence: Number(confidence.toFixed(4)),
+    modelEdge: Number(edge.toFixed(2)),
     seasonRate,
     recentRate,
     supportingStats: [
       `${seasonRate.toFixed(2)} per game this season`,
-      `${recentRate.toFixed(2)} per game over the recent sample`,
+      `${recentRate.toFixed(2)} per game over the last 10`,
+      `${edge >= 0 ? "+" : ""}${edge.toFixed(2)} model edge vs line`,
       `${Math.round(teamProbability * 100)}% team win chance`
     ],
-    explanation: `${selection} ${lineLabel} rates best after blending season production, recent form, and the matchup-adjusted team outlook.`
+    explanation: `${selection} ${base.line} is the stronger side after blending season production, recent form, opponent history, and the matchup-adjusted team outlook.`
   };
 }
 
 async function fetchMlbStats(group: "hitting" | "pitching", stats: "season" | "lastXGames", season: number): Promise<MlbSplit[]> {
-  const query = new URLSearchParams({
-    stats,
-    group,
-    season: String(season),
-    sportIds: "1",
-    playerPool: "QUALIFIED",
-    hydrate: "team",
-    limit: "1000"
-  });
+  const query = new URLSearchParams({ stats, group, season: String(season), sportIds: "1", playerPool: "QUALIFIED", hydrate: "team", limit: "1000" });
   if (stats === "lastXGames") query.set("numberOfGames", "10");
   try {
     const response = await fetch(`${MLB_API}/stats?${query}`, { next: { revalidate: 900 }, headers: { Accept: "application/json" } });
@@ -94,11 +137,12 @@ async function fetchMlbStats(group: "hitting" | "pitching", stats: "season" | "l
   }
 }
 
-function mlbTeamContext(games: TeamPrediction[]): Map<string, { opponent: string; probability: number; gameTime: string | null; opponentId: number }> {
-  const context = new Map<string, { opponent: string; probability: number; gameTime: string | null; opponentId: number }>();
+function mlbTeamContext(games: TeamPrediction[]): Map<string, MlbContext> {
+  const context = new Map<string, MlbContext>();
   for (const game of games) {
-    context.set(game.home_team, { opponent: game.away_team, probability: game.pregame_home_win_probability, gameTime: game.game_time_utc, opponentId: game.awayTeam.id });
-    context.set(game.away_team, { opponent: game.home_team, probability: game.pregame_away_win_probability, gameTime: game.game_time_utc, opponentId: game.homeTeam.id });
+    if (pickStatus(game.status, game.is_final) !== "scheduled") continue;
+    context.set(game.home_team, { gameId: game.gameId, opponent: game.away_team, probability: game.pregame_home_win_probability, gameTime: game.game_time_utc, opponentId: game.awayTeam.id });
+    context.set(game.away_team, { gameId: game.gameId, opponent: game.home_team, probability: game.pregame_away_win_probability, gameTime: game.game_time_utc, opponentId: game.homeTeam.id });
   }
   return context;
 }
@@ -106,7 +150,7 @@ function mlbTeamContext(games: TeamPrediction[]): Map<string, { opponent: string
 async function fetchVsOpponent(playerId: string, group: "hitting" | "pitching", opponentId: number, season: number): Promise<number | null> {
   const query = new URLSearchParams({ stats: "vsTeam", group, season: String(season), opposingTeamId: String(opponentId) });
   try {
-    const response = await fetch(`${MLB_API}/people/${playerId}/stats?${query}`, { next: { revalidate: 3600 }, headers: { Accept: "application/json" } });
+    const response = await fetch(`${MLB_API}/people/${encodeURIComponent(playerId)}/stats?${query}`, { next: { revalidate: 3600 }, headers: { Accept: "application/json" } });
     if (!response.ok) return null;
     const payload = (await response.json()) as MlbStatsPayload;
     const stat = payload.stats?.[0]?.splits?.[0]?.stat;
@@ -116,6 +160,18 @@ async function fetchVsOpponent(playerId: string, group: "hitting" | "pitching", 
   } catch {
     return null;
   }
+}
+
+function pendingFields(modelVersion: string, sampleSize: number) {
+  return {
+    modelVersion,
+    sampleSize,
+    status: "scheduled" as const,
+    statusLabel: "Scheduled",
+    actualValue: null,
+    result: "pending" as const,
+    resultUpdatedAt: null
+  };
 }
 
 async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsResponse): Promise<Candidate[]> {
@@ -152,7 +208,22 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
     ] as const;
     for (const [market, line, seasonRate, recentRate] of props) {
       const projection = (seasonRate * 0.58 + recentRate * 0.42) * matchupFactor;
-      candidates.push(candidate({ id: `mlb-${playerId}-${market}`, sport: "mlb", playerId, playerName, position: split.position?.abbreviation ?? null, team, opponent: context.opponent, gameTime: context.gameTime, market, line, group: "hitting" }, projection, seasonRate, recentRate, context.probability));
+      candidates.push(baseCandidate({
+        id: `mlb-${context.gameId}-${playerId}-${market.toLowerCase().replace(/\s/g, "-")}`,
+        sport: "mlb",
+        gameId: context.gameId,
+        playerId,
+        playerName,
+        headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/w_240,q_auto:best/v1/people/${playerId}/headshot/67/current`,
+        position: split.position?.abbreviation ?? null,
+        team,
+        opponent: context.opponent,
+        gameTime: context.gameTime,
+        market,
+        line,
+        group: "hitting",
+        ...pendingFields("mlb-player-blend-v2", Math.round(games))
+      }, projection, seasonRate, recentRate, context.probability));
     }
   }
 
@@ -169,23 +240,26 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
     const seasonRate = numberValue(split.stat, "strikeOuts") / games;
     const recentRate = numberValue(recent, "strikeOuts") / recentGames;
     const projection = (seasonRate * 0.58 + recentRate * 0.42) * (0.95 + context.probability * 0.1);
-    candidates.push(candidate({ id: `mlb-${playerId}-strikeouts`, sport: "mlb", playerId, playerName, position: "P", team, opponent: context.opponent, gameTime: context.gameTime, market: "Strikeouts", line: 4.5, group: "pitching" }, projection, seasonRate, recentRate, context.probability));
+    candidates.push(baseCandidate({
+      id: `mlb-${context.gameId}-${playerId}-strikeouts`, sport: "mlb", gameId: context.gameId, playerId, playerName,
+      headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/w_240,q_auto:best/v1/people/${playerId}/headshot/67/current`,
+      position: "P", team, opponent: context.opponent, gameTime: context.gameTime, market: "Strikeouts", line: 4.5, group: "pitching",
+      ...pendingFields("mlb-player-blend-v2", Math.round(games))
+    }, projection, seasonRate, recentRate, context.probability));
   }
 
-  const initial = candidates.sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0)).slice(0, 28);
-  await Promise.all(initial.map(async (pick) => {
+  const initial = candidates.toSorted((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0)).slice(0, 60);
+  await Promise.all(initial.slice(0, 20).map(async (pick) => {
     const context = teamContext.get(pick.team);
     if (!context || !pick.group) return;
     const opponentRate = await fetchVsOpponent(pick.playerId, pick.group, context.opponentId, season);
-    if (opponentRate === null) return;
-    pick.supportingStats.push(`${opponentRate.toFixed(2)} relevant results per game vs ${pick.opponent}`);
-    pick.explanation = `${pick.explanation} Historical results against ${pick.opponent} also inform the ranking.`;
+    if (opponentRate !== null) pick.supportingStats.push(`${opponentRate.toFixed(2)} relevant results per game vs ${pick.opponent}`);
   }));
   return diversify(initial);
 }
 
 function diversify(candidates: Candidate[]): Candidate[] {
-  const ordered = candidates.toSorted((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0));
+  const ordered = candidates.toSorted((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0) || Math.abs(b.modelEdge ?? 0) - Math.abs(a.modelEdge ?? 0));
   const selected: Candidate[] = [];
   const selectedIds = new Set<string>();
   const playerCounts = new Map<string, number>();
@@ -197,112 +271,260 @@ function diversify(candidates: Candidate[]): Candidate[] {
     marketCounts.set(pick.market, (marketCounts.get(pick.market) ?? 0) + 1);
   };
   for (const pick of ordered) {
-    if (selected.length >= 5) break;
+    if (selected.length >= TOP_PLAYER_PICK_COUNT) break;
     if ((playerCounts.get(pick.playerId) ?? 0) >= 1 || (marketCounts.get(pick.market) ?? 0) >= 2) continue;
     add(pick);
   }
   for (const pick of ordered) {
-    if (selected.length >= 20) break;
-    if (selectedIds.has(pick.id) || (playerCounts.get(pick.playerId) ?? 0) >= 2 || (marketCounts.get(pick.market) ?? 0) >= 5) continue;
+    if (selected.length >= TOP_PLAYER_PICK_COUNT + FREE_PLAYER_PICK_COUNT) break;
+    if (selectedIds.has(pick.id) || (playerCounts.get(pick.playerId) ?? 0) >= 1 || (marketCounts.get(pick.market) ?? 0) >= 3) continue;
     add(pick);
   }
   for (const pick of ordered) {
-    if (selected.length >= 20) break;
+    if (selected.length >= MAX_PLAYER_PICK_COUNT) break;
+    if (selectedIds.has(pick.id) || (playerCounts.get(pick.playerId) ?? 0) >= 2 || (marketCounts.get(pick.market) ?? 0) >= 12) continue;
+    add(pick);
+  }
+  for (const pick of ordered) {
+    if (selected.length >= MAX_PLAYER_PICK_COUNT) break;
     if (!selectedIds.has(pick.id)) add(pick);
   }
-  return selected.slice(0, 20);
+  return selected.slice(0, MAX_PLAYER_PICK_COUNT);
 }
 
-function extractLeaderValue(leader: EspnLeader): number {
-  if (typeof leader.value === "number") return leader.value;
-  const fromStats = leader.statistics?.find((stat) => typeof stat.value === "number")?.value;
-  if (typeof fromStats === "number") return fromStats;
-  const text = leader.displayValue ?? leader.statistics?.[0]?.displayValue ?? "0";
-  const value = Number(text.replace(/,/g, "").match(/[\d.]+/)?.[0] ?? 0);
-  return Number.isFinite(value) ? value : 0;
-}
-
-function nflMarket(category: string): { market: string; line: number; scale: number } | null {
-  const value = category.toLowerCase().replace(/[^a-z]/g, "");
-  if (value.includes("passingyard")) return { market: "Passing yards", line: 249.5, scale: 85 };
-  if (value.includes("rushingyard")) return { market: "Rushing yards", line: 49.5, scale: 40 };
-  if (value.includes("receivingyard")) return { market: "Receiving yards", line: 49.5, scale: 40 };
-  if (value.includes("reception")) return { market: "Receptions", line: 4.5, scale: 3 };
-  if (value.includes("passingtouchdown")) return { market: "Passing touchdowns", line: 1.5, scale: 1.5 };
-  if (value.includes("touchdown")) return { market: "Anytime touchdown", line: 0.5, scale: 0.8 };
-  return null;
+async function fetchNflSeason(year: number): Promise<EspnEvent[]> {
+  try {
+    return await fetchEspnNflSeason<EspnEvent>(year);
+  } catch {
+    return [];
+  }
 }
 
 async function fetchNflSummary(gameId: string): Promise<EspnSummary | null> {
   try {
-    const response = await fetch(`${ESPN_SUMMARY}?event=${encodeURIComponent(gameId)}`, { next: { revalidate: 900 }, headers: { Accept: "application/json" } });
+    const response = await fetch(`${ESPN_NFL_BASE}/summary?event=${encodeURIComponent(gameId)}`, { next: { revalidate: 300 }, headers: ESPN_NFL_HEADERS });
     return response.ok ? await response.json() as EspnSummary : null;
   } catch {
     return null;
   }
 }
 
+function numericStat(value: string | undefined): number {
+  if (!value || value.includes("/")) return 0;
+  const parsed = Number(value.replace(/,/g, "").replace(/[^\d.-]/g, ""));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function inferredPosition(group: string): string | null {
+  if (group === "passing") return "QB";
+  if (group === "rushing") return "RB";
+  if (group === "receiving") return "WR/TE";
+  return null;
+}
+
+function extractNflBoxscore(summary: EspnSummary | null, teamId: string): Map<string, { athlete: EspnAthlete; values: Map<string, number>; position: string | null }> {
+  const players = new Map<string, { athlete: EspnAthlete; values: Map<string, number>; position: string | null }>();
+  const team = summary?.boxscore?.players?.find((group) => group.team?.id === teamId);
+  for (const group of team?.statistics ?? []) {
+    const name = group.name ?? "";
+    if (!["passing", "rushing", "receiving"].includes(name)) continue;
+    const labels = group.labels ?? [];
+    for (const entry of group.athletes ?? []) {
+      const athlete = entry.athlete;
+      if (!athlete?.id || !athlete.displayName) continue;
+      const record = players.get(athlete.id) ?? { athlete, values: new Map<string, number>(), position: athlete.position?.abbreviation ?? inferredPosition(name) };
+      const stat = (label: string) => numericStat(entry.stats?.[labels.indexOf(label)]);
+      if (name === "passing") {
+        record.values.set("Passing yards", stat("YDS"));
+        record.values.set("Passing touchdowns", stat("TD"));
+      } else if (name === "rushing") {
+        record.values.set("Rushing yards", stat("YDS"));
+        record.values.set("Anytime touchdown", (record.values.get("Anytime touchdown") ?? 0) + stat("TD"));
+      } else if (name === "receiving") {
+        record.values.set("Receptions", stat("REC"));
+        record.values.set("Receiving yards", stat("YDS"));
+        record.values.set("Anytime touchdown", (record.values.get("Anytime touchdown") ?? 0) + stat("TD"));
+      }
+      players.set(athlete.id, record);
+    }
+  }
+  return players;
+}
+
+function eventHasTeam(event: EspnEvent, teamId: string): boolean {
+  return event.competitions?.[0]?.competitors?.some((team) => (team.id ?? team.team?.id) === teamId) ?? false;
+}
+
+function nflLine(market: string, average: number): { line: number; scale: number } {
+  if (market === "Passing yards") return { line: Math.max(174.5, Math.min(299.5, Math.round(average / 25) * 25 - 0.5)), scale: 70 };
+  if (market === "Rushing yards" || market === "Receiving yards") return { line: Math.max(19.5, Math.min(99.5, Math.round(average / 10) * 10 - 0.5)), scale: 32 };
+  if (market === "Receptions") return { line: Math.max(1.5, Math.min(7.5, Math.round(average) - 0.5)), scale: 2.5 };
+  if (market === "Passing touchdowns") return { line: average >= 2.25 ? 2.5 : 1.5, scale: 1.25 };
+  return { line: 0.5, scale: 0.75 };
+}
+
+async function teamForms(teamId: string, gameTime: string, events: EspnEvent[], summaries: Map<string, EspnSummary | null>): Promise<Map<string, NflPlayerForm>> {
+  const priorEvents = events
+    .filter((event) => event.id && event.date && event.date < gameTime && (event.status?.type?.completed || event.status?.type?.state === "post") && eventHasTeam(event, teamId))
+    .toSorted((a, b) => (a.date ?? "").localeCompare(b.date ?? ""))
+    .slice(-3);
+  const forms = new Map<string, NflPlayerForm>();
+  for (const event of priorEvents) {
+    if (!event.id) continue;
+    for (const [playerId, record] of extractNflBoxscore(summaries.get(event.id) ?? null, teamId)) {
+      const form = forms.get(playerId) ?? {
+        playerId,
+        playerName: record.athlete.displayName ?? record.athlete.fullName ?? "NFL player",
+        headshotUrl: record.athlete.headshot?.href ?? `https://a.espncdn.com/i/headshots/nfl/players/full/${playerId}.png`,
+        position: record.position,
+        values: new Map<string, number[]>()
+      };
+      for (const [market, value] of record.values) form.values.set(market, [...(form.values.get(market) ?? []), value]);
+      forms.set(playerId, form);
+    }
+  }
+  return forms;
+}
+
 async function getNflPlayerPicks(date: string, slateOverride?: TodayPredictionsResponse): Promise<Candidate[]> {
   const slate = slateOverride ?? await getNflPredictions(date);
-  const summaries = await Promise.all(slate.predictions.map(async (game) => [game, await fetchNflSummary(game.gameId)] as const));
+  const scheduled = slate.predictions.filter((game) => pickStatus(game.status, game.is_final) === "scheduled" && game.game_time_utc);
+  if (scheduled.length === 0) return [];
+  const season = Number(date.slice(0, 4)) - (Number(date.slice(5, 7)) < 3 ? 1 : 0);
+  const events = (await Promise.all([fetchNflSeason(season - 1), fetchNflSeason(season)])).flat();
+  const priorEventIds = new Set<string>();
+  for (const game of scheduled) {
+    for (const teamId of [String(game.homeTeam.id), String(game.awayTeam.id)]) {
+      events
+        .filter((event) => event.id && event.date && event.date < (game.game_time_utc ?? "") && (event.status?.type?.completed || event.status?.type?.state === "post") && eventHasTeam(event, teamId))
+        .toSorted((a, b) => (b.date ?? "").localeCompare(a.date ?? ""))
+        .slice(0, 3)
+        .forEach((event) => { if (event.id) priorEventIds.add(event.id); });
+    }
+  }
+  const summaries = new Map(await Promise.all([...priorEventIds].map(async (id) => [id, await fetchNflSummary(id)] as const)));
   const candidates: Candidate[] = [];
-  for (const [game, summary] of summaries) {
-    for (const teamGroup of summary?.leaders ?? []) {
-      const teamId = teamGroup.team?.id;
-      const isHome = teamId === String(game.homeTeam.id) || teamGroup.team?.displayName === game.home_team;
-      const team = isHome ? game.home_team : game.away_team;
-      const opponent = isHome ? game.away_team : game.home_team;
-      const probability = isHome ? game.pregame_home_win_probability : game.pregame_away_win_probability;
-      const record = isHome ? game.homeTeam.record : game.awayTeam.record;
-      const gamesPlayed = Math.max(1, record.split("-").map(Number).reduce((sum, value) => sum + (Number.isFinite(value) ? value : 0), 0));
-      for (const category of teamGroup.leaders ?? []) {
-        const config = nflMarket(`${category.name ?? ""} ${category.displayName ?? ""}`);
-        if (!config) continue;
-        for (const leader of category.leaders?.slice(0, 2) ?? []) {
-          if (!leader.athlete?.id || !leader.athlete.displayName) continue;
-          const seasonTotal = extractLeaderValue(leader);
-          const perGame = seasonTotal / gamesPlayed;
-          const projection = perGame * (0.9 + probability * 0.2);
-          const distance = (projection - config.line) / config.scale;
-          const overProbability = 1 / (1 + Math.exp(-distance));
-          const selection = overProbability >= 0.5 ? "Over" : "Under";
-          const confidence = Math.min(0.88, Math.max(0.51, Math.max(overProbability, 1 - overProbability)));
+  for (const game of scheduled) {
+    const sides = [
+      { teamId: String(game.homeTeam.id), team: game.home_team, opponent: game.away_team, probability: game.pregame_home_win_probability, record: game.homeTeam.record },
+      { teamId: String(game.awayTeam.id), team: game.away_team, opponent: game.home_team, probability: game.pregame_away_win_probability, record: game.awayTeam.record }
+    ];
+    for (const side of sides) {
+      const forms = await teamForms(side.teamId, game.game_time_utc!, events, summaries);
+      for (const form of forms.values()) {
+        for (const [market, values] of form.values) {
+          if (values.length === 0) continue;
+          const recentAverage = values.reduce((sum, value) => sum + value, 0) / values.length;
+          if (recentAverage <= 0 && market !== "Anytime touchdown") continue;
+          const projection = recentAverage * (0.94 + side.probability * 0.12);
+          const { line, scale } = nflLine(market, recentAverage);
+          const edge = projection - line;
+          const selection = edge >= 0 ? "Over" : "Under";
           candidates.push({
-            id: `nfl-${leader.athlete.id}-${config.market}`,
-            sport: "nfl",
-            playerId: leader.athlete.id,
-            playerName: leader.athlete.displayName,
-            position: leader.athlete.position?.abbreviation ?? null,
-            team,
-            opponent,
-            gameTime: game.game_time_utc,
-            market: config.market,
-            selection,
-            line: config.line,
-            projection: Number(projection.toFixed(1)),
-            confidence: Number(confidence.toFixed(4)),
-            supportingStats: [`${perGame.toFixed(1)} per game this season`, `${Math.round(probability * 100)}% team win chance`, `${record} team record`],
-            explanation: `${selection} ${config.line} ranks best after weighting season production, recent team form, home/away context, and the ${opponent} matchup.`
+            id: `nfl-${game.gameId}-${form.playerId}-${market.toLowerCase().replace(/\s/g, "-")}`,
+            sport: "nfl", gameId: game.gameId, playerId: form.playerId, playerName: form.playerName, headshotUrl: form.headshotUrl,
+            position: form.position, team: side.team, opponent: side.opponent, gameTime: game.game_time_utc, market, selection, line,
+            projection: Number(projection.toFixed(1)), confidence: confidenceFromEdge(edge, values.length, scale), modelEdge: Number(edge.toFixed(1)),
+            supportingStats: [
+              `${recentAverage.toFixed(1)} average over ${values.length} recent game${values.length === 1 ? "" : "s"}`,
+              `${values.at(-1)?.toFixed(1) ?? "0.0"} in the latest game`,
+              `${edge >= 0 ? "+" : ""}${edge.toFixed(1)} model edge vs line`,
+              `${Math.round(side.probability * 100)}% team win chance`, `${side.record} team record`
+            ],
+            explanation: `${selection} ${line} is the calibrated side after weighting the player’s last three available games, role continuity, team strength, and the ${side.opponent} matchup. Small samples are deliberately confidence-capped.`,
+            ...pendingFields("nfl-player-form-v2", values.length)
           });
         }
       }
     }
   }
-  const deduped = [...new Map(candidates.map((pick) => [pick.id, pick])).values()];
-  return diversify(deduped);
+  return diversify([...new Map(candidates.map((pick) => [pick.id, pick])).values()]);
 }
 
-function applyAccess(candidates: Candidate[], access: AccessState): PlayerPick[] {
+function rankCandidates(candidates: Candidate[]): PlayerPick[] {
   return candidates.map((candidate, index) => {
-    const locked = !access.isPro && index >= 5;
-    const base: PlayerPick = { ...candidate, rank: index + 1, is_locked: locked };
-    if (access.isPro) return base;
-    if (!locked) return { ...base, explanation: null, supportingStats: base.supportingStats.slice(0, 1) };
-    return { ...base, projection: null, confidence: null, supportingStats: [], explanation: null, playerName: "Pro player pick", selection: "Over" };
+    const ranked = {
+      ...candidate,
+      rank: index + 1,
+      isTopFive: index < TOP_PLAYER_PICK_COUNT,
+      is_locked: false
+    } as PlayerPick & Pick<Candidate, "recentRate" | "seasonRate" | "group">;
+    delete ranked.recentRate;
+    delete ranked.seasonRate;
+    delete ranked.group;
+    return ranked;
   });
 }
 
-export async function getPlayerPicks(sport: Sport, date: string, access: AccessState, slate?: TodayPredictionsResponse): Promise<PlayerPicksResponse> {
-  const candidates = sport === "nfl" ? await getNflPlayerPicks(date, slate) : await getMlbPlayerPicks(date, slate);
-  return { sport, date, updatedAt: new Date().toISOString(), isPro: access.isPro, picks: applyAccess(candidates, access) };
+async function fetchMlbBoxscore(gameId: string): Promise<MlbBoxscore | null> {
+  try {
+    const response = await fetch(`${MLB_API}/game/${encodeURIComponent(gameId)}/boxscore`, { cache: "no-store", headers: { Accept: "application/json" } });
+    return response.ok ? await response.json() as MlbBoxscore : null;
+  } catch {
+    return null;
+  }
+}
+
+function mlbActualValue(boxscore: MlbBoxscore | null, playerId: string, market: string): { value: number | null; didPlay: boolean } {
+  const players = { ...(boxscore?.teams?.away?.players ?? {}), ...(boxscore?.teams?.home?.players ?? {}) };
+  const player = Object.values(players).find((entry) => String(entry.person?.id ?? "") === playerId);
+  if (!player) return { value: null, didPlay: false };
+  const battingKeys: Record<string, string> = { Hits: "hits", "Total bases": "totalBases", "Home runs": "homeRuns", RBIs: "rbi" };
+  const key = battingKeys[market];
+  if (key) return { value: numberValue(player.stats?.batting, key), didPlay: Boolean(player.stats?.batting) };
+  if (market === "Strikeouts") return { value: numberValue(player.stats?.pitching, "strikeOuts"), didPlay: Boolean(player.stats?.pitching) };
+  return { value: null, didPlay: false };
+}
+
+async function enrichLiveResults(picks: PlayerPick[], slate: TodayPredictionsResponse): Promise<PlayerPick[]> {
+  const games = new Map(slate.predictions.map((game) => [game.gameId, game]));
+  const activeGameIds = [...new Set(picks.map((pick) => pick.gameId).filter((gameId) => {
+    const game = games.get(gameId);
+    return game && pickStatus(game.status, game.is_final) !== "scheduled";
+  }))];
+  const mlbBoxes = new Map<string, MlbBoxscore | null>();
+  const nflBoxes = new Map<string, EspnSummary | null>();
+  await Promise.all(activeGameIds.map(async (gameId) => {
+    if (slate.sport === "mlb") mlbBoxes.set(gameId, await fetchMlbBoxscore(gameId));
+    else nflBoxes.set(gameId, await fetchNflSummary(gameId));
+  }));
+  const now = new Date().toISOString();
+  return picks.map((pick) => {
+    const game = games.get(pick.gameId);
+    if (!game) return pick;
+    const status = pickStatus(game.status, game.is_final);
+    const statusLabel = game.inning ?? game.status;
+    if (status === "scheduled") return { ...pick, status, statusLabel };
+    let actual: { value: number | null; didPlay: boolean } = { value: null, didPlay: false };
+    if (pick.sport === "mlb") actual = mlbActualValue(mlbBoxes.get(pick.gameId) ?? null, pick.playerId, pick.market);
+    else {
+      const teamId = pick.team === game.home_team ? String(game.homeTeam.id) : String(game.awayTeam.id);
+      const record = extractNflBoxscore(nflBoxes.get(pick.gameId) ?? null, teamId).get(pick.playerId);
+      actual = { value: record?.values.get(pick.market) ?? null, didPlay: Boolean(record?.values.has(pick.market)) };
+    }
+    return {
+      ...pick, status, statusLabel, actualValue: actual.value,
+      result: gradePlayerPick(pick.selection, pick.line, actual.value, status, actual.didPlay),
+      resultUpdatedAt: now
+    };
+  });
+}
+
+export async function getPlayerPicks(sport: Sport, date: string, access: AccessState, slateOverride?: TodayPredictionsResponse): Promise<PlayerPicksResponse> {
+  const slate = slateOverride ?? (sport === "nfl" ? await getNflPredictions(date) : await getPredictions(date));
+  let picks = await loadPlayerPickSnapshots(sport, date);
+  if (!picks?.length) {
+    const candidates = sport === "nfl" ? await getNflPlayerPicks(date, slate) : await getMlbPlayerPicks(date, slate);
+    picks = await storeInitialPlayerPicks(date, rankCandidates(candidates));
+  }
+  picks = await enrichLiveResults(picks, slate);
+  if (picks.some((pick) => pick.status !== "scheduled")) await updatePlayerPickResults(date, picks);
+  const storedResults = await loadRecentPlayerPickResults(sport);
+  const performanceSource = storedResults ?? picks.filter((pick) => pick.result !== "pending");
+  return {
+    sport, date, updatedAt: new Date().toISOString(), isPro: access.isPro, tier: access.tier,
+    totalPicks: picks.length, topFiveCount: Math.min(TOP_PLAYER_PICK_COUNT, picks.length), freePreviewCount: FREE_PLAYER_PICK_COUNT,
+    hasLiveGames: picks.some((pick) => pick.status === "live"), performance: calculatePerformance(performanceSource),
+    recentResults: applyResultAccess(performanceSource, access.isPro, 24), picks: applyPlayerPickAccess(picks, access.isPro)
+  };
 }

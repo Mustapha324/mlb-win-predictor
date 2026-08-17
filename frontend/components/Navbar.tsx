@@ -10,7 +10,9 @@ export function Navbar() {
   const sport = sportFromPath(pathname);
   const config = SPORTS[sport];
   const navigationItems = [
-    { href: config.homeHref, label: sport === "mlb" ? "Today" : "Week" },
+    { href: config.homeHref, label: "Home" },
+    { href: `${config.homeHref}#player-picks`, label: "Player Picks" },
+    { href: `${config.homeHref}#team-picks`, label: "Team Picks" },
     { href: config.historyHref, label: "Results" },
     { href: config.metricsHref, label: "Model" }
   ];
@@ -59,7 +61,7 @@ export function Navbar() {
         <div className="flex gap-1">
           {(["mlb", "nfl"] as const).map((item) => <Link key={item} href={SPORTS[item].homeHref} className={`rounded-lg px-3 py-1.5 text-[10px] font-black ${sport === item ? item === "mlb" ? "bg-cyan-300 text-black" : "bg-lime-300 text-black" : "text-neutral-500"}`}>{SPORTS[item].shortName}</Link>)}
         </div>
-        <div className="flex gap-1">{navigationItems.map((item) => <Link key={item.href} href={item.href} className="px-2 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-neutral-500">{item.label}</Link>)}</div>
+        <div className="flex gap-1">{navigationItems.slice(1, 4).map((item) => <Link key={item.href} href={item.href} className="px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-neutral-500">{item.label}</Link>)}</div>
       </div>
     </header>
   );

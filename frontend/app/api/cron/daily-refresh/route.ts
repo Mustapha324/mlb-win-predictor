@@ -5,6 +5,7 @@ import { getPlayerPicks } from "@/lib/server/playerPicks";
 import { preservePregameSnapshots } from "@/lib/server/predictionSnapshots";
 import { recordModelRefresh } from "@/lib/server/modelRefresh";
 import type { Sport } from "@/lib/sports";
+import { hasValidBearer } from "@/lib/server/requestSecurity";
 
 export const maxDuration = 60;
 
@@ -34,8 +35,7 @@ async function refreshSport(sport: Sport) {
 }
 
 export async function GET(request: Request): Promise<Response> {
-  const secret = process.env.CRON_SECRET;
-  if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  if (!hasValidBearer(request, process.env.CRON_SECRET)) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const results = await Promise.all([refreshSport("mlb"), refreshSport("nfl")]);
   const ok = results.every((result) => result.ok);
   return Response.json({ ok, ranAt: new Date().toISOString(), results }, { status: ok ? 200 : 207 });

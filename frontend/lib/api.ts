@@ -122,8 +122,10 @@ export type PlayerPick = {
   id: string;
   sport: Sport;
   rank: number;
+  gameId: string;
   playerId: string;
   playerName: string;
+  headshotUrl: string | null;
   position: string | null;
   team: string;
   opponent: string;
@@ -135,7 +137,29 @@ export type PlayerPick = {
   confidence: number | null;
   supportingStats: string[];
   explanation: string | null;
+  modelVersion: string;
+  modelEdge: number | null;
+  sampleSize: number;
+  status: "scheduled" | "live" | "final" | "postponed";
+  statusLabel: string;
+  actualValue: number | null;
+  result: "pending" | "correct" | "incorrect" | "push" | "void";
+  resultUpdatedAt: string | null;
+  isTopFive: boolean;
   is_locked: boolean;
+};
+
+export type PlayerPickPerformance = {
+  graded: number;
+  correct: number;
+  incorrect: number;
+  pushes: number;
+  voids: number;
+  accuracy: number | null;
+  topFiveGraded: number;
+  topFiveCorrect: number;
+  topFiveAccuracy: number | null;
+  byMarket: Array<{ market: string; graded: number; correct: number; accuracy: number }>;
 };
 
 export type PlayerPicksResponse = {
@@ -143,6 +167,13 @@ export type PlayerPicksResponse = {
   date: string;
   updatedAt: string;
   isPro: boolean;
+  tier: "free" | "pro" | "friends_family";
+  totalPicks: number;
+  topFiveCount: number;
+  freePreviewCount: number;
+  hasLiveGames: boolean;
+  performance: PlayerPickPerformance;
+  recentResults: PlayerPick[];
   picks: PlayerPick[];
 };
 
