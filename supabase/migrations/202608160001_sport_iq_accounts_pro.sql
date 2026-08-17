@@ -115,7 +115,7 @@ begin
   if v_user is null then
     return jsonb_build_object('ok', false, 'message', 'Sign in before redeeming a code.');
   end if;
-  v_hash := encode(digest(upper(trim(p_code)), 'sha256'), 'hex');
+  v_hash := encode(extensions.digest(upper(trim(p_code)), 'sha256'), 'hex');
   select * into v_code from public.promo_codes where code_hash = v_hash for update;
   if v_code.id is null then
     return jsonb_build_object('ok', false, 'message', 'That invite code is invalid.');
