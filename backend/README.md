@@ -1,4 +1,4 @@
-# Backend (FastAPI)
+# Sport IQ research backend (FastAPI)
 
 ## Run locally
 
@@ -43,3 +43,13 @@ You can also run retraining manually from `backend/`:
 ```bash
 python -c "from datetime import date; from app.services.training_pipeline import run_training_pipeline; print(run_training_pipeline(start_date=date(2026,4,10), end_date=date(2026,4,10)))"
 ```
+
+## NFL team and player models
+
+NFL is kept separate from MLB under `app/services/nfl/`. The dataset builder creates shifted, pregame-only rolling features for team form, scoring, passing/rushing, turnovers, sacks, third-down/red-zone rates, rest, strength of schedule, home/away performance, QB EPA, and head-to-head history. Player features include recent and career-vs-opponent passing, rushing, receiving, touchdown, interception, completion, target, and reception history.
+
+```bash
+python scripts/build_nfl_dataset.py --team-games path/to/team_games.csv --player-games path/to/player_games.csv --start-season 2006 --end-season 2025
+```
+
+All 20 complete seasons from 2006–2025 are required; the builder stops if either source is missing a season. The newest season is reserved as a chronological holdout. Game outputs include calibrated accuracy, Brier score, and log loss; player projection outputs include per-market MAE.

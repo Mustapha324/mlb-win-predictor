@@ -11,7 +11,7 @@ load_dotenv()
 class AppSettings:
     """Runtime settings loaded from environment variables."""
 
-    app_name: str = os.getenv("APP_NAME", "MLB Win Predictor API")
+    app_name: str = os.getenv("APP_NAME", "Sport IQ API")
     api_prefix: str = os.getenv("API_PREFIX", "/api")
     model_path: str = os.getenv(
         "MODEL_PATH",

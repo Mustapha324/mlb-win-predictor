@@ -1,4 +1,4 @@
-# MLB Win Predictor - Architecture Extension Notes
+# Sport IQ MLB Pipeline - Architecture Extension Notes
 
 This document records intentional extension points that are now present in the codebase.
 
