@@ -1,11 +1,23 @@
 import { getDefaultPredictionDate, getPredictions } from "@/lib/server/mlbModel";
+import { getDefaultNflDate, getNflPredictions } from "@/lib/server/nflModel";
+import { getServerAccess } from "@/lib/server/access";
+import { applyPredictionEntitlements } from "@/lib/server/entitlements";
+import { preservePregameSnapshots } from "@/lib/server/predictionSnapshots";
 
 export async function GET(request: Request): Promise<Response> {
-  const date = new URL(request.url).searchParams.get("date") ?? getDefaultPredictionDate();
+  const searchParams = new URL(request.url).searchParams;
+  const sport = searchParams.get("sport") === "nfl" ? "nfl" : "mlb";
+  const date = searchParams.get("date") ?? (sport === "nfl" ? getDefaultNflDate() : getDefaultPredictionDate());
   try {
-    return Response.json(await getPredictions(date), { headers: { "Cache-Control": "public, max-age=300" } });
+    const [predictions, access] = await Promise.all([
+      sport === "nfl" ? getNflPredictions(date) : getPredictions(date),
+      getServerAccess()
+    ]);
+    return Response.json(applyPredictionEntitlements(await preservePregameSnapshots(predictions), access), {
+      headers: { "Cache-Control": "private, no-store", Vary: "Cookie" }
+    });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to load MLB predictions.";
+    const message = error instanceof Error ? error.message : "Unable to load predictions.";
     return Response.json({ error: message }, { status: 503 });
   }
 }

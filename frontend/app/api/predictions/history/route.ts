@@ -1,9 +1,12 @@
 import { getRecentHistory } from "@/lib/server/mlbModel";
+import { getNflHistory } from "@/lib/server/nflModel";
 
 export async function GET(request: Request): Promise<Response> {
   const requestedLimit = Number(new URL(request.url).searchParams.get("limit") ?? 60);
+  const sport = new URL(request.url).searchParams.get("sport") === "nfl" ? "nfl" : "mlb";
   try {
-    return Response.json(await getRecentHistory(Number.isFinite(requestedLimit) ? requestedLimit : 60), {
+    const limit = Number.isFinite(requestedLimit) ? requestedLimit : 60;
+    return Response.json(sport === "nfl" ? await getNflHistory(limit) : await getRecentHistory(limit), {
       headers: { "Cache-Control": "public, max-age=900" }
     });
   } catch (error) {

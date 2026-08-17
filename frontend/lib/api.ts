@@ -1,4 +1,5 @@
 import { apiUrl } from "@/lib/apiConfig";
+import type { Sport } from "@/lib/sports";
 
 export type TeamIdentity = {
   id: number;
@@ -10,9 +11,12 @@ export type TeamIdentity = {
 };
 
 export type TeamPrediction = {
+  is_locked?: boolean;
+  sport: Sport;
   game_id: string;
   gameId: string;
   date: string;
+  week?: number | null;
   home_team: string;
   away_team: string;
   homeTeam: TeamIdentity;
@@ -26,8 +30,28 @@ export type TeamPrediction = {
   home_probable_pitcher: string | null;
   away_probable_pitcher: string | null;
   predicted_winner: string;
+  pregame_predicted_winner: string;
   home_win_probability: number;
   away_win_probability: number;
+  pregame_home_win_probability: number;
+  pregame_away_win_probability: number;
+  live_home_win_probability: number | null;
+  live_away_win_probability: number | null;
+  live_favorite: string | null;
+  live_probability_source: string | null;
+  live_updated_at: string | null;
+  live_market: {
+    homeWinProbability: number;
+    awayWinProbability: number;
+    homeAmericanOdds: number;
+    awayAmericanOdds: number;
+    favorite: string;
+    source: string;
+    books: number;
+    updatedAt: string;
+  } | null;
+  actual_winner: string | null;
+  is_final: boolean;
   prediction_source: string;
   confidence: "Lean" | "Edge" | "Strong";
   factors: string[];
@@ -36,14 +60,20 @@ export type TeamPrediction = {
 };
 
 export type TodayPredictionsResponse = {
+  sport: Sport;
   date: string;
+  slate_label: string;
   data_through: string;
   model_version: string;
   games_trained: number;
+  updated_at: string;
+  live_updates: boolean;
+  access?: { authenticated: boolean; isPro: boolean; tier: "free" | "pro" | "friends_family" };
   predictions: TeamPrediction[];
 };
 
 export type ModelMetricsResponse = {
+  sport?: Sport;
   available: boolean;
   status: string;
   message: string | null;
@@ -63,9 +93,18 @@ export type ModelMetricsResponse = {
   seasons: number[];
   description: string;
   features: string[];
+  refresh?: {
+    schedule: string;
+    mode: string;
+    lastRunAt: string | null;
+    status: string;
+    gamesRefreshed: number | null;
+    playerPicksRefreshed: number | null;
+  };
 };
 
 export type PredictionHistoryItem = {
+  sport?: Sport;
   gameId: string;
   date: string;
   awayTeam: TeamIdentity;
@@ -77,6 +116,34 @@ export type PredictionHistoryItem = {
   wasCorrect: boolean;
   awayScore: number;
   homeScore: number;
+};
+
+export type PlayerPick = {
+  id: string;
+  sport: Sport;
+  rank: number;
+  playerId: string;
+  playerName: string;
+  position: string | null;
+  team: string;
+  opponent: string;
+  gameTime: string | null;
+  market: string;
+  selection: "Over" | "Under";
+  line: number;
+  projection: number | null;
+  confidence: number | null;
+  supportingStats: string[];
+  explanation: string | null;
+  is_locked: boolean;
+};
+
+export type PlayerPicksResponse = {
+  sport: Sport;
+  date: string;
+  updatedAt: string;
+  isPro: boolean;
+  picks: PlayerPick[];
 };
 
 export class ApiError extends Error {
@@ -111,20 +178,31 @@ async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
-export function getTodayPredictions(date?: string): Promise<TodayPredictionsResponse> {
-  return fetchJson<TodayPredictionsResponse>(`/predictions/today${date ? `?date=${encodeURIComponent(date)}` : ""}`);
+function withQuery(path: string, values: Record<string, string | number | undefined>): string {
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(values)) if (value !== undefined) query.set(key, String(value));
+  const suffix = query.toString();
+  return suffix ? `${path}?${suffix}` : path;
 }
 
-export function getModelMetrics(): Promise<ModelMetricsResponse> {
-  return fetchJson<ModelMetricsResponse>("/metrics");
+export function getTodayPredictions(date?: string, sport: Sport = "mlb"): Promise<TodayPredictionsResponse> {
+  return fetchJson<TodayPredictionsResponse>(withQuery("/predictions/today", { date, sport }));
 }
 
-export function getPredictionHistory(limit = 80): Promise<PredictionHistoryItem[]> {
-  return fetchJson<PredictionHistoryItem[]>(`/predictions/history?limit=${limit}`);
+export function getModelMetrics(sport: Sport = "mlb"): Promise<ModelMetricsResponse> {
+  return fetchJson<ModelMetricsResponse>(withQuery("/metrics", { sport }));
 }
 
-export function getGamePrediction(gameId: string): Promise<TeamPrediction> {
-  return fetchJson<TeamPrediction>(`/games/${encodeURIComponent(gameId)}`);
+export function getPredictionHistory(limit = 80, sport: Sport = "mlb"): Promise<PredictionHistoryItem[]> {
+  return fetchJson<PredictionHistoryItem[]>(withQuery("/predictions/history", { limit, sport }));
+}
+
+export function getGamePrediction(gameId: string, sport: Sport = "mlb"): Promise<TeamPrediction> {
+  return fetchJson<TeamPrediction>(withQuery(`/games/${encodeURIComponent(gameId)}`, { sport }));
+}
+
+export function getPlayerPicks(date?: string, sport: Sport = "mlb"): Promise<PlayerPicksResponse> {
+  return fetchJson<PlayerPicksResponse>(withQuery("/player-picks", { date, sport }));
 }
 
 export function getErrorMessage(error: unknown, fallbackMessage: string): string {
