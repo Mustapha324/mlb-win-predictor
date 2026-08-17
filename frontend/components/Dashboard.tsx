@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GameCard } from "@/components/GameCard";
 import { PlayerPicksSection } from "@/components/PlayerPicksSection";
 import { getErrorMessage, getTodayPredictions, type TodayPredictionsResponse } from "@/lib/api";
@@ -38,17 +38,22 @@ export function Dashboard({ sport }: { sport: Sport }) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestId = useRef(0);
 
   const load = useCallback(async (silent = false) => {
+    const currentRequest = ++requestId.current;
     try {
       if (silent) setRefreshing(true); else setLoading(true);
       setError(null);
-      setData(await getTodayPredictions(date, sport));
+      const result = await getTodayPredictions(date, sport);
+      if (currentRequest === requestId.current) setData(result);
     } catch (requestError) {
-      setError(getErrorMessage(requestError, `Unable to load the ${config.shortName} slate.`));
+      if (currentRequest === requestId.current) setError(getErrorMessage(requestError, `Unable to load the ${config.shortName} slate.`));
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (currentRequest === requestId.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
   }, [config.shortName, date, sport]);
 
@@ -95,8 +100,8 @@ export function Dashboard({ sport }: { sport: Sport }) {
           </div>
           <div className="min-w-[290px] rounded-2xl border border-white/[0.09] bg-white/[0.025] p-4">
             <div className="flex items-center justify-between"><p className="eyebrow">Your access</p><span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.13em] ${isPro ? "bg-lime-300 text-black" : "bg-white/[0.07] text-neutral-400"}`}>{isPro ? "Pro" : "Free preview"}</span></div>
-            <p className="mt-4 text-sm font-bold text-white">{isPro ? "Full slate + live updates" : "Half the slate · pregame only"}</p>
-            <p className="mt-2 text-xs leading-5 text-neutral-600">{isPro ? "Live games refresh every 30 seconds without changing the pregame call." : "Upgrade to reveal every pick, live movement, and the full model breakdown."}</p>
+            <p className="mt-4 text-sm font-bold text-white">{isPro ? "Full player + team boards" : "5 player samples + team preview"}</p>
+            <p className="mt-2 text-xs leading-5 text-neutral-600">{isPro ? "Every player pick, team pick, and live result refreshes without changing the pregame call." : "Your player samples come from below today’s premium top five."}</p>
             {!isPro ? <Link href="/pro" className="mt-4 inline-flex text-[10px] font-black uppercase tracking-[0.13em] text-lime-300">Unlock Pro for $3.99 →</Link> : null}
           </div>
         </div>
@@ -119,7 +124,12 @@ export function Dashboard({ sport }: { sport: Sport }) {
 
       <PlayerPicksSection sport={sport} date={date} />
 
-      {loading ? <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{[0,1,2,3,4,5].map((item) => <div key={item} className="h-[520px] animate-pulse rounded-[24px] border border-white/[0.07] bg-white/[0.025]" />)}</section> : null}
+      <section id="team-picks" className="mt-10 scroll-mt-28 border-t border-white/[0.08] pt-8" aria-labelledby={`${sport}-team-picks-heading`}>
+        <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${accent}`}>{sport.toUpperCase()} game model</p>
+        <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between"><div><h2 id={`${sport}-team-picks-heading`} className="text-3xl font-black tracking-[-0.045em] text-white sm:text-4xl">Team Picks</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-neutral-500">Pregame winner probabilities, live movement, market context, and verified final outcomes for the full game slate.</p></div><span className="text-[10px] font-bold uppercase tracking-[0.12em] text-neutral-600">Original picks stay locked</span></div>
+      </section>
+
+      {loading ? <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-label="Loading team picks">{[0,1,2,3,4,5].map((item) => <div key={item} className="h-[520px] animate-pulse rounded-[24px] border border-white/[0.07] bg-white/[0.025]" />)}</section> : null}
       {error && !loading ? <section className="mt-6 rounded-[22px] border border-rose-300/20 bg-rose-300/[0.06] p-6"><p className="font-bold text-rose-100">{error}</p><button type="button" onClick={() => void load()} className="mt-4 rounded-xl bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-black">Try again</button></section> : null}
       {!loading && !error && visibleGames.length > 0 ? <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">{visibleGames.map((game) => <GameCard key={game.gameId} game={game} />)}</section> : null}
       {!loading && !error && visibleGames.length === 0 ? <section className="mt-6 rounded-[24px] border border-dashed border-white/[0.12] bg-white/[0.02] p-10 text-center"><p className="text-lg font-black text-white">No games match this view.</p><p className="mt-2 text-sm text-neutral-500">Try another filter or move to the next game date.</p></section> : null}
