@@ -47,6 +47,7 @@ const OUT_DIR = path.join(here, "..", "..", "docs", "backtests");
 const REFRESH = process.argv.includes("--refresh");
 const EXPERIMENT = process.argv.includes("--experiment");
 const FROZEN = process.argv.includes("--frozen"); // evaluate current production weights with tuning disabled
+const FACEOFF = process.argv.includes("--faceoff"); // deployed GitHub models vs the new model, head to head
 const SPORT_ARG = process.argv.find((arg) => ["mlb", "nfl", "all"].includes(arg)) ?? "all";
 const TODAY = "2026-08-24";
 
@@ -224,7 +225,7 @@ function teamState() {
 }
 
 function buildFeatures(games, options) {
-  const { sport, ilIntervals, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
+  const { sport, ilIntervals, churnEvents, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
   const teams = new Map();
   const stateOf = (id) => teams.get(id) ?? teams.set(id, teamState()).get(id);
   const starters = new Map();
@@ -269,6 +270,7 @@ function buildFeatures(games, options) {
       const homeStarter = game.homeStarterId ? starterAvg(game.homeStarterId) : null;
       const awayStarter = game.awayStarterId ? starterAvg(game.awayStarterId) : null;
       game.pitcherFormGap = homeStarter !== null && awayStarter !== null ? Number((awayStarter - homeStarter).toFixed(3)) : undefined;
+      game.rosterChurnGap = churnEvents ? churnCount(churnEvents, game.awayId, game.date) - churnCount(churnEvents, game.homeId, game.date) : undefined;
     } else {
       game.homeBurden = 0;
       game.awayBurden = 0;
@@ -311,6 +313,39 @@ function ilEntries(intervals, teamId, date) {
   return intervals
     .filter((interval) => interval.teamId === teamId && interval.date <= date && date < interval.end)
     .map((interval) => ({ position: interval.pitcher ? "P" : "OF", status: "il_short" }));
+}
+
+/** Roster-disruption events (trades/claims/releases/selections/DFAs) per MLB club — the archivable "news wire". */
+async function mlbChurnEvents(seasons) {
+  const byTeam = new Map();
+  const churnTypes = /trade|claimed|released|selected|designated/i;
+  for (const season of seasons) {
+    for (let month = 2; month <= 10; month += 1) {
+      const start = `${season}-${String(month + 1).padStart(2, "0")}-01`;
+      const end = month === 10 ? `${season}-11-15` : `${season}-${String(month + 2).padStart(2, "0")}-01`;
+      let payload;
+      try {
+        payload = await cachedJson(`mlb-tx-${season}-${month}`, `https://statsapi.mlb.com/api/v1/transactions?startDate=${start}&endDate=${end}`);
+      } catch {
+        continue;
+      }
+      for (const tx of payload.transactions ?? []) {
+        const teamId = tx.toTeam?.id;
+        const date = tx.effectiveDate ?? tx.date;
+        if (!teamId || teamId > 160 || !date || !churnTypes.test(tx.typeDesc ?? "")) continue;
+        const dates = byTeam.get(teamId) ?? [];
+        dates.push(date);
+        byTeam.set(teamId, dates);
+      }
+    }
+  }
+  for (const dates of byTeam.values()) dates.sort();
+  return byTeam;
+}
+
+function churnCount(byTeam, teamId, date) {
+  const cutoff = new Date(`${date}T12:00:00Z`).getTime() - 14 * 86400000;
+  return (byTeam.get(teamId) ?? []).filter((d) => d < date && new Date(`${d}T12:00:00Z`).getTime() >= cutoff).length;
 }
 
 // ---------------------------------------------------------------------------
@@ -358,6 +393,7 @@ function gameInputs(sport, game, baselineLogit) {
     pythagGap: game.pythagGap,
     densityGap: game.densityGap,
     pitcherFormGap: game.pitcherFormGap,
+    rosterChurnGap: game.rosterChurnGap,
     divisionGame: game.divisionGame,
     baselineLogit,
     homeOffBye: game.homeOffBye,
@@ -505,7 +541,8 @@ const TUNABLE_BOUNDS = {
     homeSplit: { min: 0, max: 0.6, delta: 0.05 },
     pythag: { min: 0, max: 1.2, delta: 0.1 },
     density: { min: 0, max: 0.06, delta: 0.008 },
-    pitcherForm: { min: 0, max: 0.12, delta: 0.012 }
+    pitcherForm: { min: 0, max: 0.12, delta: 0.012 },
+    rosterChurn: { min: 0, max: 0.08, delta: 0.008 }
   },
   nfl: {
     formWinRate: { min: 0, max: 0.35, delta: 0.03 },
@@ -525,7 +562,7 @@ const BASE_TUNABLES = {
 };
 
 const CANDIDATES = {
-  mlb: ["pitcherForm", "scoringForm", "homeSplit", "pythag", "density"],
+  mlb: ["pitcherForm", "scoringForm", "homeSplit", "pythag", "density", "rosterChurn"],
   nfl: ["scoringForm", "homeSplit", "pythag", "divisionDamp", "bye"]
 };
 
@@ -546,7 +583,7 @@ async function loadMlb() {
   const seasons = [2021, 2022, 2023, 2024, 2025, 2026];
   const bySeason = new Map();
   for (const season of seasons) bySeason.set(season, await mlbSeasonGames(season, season === 2026 ? TODAY : undefined));
-  const [venues, intervals] = await Promise.all([mlbVenueInfo(), mlbIlTimeline([2022, 2023, 2024, 2025, 2026])]);
+  const [venues, intervals, churnEvents] = await Promise.all([mlbVenueInfo(), mlbIlTimeline([2022, 2023, 2024, 2025, 2026]), mlbChurnEvents([2022, 2023, 2024, 2025, 2026])]);
   const evalGames = [2022, 2023, 2024, 2025, 2026].flatMap((season) => bySeason.get(season));
   const outdoorIds = [...new Set(evalGames.map((game) => game.venueId).filter(Boolean))].filter((id) => venues.get(id)?.open && venues.get(id)?.lat);
   const archives = new Map();
@@ -563,6 +600,7 @@ async function loadMlb() {
   buildFeatures(all, {
     sport: "mlb",
     ilIntervals: intervals,
+    churnEvents,
     weatherFor: (game) => weatherAt(archives.get(`${game.venueId}-${game.season}`), game.timeUtc),
     marginWindow: 15,
     pythagExponent: 1.83,
@@ -675,6 +713,187 @@ const summaryRow = (stats) => ({
   brainLogLoss: Number(stats.brainLogLoss.toFixed(5)),
   baseLogLoss: Number(stats.baseLogLoss.toFixed(5))
 });
+
+// ---------------------------------------------------------------------------
+// Faceoff: faithful replays of the deployed GitHub models vs the new model
+// ---------------------------------------------------------------------------
+
+/**
+ * Deployed MLB model ("diamond-elo-v4", mlbModel.ts): Elo (k=12, HA=20,
+ * margin mult min(1.75, 1+log1p(m)/5)) feeding a pretrained standardized
+ * logistic over [eloLogit, W% gap, last-10 gap, runDiff/g gap, home/road
+ * split gap], clamped [0.2, 0.8]; ratings update on the logistic probability.
+ * The live pitcher ERA/WHIP adjustment is approximated with the same
+ * runs-allowed-per-start proxy the brain uses (ERA ≈ RA/start × 0.92 × 9/5.5,
+ * WHIP neutral) — disclosed in the report. NOTE: its logistic weights were
+ * trained through 2025-09-28, so 2022–2025 replays are in-sample FOR IT; the
+ * 2026 holdout is the only window that is out-of-sample for both models.
+ */
+function mlbGithubReplayer() {
+  const snapshot = JSON.parse(fs.readFileSync(path.join(here, "..", "data", "model-snapshot.json"), "utf8"));
+  const hyper = snapshot.hyperparameters;
+  const portable = snapshot.portable_model;
+  const ratings = new Map();
+  const states = new Map();
+  const pitchers = new Map();
+  let currentSeason = null;
+  const ratingOf = (id) => ratings.get(id) ?? 1500;
+  const stateOf = (id) => states.get(id) ?? { games: 0, wins: 0, runDiff: 0, homeGames: 0, homeWins: 0, awayGames: 0, awayWins: 0, recent: [] };
+  const rateOr = (n, d, f = 0.5) => (d ? n / d : f);
+  return {
+    probability(game) {
+      if (game.season !== currentSeason) {
+        for (const [id, rating] of ratings) ratings.set(id, 1500 + (rating - 1500) * (1 - hyper.season_regression));
+        states.clear();
+        pitchers.clear();
+        currentSeason = game.season;
+      }
+      const home = stateOf(game.homeId);
+      const away = stateOf(game.awayId);
+      const elo = 1 / (1 + 10 ** (-(ratingOf(game.homeId) + hyper.home_advantage - ratingOf(game.awayId)) / 400));
+      const features = [
+        Math.log(elo / (1 - elo)),
+        rateOr(home.wins, home.games) - rateOr(away.wins, away.games),
+        rateOr(home.recent.reduce((sum, value) => sum + value, 0), home.recent.length) - rateOr(away.recent.reduce((sum, value) => sum + value, 0), away.recent.length),
+        rateOr(home.runDiff, home.games, 0) - rateOr(away.runDiff, away.games, 0),
+        rateOr(home.homeWins, home.homeGames) - rateOr(away.awayWins, away.awayGames)
+      ];
+      const standardized = features.map((value, index) => (value - portable.means[index]) / portable.scales[index]);
+      const score = portable.weights[0] + standardized.reduce((sum, value, index) => sum + value * portable.weights[index + 1], 0);
+      const forUpdate = Math.max(0.2, Math.min(0.8, 1 / (1 + Math.exp(-Math.max(-30, Math.min(30, score))))));
+      let display = forUpdate;
+      const homePitcher = game.homeStarterId ? pitchers.get(game.homeStarterId) : null;
+      const awayPitcher = game.awayStarterId ? pitchers.get(game.awayStarterId) : null;
+      if (homePitcher?.runs.length >= 3 && awayPitcher?.runs.length >= 3) {
+        const eraProxy = (record) => (record.runs.reduce((sum, value) => sum + value, 0) / record.runs.length) * 0.92 * (9 / 5.5);
+        const reliability = Math.min(1, (Math.min(homePitcher.starts, awayPitcher.starts) * 5.5) / 45);
+        const adjustment = (eraProxy(awayPitcher) - eraProxy(homePitcher)) * 0.045 * reliability;
+        const logit = Math.log(display / (1 - display)) + adjustment;
+        display = Math.max(0.2, Math.min(0.8, 1 / (1 + Math.exp(-logit))));
+      }
+      return { display, forUpdate };
+    },
+    update(game, forUpdate) {
+      const homeWon = Number(game.homeWon);
+      const multiplier = Math.min(1.75, 1 + Math.log1p(game.margin) / 5);
+      const change = hyper.k_factor * multiplier * (homeWon - forUpdate);
+      ratings.set(game.homeId, ratingOf(game.homeId) + change);
+      ratings.set(game.awayId, ratingOf(game.awayId) - change);
+      const home = stateOf(game.homeId);
+      const away = stateOf(game.awayId);
+      home.games += 1;
+      home.wins += homeWon;
+      home.runDiff += game.homeScore - game.awayScore;
+      home.recent = [...home.recent.slice(-9), homeWon];
+      home.homeGames += 1;
+      home.homeWins += homeWon;
+      away.games += 1;
+      away.wins += 1 - homeWon;
+      away.runDiff += game.awayScore - game.homeScore;
+      away.recent = [...away.recent.slice(-9), 1 - homeWon];
+      away.awayGames += 1;
+      away.awayWins += 1 - homeWon;
+      states.set(game.homeId, home);
+      states.set(game.awayId, away);
+      for (const [pitcherId, runsAgainst] of [[game.homeStarterId, game.awayScore], [game.awayStarterId, game.homeScore]]) {
+        if (!pitcherId) continue;
+        const record = pitchers.get(pitcherId) ?? { runs: [], starts: 0 };
+        record.runs = [...record.runs, runsAgainst].slice(-8);
+        record.starts += 1;
+        pitchers.set(pitcherId, record);
+      }
+    }
+  };
+}
+
+/** Deployed NFL model ("nfl-elo-form-v1", nflModel.ts): fully self-contained constants — fair on every window. */
+function nflGithubReplayer() {
+  const HOME_ADVANTAGE = 48;
+  const K_FACTOR = 22;
+  const SEASON_REGRESSION = 0.35;
+  const ratings = new Map();
+  const teams = new Map();
+  let currentSeason = null;
+  const ratingOf = (id) => ratings.get(id) ?? 1500;
+  const stateOf = (id) => teams.get(id) ?? { games: 0, wins: 0, pointDiff: 0, recent: [] };
+  const rateOr = (n, d, f = 0.5) => (d ? n / d : f);
+  return {
+    probability(game) {
+      if (game.season !== currentSeason) {
+        for (const [id, rating] of ratings) ratings.set(id, 1500 + (rating - 1500) * (1 - SEASON_REGRESSION));
+        teams.clear();
+        currentSeason = game.season;
+      }
+      const home = stateOf(game.homeId);
+      const away = stateOf(game.awayId);
+      const elo = 1 / (1 + 10 ** (-(ratingOf(game.homeId) + HOME_ADVANTAGE - ratingOf(game.awayId)) / 400));
+      const recordEdge = rateOr(home.wins, home.games) - rateOr(away.wins, away.games);
+      const recentEdge = rateOr(home.recent.reduce((sum, value) => sum + value, 0), home.recent.length) - rateOr(away.recent.reduce((sum, value) => sum + value, 0), away.recent.length);
+      const pointEdge = rateOr(home.pointDiff, home.games, 0) - rateOr(away.pointDiff, away.games, 0);
+      const logit = Math.log(elo / (1 - elo)) + recordEdge * 0.7 + recentEdge * 0.45 + Math.max(-18, Math.min(18, pointEdge)) * 0.018;
+      const probability = Math.max(0.18, Math.min(0.82, 1 / (1 + Math.exp(-logit))));
+      return { display: probability, forUpdate: probability };
+    },
+    update(game, forUpdate) {
+      const homeWon = Number(game.homeWon);
+      const multiplier = Math.min(1.8, 1 + Math.log1p(game.margin) / 4.5);
+      const change = K_FACTOR * multiplier * (homeWon - forUpdate);
+      ratings.set(game.homeId, ratingOf(game.homeId) + change);
+      ratings.set(game.awayId, ratingOf(game.awayId) - change);
+      const home = stateOf(game.homeId);
+      const away = stateOf(game.awayId);
+      home.games += 1;
+      home.wins += homeWon;
+      home.pointDiff += game.homeScore - game.awayScore;
+      home.recent = [...home.recent.slice(-4), homeWon];
+      away.games += 1;
+      away.wins += 1 - homeWon;
+      away.pointDiff += game.awayScore - game.homeScore;
+      away.recent = [...away.recent.slice(-4), 1 - homeWon];
+      teams.set(game.homeId, home);
+      teams.set(game.awayId, away);
+    }
+  };
+}
+
+function runFaceoff(sport, games) {
+  const github = sport === "mlb" ? mlbGithubReplayer() : nflGithubReplayer();
+  const elo = sport === "mlb" ? makeElo(4, 24) : makeElo(20, 48);
+  const rows = [];
+  for (const game of games) {
+    const phase = PHASES[sport](game);
+    const githubProbability = github.probability(game);
+    const baseProbability = elo.probability(game.homeId, game.awayId);
+    const { probability: newProbability } = brainProbability(sport, game, baseProbability, DEFAULT_BRAIN_WEIGHTS);
+    if (phase !== "burnin") {
+      rows.push({
+        phase,
+        season: game.season,
+        githubCorrect: githubProbability.display >= 0.5 === game.homeWon,
+        newCorrect: newProbability >= 0.5 === game.homeWon,
+        githubLogLoss: logLoss(githubProbability.display, game.homeWon),
+        newLogLoss: logLoss(newProbability, game.homeWon)
+      });
+    }
+    github.update(game, githubProbability.forUpdate);
+    elo.update(game);
+  }
+  const summarizeRows = (subset) => {
+    const wins = (key) => subset.filter((row) => row[key]).length;
+    const mean = (key) => subset.reduce((sum, row) => sum + row[key], 0) / subset.length;
+    return {
+      games: subset.length,
+      githubAccuracy: wins("githubCorrect") / subset.length,
+      newAccuracy: wins("newCorrect") / subset.length,
+      githubWins: wins("githubCorrect"),
+      newWins: wins("newCorrect"),
+      githubLogLoss: mean("githubLogLoss"),
+      newLogLoss: mean("newLogLoss")
+    };
+  };
+  const bySeason = [...new Set(rows.map((row) => row.season))].toSorted().map((season) => ({ season, ...summarizeRows(rows.filter((row) => row.season === season)) }));
+  return { sport, overall: summarizeRows(rows), holdout: summarizeRows(rows.filter((row) => row.phase === "holdout")), bySeason };
+}
 
 // ---------------------------------------------------------------------------
 // Report (self-contained HTML + inline SVG)
@@ -792,8 +1011,18 @@ ${weightChart(result.weightTrail, meta.weightKeys, "Weight evolution (walk-forwa
 const sports = SPORT_ARG === "all" ? ["mlb", "nfl"] : [SPORT_ARG];
 const experimentsLog = [];
 
+const faceoffResults = [];
 for (const sport of sports) {
   const games = sport === "mlb" ? await loadMlb() : await loadNfl();
+
+  if (FACEOFF) {
+    const result = runFaceoff(sport, games);
+    faceoffResults.push(result);
+    const pct = (value) => `${(value * 100).toFixed(1)}%`;
+    console.log(`[${sport}] FACEOFF overall (${result.overall.games} games): GitHub ${pct(result.overall.githubAccuracy)} (ll ${result.overall.githubLogLoss.toFixed(4)}) vs NEW ${pct(result.overall.newAccuracy)} (ll ${result.overall.newLogLoss.toFixed(4)})`);
+    console.log(`[${sport}] FACEOFF holdout (${result.holdout.games} games): GitHub ${pct(result.holdout.githubAccuracy)} (ll ${result.holdout.githubLogLoss.toFixed(4)}) vs NEW ${pct(result.holdout.newAccuracy)} (ll ${result.holdout.newLogLoss.toFixed(4)})`);
+    continue;
+  }
 
   let kept;
   if (EXPERIMENT) {
@@ -827,6 +1056,33 @@ for (const sport of sports) {
     path.join(OUT_DIR, `${sport}-backtest.json`),
     JSON.stringify({ generated: TODAY, kept, finalWeights: finalResult.finalWeights[sport], validation, holdout, batches: finalResult.batchSummaries }, null, 1)
   );
+}
+
+if (FACEOFF && faceoffResults.length) {
+  const lines = [
+    "# Deployed GitHub models vs the new model — head to head",
+    "",
+    `Generated ${TODAY} by \`npm run backtest -- all --faceoff\`. Identical games, identical chronological replay; each model manages its own state exactly as its production code does.`,
+    "",
+    "- **GitHub MLB** (\"diamond-elo-v4\"): the deployed Elo + pretrained logistic, replayed with its exact hyperparameters and snapshot weights; the live pitcher ERA/WHIP adjustment is approximated with a runs-allowed-per-start proxy (WHIP neutral). Its logistic was trained through 2025-09-28, so **2022–2025 rows are in-sample for it** — the 2026 holdout is the only window that is out-of-sample for both sides.",
+    "- **GitHub NFL** (\"nfl-elo-form-v1\"): fully self-contained constants — fair on every window.",
+    "- **NEW model**: margin-of-victory Elo + Game Brain factors at shipped `DEFAULT_BRAIN_WEIGHTS`, frozen (no tuning during the faceoff).",
+    ""
+  ];
+  for (const result of faceoffResults) {
+    const pct = (value) => `${(value * 100).toFixed(1)}%`;
+    lines.push(`## ${result.sport.toUpperCase()}`, "");
+    lines.push("| window | games | GitHub W-L | GitHub acc | GitHub logloss | NEW W-L | NEW acc | NEW logloss |");
+    lines.push("|---|---|---|---|---|---|---|---|");
+    const row = (label, stats) =>
+      `| ${label} | ${stats.games} | ${stats.githubWins}-${stats.games - stats.githubWins} | ${pct(stats.githubAccuracy)} | ${stats.githubLogLoss.toFixed(4)} | ${stats.newWins}-${stats.games - stats.newWins} | ${pct(stats.newAccuracy)} | ${stats.newLogLoss.toFixed(4)} |`;
+    lines.push(row("**overall**", result.overall));
+    lines.push(row(`**final holdout${result.sport === "mlb" ? " (2026 — fair for both)" : " (2025)"}**`, result.holdout));
+    for (const season of result.bySeason) lines.push(row(String(season.season), season));
+    lines.push("");
+  }
+  fs.writeFileSync(path.join(OUT_DIR, "faceoff.md"), lines.join("\n"));
+  console.log("faceoff report written to docs/backtests/faceoff.md");
 }
 
 if (EXPERIMENT && experimentsLog.length) {

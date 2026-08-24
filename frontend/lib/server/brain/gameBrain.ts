@@ -18,6 +18,7 @@ import { getGameWeather } from "@/lib/server/brain/weather";
 import { getMlbVenueContext, getNflVenueContext, type VenueContext } from "@/lib/server/brain/venues";
 import { NFL_DIVISIONS } from "@/lib/server/brain/nflStadiums";
 import { getNflSeasonContext, type TeamSeasonContext } from "@/lib/server/brain/teamContext";
+import { getEspnTeamNews, getMlbTransactionNews, type NewsFlag, type TeamTransactionNews } from "@/lib/server/brain/news";
 import { pickStatus } from "@/lib/server/playerPickScoring";
 
 /**
@@ -33,6 +34,7 @@ export type TeamBrainSide = {
   team: string;
   injuries: TeamInjuryReport;
   form: TeamForm;
+  news: NewsFlag[];
 };
 
 export type GameBrainContext = {
@@ -83,7 +85,8 @@ function buildFactors(
   home: TeamBrainSide,
   away: TeamBrainSide,
   weather: WeatherSnapshot | null,
-  season: { home?: TeamSeasonContext; away?: TeamSeasonContext }
+  season: { home?: TeamSeasonContext; away?: TeamSeasonContext },
+  rosterChurnGap?: number
 ): BrainFactor[] {
   const divisionGame =
     sport === "nfl" &&
@@ -106,7 +109,8 @@ function buildFactors(
       divisionGame,
       baselineLogit: Math.log(baseline / (1 - baseline)),
       homeOffBye: sport === "nfl" ? (home.form.restDays ?? 0) >= 10 && home.form.lastTenGames > 0 : undefined,
-      awayOffBye: sport === "nfl" ? (away.form.restDays ?? 0) >= 10 && away.form.lastTenGames > 0 : undefined
+      awayOffBye: sport === "nfl" ? (away.form.restDays ?? 0) >= 10 && away.form.lastTenGames > 0 : undefined,
+      rosterChurnGap
     },
     DEFAULT_BRAIN_WEIGHTS
   );
@@ -150,6 +154,10 @@ function buildFactors(
         homeLogit: term.homeLogit
       };
     }
+    if (term.kind === "roster-churn") {
+      const steadier = term.homeLogit > 0 ? game.home_team : game.away_team;
+      return { label: "Roster stability", detail: `${steadier} has had the quieter transaction wire over the last two weeks`, homeLogit: term.homeLogit };
+    }
     if (term.kind === "bye") {
       const rested = term.homeLogit > 0 ? game.home_team : game.away_team;
       return { label: "Off the bye", detail: `${rested} comes in off a bye week`, homeLogit: term.homeLogit };
@@ -172,7 +180,7 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
   if (scheduled.length === 0) return [];
 
   const teamIds = [...new Set(scheduled.flatMap((game) => [game.homeTeam.id, game.awayTeam.id]))];
-  const [forms, injuryPairs, mlbVenues, seasonContexts] = await Promise.all([
+  const [forms, injuryPairs, mlbVenues, seasonContexts, transactionNews, espnNewsPairs] = await Promise.all([
     sport === "mlb"
       ? getMlbTeamForms(teamIds, date)
       : getNflTeamForms(teamIds.map(String), date),
@@ -184,9 +192,21 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
     ),
     sport === "mlb" ? getMlbVenueRefs(date) : Promise.resolve(new Map<string, MlbVenueRef>()),
     // Season context feeds the record-derived factors; only the NFL has ones with non-zero weights today.
-    sport === "nfl" ? getNflSeasonContext(teamIds.map(String), date) : Promise.resolve(new Map<string, TeamSeasonContext>())
+    sport === "nfl" ? getNflSeasonContext(teamIds.map(String), date) : Promise.resolve(new Map<string, TeamSeasonContext>()),
+    sport === "mlb" ? getMlbTransactionNews(teamIds, date) : Promise.resolve(new Map<number, TeamTransactionNews>()),
+    Promise.all(
+      scheduled
+        .flatMap((game) => [game.homeTeam, game.awayTeam])
+        .filter((team, index, all) => all.findIndex((entry) => entry.id === team.id) === index)
+        .map(async (team) => [team.id, await getEspnTeamNews(sport, team.abbreviation)] as const)
+    )
   ]);
   const injuries = new Map(injuryPairs);
+  const espnNews = new Map(espnNewsPairs);
+  const teamNews = (teamId: number) => [
+    ...(espnNews.get(teamId) ?? []),
+    ...(transactionNews.get(teamId)?.flags ?? [])
+  ].slice(0, 8);
   const emptyForm: TeamForm = { lastTenWins: 0, lastTenGames: 0, streak: 0, restDays: null };
   const emptyInjuries: TeamInjuryReport = { entries: [], burden: 0, qbOut: false };
   const formFor = (teamId: number): TeamForm =>
@@ -199,13 +219,17 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
           ? await getMlbVenueContext(mlbVenues.get(game.gameId)?.id ?? null, mlbVenues.get(game.gameId)?.name ?? game.venue)
           : getNflVenueContext(game.homeTeam.abbreviation, game.venue);
       const weather = await getGameWeather(venue, game.game_time_utc);
-      const home: TeamBrainSide = { team: game.home_team, injuries: injuries.get(game.homeTeam.id) ?? emptyInjuries, form: formFor(game.homeTeam.id) };
-      const away: TeamBrainSide = { team: game.away_team, injuries: injuries.get(game.awayTeam.id) ?? emptyInjuries, form: formFor(game.awayTeam.id) };
+      const home: TeamBrainSide = { team: game.home_team, injuries: injuries.get(game.homeTeam.id) ?? emptyInjuries, form: formFor(game.homeTeam.id), news: teamNews(game.homeTeam.id) };
+      const away: TeamBrainSide = { team: game.away_team, injuries: injuries.get(game.awayTeam.id) ?? emptyInjuries, form: formFor(game.awayTeam.id), news: teamNews(game.awayTeam.id) };
       const season = {
         home: seasonContexts.get(String(game.homeTeam.id)),
         away: seasonContexts.get(String(game.awayTeam.id))
       };
-      const { logitDelta, factors } = combineFactors(buildFactors(sport, game, home, away, weather, season));
+      const churnGap =
+        sport === "mlb"
+          ? (transactionNews.get(game.awayTeam.id)?.churn ?? 0) - (transactionNews.get(game.homeTeam.id)?.churn ?? 0)
+          : undefined;
+      const { logitDelta, factors } = combineFactors(buildFactors(sport, game, home, away, weather, season, churnGap));
       return {
         gameId: game.gameId,
         sport,

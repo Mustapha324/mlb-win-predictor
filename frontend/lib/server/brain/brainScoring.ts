@@ -88,6 +88,8 @@ export type SportWeightSet = {
   divisionDamp: number;
   /** NFL: flat logit for a side coming off a bye (10+ rest days) when the other is not. */
   bye: number;
+  /** Logit per unit of roster-disruption gap (away churn − home churn, transactions last 14 days). */
+  rosterChurn: number;
 };
 
 export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
@@ -95,11 +97,11 @@ export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
 export const DEFAULT_BRAIN_WEIGHTS: BrainWeights = {
   mlb: {
     injuryGap: 0.05, qbOut: 0, formWinRate: 0.02, restDay: 0.005, weatherHome: 0.06,
-    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0
+    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0, rosterChurn: 0
   },
   nfl: {
     injuryGap: 0.4, qbOut: 0.25, formWinRate: 0.085, restDay: 0.045, weatherHome: 0.055,
-    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0
+    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0, rosterChurn: 0
   }
 };
 
@@ -217,10 +219,12 @@ export type FactorInputs = {
   /** Off a bye this week (NFL). */
   homeOffBye?: boolean;
   awayOffBye?: boolean;
+  /** Roster-disruption gap: away transactions − home transactions over the last 14 days. */
+  rosterChurnGap?: number;
 };
 
 export type FactorTerm = {
-  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye";
+  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye" | "roster-churn";
   homeLogit: number;
 };
 
@@ -259,6 +263,9 @@ export function factorTerms(inputs: FactorInputs, weights: BrainWeights = DEFAUL
   }
   if ((inputs.homeOffBye ?? false) !== (inputs.awayOffBye ?? false) && sportWeights.bye > 0) {
     terms.push({ kind: "bye", homeLogit: inputs.homeOffBye ? sportWeights.bye : -sportWeights.bye });
+  }
+  if (inputs.rosterChurnGap !== undefined && sportWeights.rosterChurn > 0) {
+    terms.push({ kind: "roster-churn", homeLogit: inputs.rosterChurnGap * sportWeights.rosterChurn });
   }
   return terms;
 }
@@ -305,6 +312,22 @@ export function applyLogitDelta(probability: number, logitDelta: number): number
   const clamped = Math.max(0.02, Math.min(0.98, probability));
   const logit = Math.log(clamped / (1 - clamped)) + logitDelta;
   return Number((1 / (1 + Math.exp(-logit))).toFixed(4));
+}
+
+export type NewsTag = "injury" | "trade" | "activation" | "call-up" | "suspension" | "pitching" | "milestone";
+
+/** Classifies a headline/description into brain-relevant tags. Pure and testable. */
+export function tagNewsText(text: string): NewsTag[] {
+  const value = text.toLowerCase();
+  const tags: NewsTag[] = [];
+  if (/injur|hurt|il\b|injured list|out for|out indefinitely|surgery|strain|sprain|fracture|concussion|sore|questionable|doubtful/.test(value)) tags.push("injury");
+  if (/trade|acquir|deal[t ]|swap|waiver claim|claimed/.test(value)) tags.push("trade");
+  if (/activat|reinstat|return[s]? (from|to)|back (in|from)/.test(value)) tags.push("activation");
+  if (/call[- ]?up|promot|recalled|selected the contract/.test(value)) tags.push("call-up");
+  if (/suspend|banned|ineligible/.test(value)) tags.push("suspension");
+  if (/starter|rotation|bullpen|pitch(er|ing)|mound|scratch/.test(value)) tags.push("pitching");
+  if (/record|milestone|streak|no-hitter|perfect game|mvp|cy young/.test(value)) tags.push("milestone");
+  return tags;
 }
 
 /** Pythagorean win expectation from runs/points scored and allowed (MLB exponent ≈ 1.83, NFL ≈ 2.37). */

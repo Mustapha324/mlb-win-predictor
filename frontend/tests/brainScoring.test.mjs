@@ -96,3 +96,13 @@ test("record factors activate only where the backtest earned them a weight", asy
   const mlb = factorTerms({ ...base, sport: "mlb", pythagGap: 0.1, scoringFormGap: 2, densityGap: 3, pitcherFormGap: 2 });
   assert.equal(mlb.filter((term) => ["pythag", "scoring-form", "density", "pitcher-form"].includes(term.kind)).length, 0, "rejected MLB record factors stay inert");
 });
+
+test("news tagger classifies brain-relevant headlines", async () => {
+  const { tagNewsText } = await import("../lib/server/brain/brainScoring.ts");
+  assert.deepEqual(tagNewsText("Star slugger placed on 10-day injured list with hamstring strain"), ["injury"]);
+  assert.ok(tagNewsText("Yankees acquire reliever in trade with Marlins").includes("trade"));
+  assert.ok(tagNewsText("Ace activated from IL, returns to the rotation Friday").includes("activation"));
+  assert.ok(tagNewsText("Club selected the contract of top prospect").includes("call-up"));
+  assert.ok(tagNewsText("Starter scratched from tonight's outing").includes("pitching"));
+  assert.deepEqual(tagNewsText("Team unveils new alternate jerseys"), []);
+});

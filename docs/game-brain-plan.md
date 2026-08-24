@@ -159,6 +159,32 @@ Factor-lab verdicts (v2) and the frozen evaluation of shipped `DEFAULT_BRAIN_WEI
   The real MLB upgrade path stays Phase 2/4: importance-weighted injuries and probable-pitcher
   scratch detection — information no ratings baseline carries.
 
+## News ingestion (2026-08-24) — no database required
+
+`brain/news.ts` feeds each game's brain context with tagged headlines (pure classifier
+`tagNewsText`: injury / trade / activation / call-up / suspension / pitching / milestone) from two
+sources: ESPN team news (both sports) and MLB transactions — the one news feed with a real
+archive. That archive made news *backtestable*: a roster-churn factor (disruption on the
+transaction wire, last 14 days) was lab-tested like every other candidate and **rejected**
+(Δ validation logloss −0.00008), so news ships as displayed context with zero probability
+weight — exactly what the evidence supports. Everything is fetched live and framework-cached;
+no Supabase or any account is involved.
+
+## Faceoff vs the deployed GitHub models (2026-08-24)
+
+`npm run backtest -- all --faceoff` replays the deployed models faithfully (exact
+hyperparameters, snapshot logistic weights for MLB, self-contained constants for NFL) against
+the new model (MOV-Elo + frozen brain weights) on identical games. Full table in
+`docs/backtests/faceoff.md`:
+
+- **MLB — new model wins.** On the only window that is out-of-sample for both (2026 to date,
+  1,965 games): **new 56.1% vs GitHub 54.3%** with better log-loss; the new model also wins
+  overall across 11,699 games even though 2022–2025 were in-sample for the GitHub logistic.
+  (Caveat: the replayed GitHub pitcher adjustment uses a runs-allowed proxy, not live ERA/WHIP.)
+- **NFL — new model better on balance.** Better accuracy and log-loss overall (64.0% / 0.6437
+  vs 63.5% / 0.6520), decisive wins in 2022–23, better log-loss in 3 of 4 seasons; GitHub's
+  2025 accuracy edge (5 games of 271) is within noise (σ ≈ 8 games).
+
 ## Phases
 
 - **Phase 1 (this branch):** `venues` + `weather` + `injuries` + `form` + pure scoring; `gameBrain`
