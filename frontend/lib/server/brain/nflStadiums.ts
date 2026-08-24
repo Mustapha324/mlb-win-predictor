@@ -38,3 +38,15 @@ export const NFL_STADIUMS: Record<string, { name: string; lat: number; lon: numb
   TEN: { name: "Nissan Stadium", lat: 36.1665, lon: -86.7713, indoor: false },
   WSH: { name: "Northwest Stadium", lat: 38.9077, lon: -76.8645, indoor: false }
 };
+
+/** NFL divisions by ESPN team abbreviation — division games play closer than ratings suggest. */
+export const NFL_DIVISIONS: Record<string, string> = {
+  BUF: "AFCE", MIA: "AFCE", NE: "AFCE", NYJ: "AFCE",
+  BAL: "AFCN", CIN: "AFCN", CLE: "AFCN", PIT: "AFCN",
+  HOU: "AFCS", IND: "AFCS", JAX: "AFCS", TEN: "AFCS",
+  DEN: "AFCW", KC: "AFCW", LAC: "AFCW", LV: "AFCW",
+  DAL: "NFCE", NYG: "NFCE", PHI: "NFCE", WSH: "NFCE",
+  CHI: "NFCN", DET: "NFCN", GB: "NFCN", MIN: "NFCN",
+  ATL: "NFCS", CAR: "NFCS", NO: "NFCS", TB: "NFCS",
+  ARI: "NFCW", LAR: "NFCW", SEA: "NFCW", SF: "NFCW"
+};

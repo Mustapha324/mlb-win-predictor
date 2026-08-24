@@ -133,24 +133,31 @@ The brain's lineup/injury layer also guards the DFS board: skip player picks for
 posted MLB lineup, flagged Out/Doubtful in the NFL, or facing extreme weather — fewer voided and
 doomed picks.
 
-## Backtest harness + tuned weights (2026-08-24)
+## Backtest harness, factor lab + tuned weights (2026-08-24, v2)
 
-`frontend/scripts/brain-backtest.mjs` (`npm run backtest`) replays past seasons walk-forward:
-2024 Elo burn-in, chronological batches, per-loss diagnosis (coin-flip / signal-missed /
-rating-gap / fluke — flukes are logged but excluded from tuning), then a bounded
-coordinate-descent step on trailing log-loss after each batch. Internal charts land in
-`docs/backtests/{mlb,nfl}-backtest.{html,json}` — not linked from the site.
+`frontend/scripts/brain-backtest.mjs` (`npm run backtest`; `--experiment` runs the factor lab,
+`--frozen` evaluates current production weights untouched) replays 2021–2026 walk-forward
+against a margin-of-victory Elo baseline: burn-in → train → validation → untouched holdout,
+per-loss diagnosis (coin-flip / signal-missed / rating-gap / fluke — flukes are logged but
+excluded from tuning), bounded coordinate-descent on trailing log-loss. New candidate factors
+are admitted by greedy forward selection on VALIDATION log-loss only; the final holdout is
+never used for selection. Charts land in `docs/backtests/{mlb,nfl}-backtest.html`, the factor
+ledger in `docs/backtests/experiments.md` — internal, not linked from the site.
 
-Results that set today's `DEFAULT_BRAIN_WEIGHTS`:
+Factor-lab verdicts (v2) and the frozen evaluation of shipped `DEFAULT_BRAIN_WEIGHTS`:
 
-- **NFL** (tuned 2025 wks 1–14, frozen holdout wks 15–18): brain **62.5%** vs baseline 59.4%.
-  Form weight grew to ~0.3 (last-10 form spans 10 weeks — real signal a slow Elo misses);
-  weather stays tiny (moves totals, not winners). Injury/QB weights remain research priors —
-  free historical injury reports don't exist to tune them.
-- **MLB** (tuned 2025, frozen holdout 2026-to-date, 1,965 games): brain ≈ baseline
-  (54.6–54.9% vs 54.6%). Loss research: 71% of losses are sub-57.5% coin flips (baseball),
-  and raw IL counts are a noisy proxy — the upgrade path is Phase 2's importance-weighted
-  injuries and probable-pitcher scratch detection, not bigger weights on weak signals.
+- **NFL** (train 2022–23, validation 2024, holdout 2025): KEPT **Pythagorean expectation**
+  (weight ~0.69) and **division-game dampening** (~0.27); REJECTED scoring form, home/road
+  splits, bye flag. Shipped weights, frozen: validation **66.2% vs 65.4%** (logloss 0.6083 vs
+  0.6178), holdout **64.9% vs 64.2%** (0.6563 vs 0.6602) — genuine gains on two unseen seasons.
+  Injury/QB stay research priors (no free historical injury reports to tune against).
+- **MLB** (train 2022–24, validation 2025, holdout 2026-to-date): ALL record candidates
+  (starter form, scoring form, splits, pythag, density) rejected — a margin-aware baseline
+  already carries that information — and an ablation showed form/injury/rest add nothing
+  measurable either. MLB ships display-grade weights (weather ~0.06 is the one consistent
+  survivor): frozen evaluation is dead even with baseline (56.1% = 56.1%), honest and harmless.
+  The real MLB upgrade path stays Phase 2/4: importance-weighted injuries and probable-pitcher
+  scratch detection — information no ratings baseline carries.
 
 ## Phases
 

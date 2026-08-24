@@ -16,6 +16,8 @@ import { getMlbTeamInjuries, getNflTeamInjuries } from "@/lib/server/brain/injur
 import { getMlbTeamForms, getNflTeamForms } from "@/lib/server/brain/form";
 import { getGameWeather } from "@/lib/server/brain/weather";
 import { getMlbVenueContext, getNflVenueContext, type VenueContext } from "@/lib/server/brain/venues";
+import { NFL_DIVISIONS } from "@/lib/server/brain/nflStadiums";
+import { getNflSeasonContext, type TeamSeasonContext } from "@/lib/server/brain/teamContext";
 import { pickStatus } from "@/lib/server/playerPickScoring";
 
 /**
@@ -75,7 +77,19 @@ async function getMlbVenueRefs(date: string): Promise<Map<string, MlbVenueRef>> 
   }
 }
 
-function buildFactors(sport: Sport, game: TeamPrediction, home: TeamBrainSide, away: TeamBrainSide, weather: WeatherSnapshot | null): BrainFactor[] {
+function buildFactors(
+  sport: Sport,
+  game: TeamPrediction,
+  home: TeamBrainSide,
+  away: TeamBrainSide,
+  weather: WeatherSnapshot | null,
+  season: { home?: TeamSeasonContext; away?: TeamSeasonContext }
+): BrainFactor[] {
+  const divisionGame =
+    sport === "nfl" &&
+    NFL_DIVISIONS[game.homeTeam.abbreviation?.toUpperCase()] !== undefined &&
+    NFL_DIVISIONS[game.homeTeam.abbreviation?.toUpperCase()] === NFL_DIVISIONS[game.awayTeam.abbreviation?.toUpperCase()];
+  const baseline = Math.max(0.02, Math.min(0.98, game.pregame_home_win_probability));
   const terms = factorTerms(
     {
       sport,
@@ -84,7 +98,15 @@ function buildFactors(sport: Sport, game: TeamPrediction, home: TeamBrainSide, a
       awayQbOut: away.injuries.qbOut,
       homeForm: home.form,
       awayForm: away.form,
-      weatherSeverity: weather ? weatherSeverity(weather) : 0
+      weatherSeverity: weather ? weatherSeverity(weather) : 0,
+      pythagGap:
+        season.home?.pythag != null && season.away?.pythag != null
+          ? Number((season.home.pythag - season.away.pythag).toFixed(4))
+          : undefined,
+      divisionGame,
+      baselineLogit: Math.log(baseline / (1 - baseline)),
+      homeOffBye: sport === "nfl" ? (home.form.restDays ?? 0) >= 10 && home.form.lastTenGames > 0 : undefined,
+      awayOffBye: sport === "nfl" ? (away.form.restDays ?? 0) >= 10 && away.form.lastTenGames > 0 : undefined
     },
     DEFAULT_BRAIN_WEIGHTS
   );
@@ -111,13 +133,37 @@ function buildFactors(sport: Sport, game: TeamPrediction, home: TeamBrainSide, a
         homeLogit: term.homeLogit
       };
     }
-    return {
-      label: "Weather",
-      detail: weather
-        ? `${Math.round(weather.tempF)}°F, wind ${Math.round(weather.windMph)} mph${weather.snowfall ? ", snow expected" : weather.precipProbability >= 0.7 ? ", rain likely" : ""} — favors the home side's familiarity`
-        : "Adverse conditions favor the home side's familiarity",
-      homeLogit: term.homeLogit
-    };
+    if (term.kind === "pythag") {
+      const stronger = term.homeLogit > 0 ? game.home_team : game.away_team;
+      const strongerSeason = term.homeLogit > 0 ? season.home : season.away;
+      return {
+        label: "Underlying strength",
+        detail: `${stronger}'s scoring margin says they are a ${Math.round((strongerSeason?.pythag ?? 0.5) * 100)}% quality side — better than the record alone shows`,
+        homeLogit: term.homeLogit
+      };
+    }
+    if (term.kind === "division") {
+      const favorite = game.pregame_home_win_probability >= 0.5 ? game.home_team : game.away_team;
+      return {
+        label: "Division game",
+        detail: `Familiar rivals play closer than ratings suggest — the edge for ${favorite} is dampened`,
+        homeLogit: term.homeLogit
+      };
+    }
+    if (term.kind === "bye") {
+      const rested = term.homeLogit > 0 ? game.home_team : game.away_team;
+      return { label: "Off the bye", detail: `${rested} comes in off a bye week`, homeLogit: term.homeLogit };
+    }
+    if (term.kind === "weather") {
+      return {
+        label: "Weather",
+        detail: weather
+          ? `${Math.round(weather.tempF)}°F, wind ${Math.round(weather.windMph)} mph${weather.snowfall ? ", snow expected" : weather.precipProbability >= 0.7 ? ", rain likely" : ""} — favors the home side's familiarity`
+          : "Adverse conditions favor the home side's familiarity",
+        homeLogit: term.homeLogit
+      };
+    }
+    return { label: term.kind, detail: "", homeLogit: term.homeLogit };
   });
 }
 
@@ -126,7 +172,7 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
   if (scheduled.length === 0) return [];
 
   const teamIds = [...new Set(scheduled.flatMap((game) => [game.homeTeam.id, game.awayTeam.id]))];
-  const [forms, injuryPairs, mlbVenues] = await Promise.all([
+  const [forms, injuryPairs, mlbVenues, seasonContexts] = await Promise.all([
     sport === "mlb"
       ? getMlbTeamForms(teamIds, date)
       : getNflTeamForms(teamIds.map(String), date),
@@ -136,7 +182,9 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
         return [teamId, report] as const;
       })
     ),
-    sport === "mlb" ? getMlbVenueRefs(date) : Promise.resolve(new Map<string, MlbVenueRef>())
+    sport === "mlb" ? getMlbVenueRefs(date) : Promise.resolve(new Map<string, MlbVenueRef>()),
+    // Season context feeds the record-derived factors; only the NFL has ones with non-zero weights today.
+    sport === "nfl" ? getNflSeasonContext(teamIds.map(String), date) : Promise.resolve(new Map<string, TeamSeasonContext>())
   ]);
   const injuries = new Map(injuryPairs);
   const emptyForm: TeamForm = { lastTenWins: 0, lastTenGames: 0, streak: 0, restDays: null };
@@ -153,7 +201,11 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
       const weather = await getGameWeather(venue, game.game_time_utc);
       const home: TeamBrainSide = { team: game.home_team, injuries: injuries.get(game.homeTeam.id) ?? emptyInjuries, form: formFor(game.homeTeam.id) };
       const away: TeamBrainSide = { team: game.away_team, injuries: injuries.get(game.awayTeam.id) ?? emptyInjuries, form: formFor(game.awayTeam.id) };
-      const { logitDelta, factors } = combineFactors(buildFactors(sport, game, home, away, weather));
+      const season = {
+        home: seasonContexts.get(String(game.homeTeam.id)),
+        away: seasonContexts.get(String(game.awayTeam.id))
+      };
+      const { logitDelta, factors } = combineFactors(buildFactors(sport, game, home, away, weather, season));
       return {
         gameId: game.gameId,
         sport,

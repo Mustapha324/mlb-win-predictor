@@ -43,17 +43,25 @@ export const MAX_BRAIN_LOGIT = 0.35;
 /**
  * Tunable factor coefficients, per sport. Values are fit by the walk-forward
  * backtest harness (`frontend/scripts/brain-backtest.mjs`); the runs behind
- * them live in docs/backtests/. Hand-edit only with a rerun to back it up.
+ * them live in docs/backtests/ (charts + experiments.md ledger). Hand-edit
+ * only with a rerun to back it up.
  *
- * Provenance (2026-08-24 runs — 2024 Elo burn-in, walk-forward tuning, frozen
- * holdouts): MLB tuned across 2025 (2,434 games), held out 2026-to-date
- * (1,965 games): brain 54.9% vs baseline 54.6%. NFL tuned across 2025 weeks
- * 1–14, held out weeks 15–18: brain 62.5% vs baseline 59.4%. NFL formWinRate
- * hit its 0.35 tuning bound in the priors-start run and converged to 0.28
- * from a zero start with identical holdout accuracy, so it ships at 0.30;
- * NFL weather runs disagreed (0.01 vs 0.046) with identical holdouts, so it
- * ships small. NFL injuryGap/qbOut are research priors — free historical
- * injury reports don't exist, so the sim can't tune them.
+ * Provenance (2026-08-24 v2 runs — MOV-Elo baseline, 2021 burn-in, greedy
+ * factor selection on a dedicated validation season, untouched final holdout):
+ *
+ * NFL (train 2022–23, validation 2024, holdout 2025): greedy selection KEPT
+ * pythag (Δ val logloss +0.0042) and divisionDamp (+0.0042); REJECTED
+ * scoringForm, homeSplit, bye. Holdout: brain 64.9% vs baseline 64.2%,
+ * logloss 0.6563 vs 0.6602. injuryGap/qbOut stay research priors — free
+ * historical injury reports don't exist to tune against.
+ *
+ * MLB (train 2022–24, validation 2025, holdout 2026-to-date): every record
+ * candidate (pitcherForm, scoringForm, homeSplit, pythag, density) was
+ * REJECTED — a margin-aware baseline already carries that information — and
+ * an ablation showed even form/injury/rest add nothing measurable (holdout
+ * 55.9–56.1% vs 56.1% baseline). MLB therefore ships display-grade weights:
+ * small, honest, bounded; weatherHome (~0.06) is the one signal that
+ * consistently survives tuning, and injury/form stay visible-but-tiny.
  */
 export type SportWeightSet = {
   /** Logit per unit of injury-burden gap (away − home). */
@@ -66,13 +74,33 @@ export type SportWeightSet = {
   restDay: number;
   /** Home-familiarity logit per unit of weather severity. */
   weatherHome: number;
+  /** Logit per run/point of recent per-game scoring-margin gap (home − away, last 15/5). */
+  scoringForm: number;
+  /** Logit per unit of home-record vs road-record win-rate gap. */
+  homeSplit: number;
+  /** Logit per unit of season-to-date Pythagorean-expectation gap. */
+  pythag: number;
+  /** MLB: logit per extra game the away side played in the last 6 days (fatigue). */
+  density: number;
+  /** MLB: logit per run of starting-pitcher recent runs-allowed gap (away starter − home starter). */
+  pitcherForm: number;
+  /** NFL: shrink applied against the favorite in division games (familiarity closes gaps). */
+  divisionDamp: number;
+  /** NFL: flat logit for a side coming off a bye (10+ rest days) when the other is not. */
+  bye: number;
 };
 
 export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
 
 export const DEFAULT_BRAIN_WEIGHTS: BrainWeights = {
-  mlb: { injuryGap: 0.075, qbOut: 0, formWinRate: 0.03, restDay: 0.04, weatherHome: 0.065 },
-  nfl: { injuryGap: 0.4, qbOut: 0.25, formWinRate: 0.3, restDay: 0.05, weatherHome: 0.02 }
+  mlb: {
+    injuryGap: 0.05, qbOut: 0, formWinRate: 0.02, restDay: 0.005, weatherHome: 0.06,
+    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0
+  },
+  nfl: {
+    injuryGap: 0.4, qbOut: 0.25, formWinRate: 0.085, restDay: 0.045, weatherHome: 0.055,
+    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0
+  }
 };
 
 /** Availability multiplier per injury designation. */
@@ -172,13 +200,34 @@ export type FactorInputs = {
   awayForm: TeamForm;
   /** 0 when sheltered or unknown. */
   weatherSeverity: number;
+  /** Recent per-game scoring-margin gap, home − away (runs or points). */
+  scoringFormGap?: number;
+  /** Home team's home win rate − away team's road win rate (season to date, 0 until sampled). */
+  homeSplitGap?: number;
+  /** Season-to-date Pythagorean expectation gap, home − away. */
+  pythagGap?: number;
+  /** Games the away side played in the last 6 days minus the home side's (MLB fatigue). */
+  densityGap?: number;
+  /** Away starter's recent runs-allowed per start minus home starter's (MLB; positive favors home). */
+  pitcherFormGap?: number;
+  /** Division rivalry game (NFL). */
+  divisionGame?: boolean;
+  /** Baseline home logit, required for divisionDamp to know who the favorite is. */
+  baselineLogit?: number;
+  /** Off a bye this week (NFL). */
+  homeOffBye?: boolean;
+  awayOffBye?: boolean;
 };
 
-export type FactorTerm = { kind: "injury" | "qb" | "form" | "weather"; homeLogit: number };
+export type FactorTerm = {
+  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye";
+  homeLogit: number;
+};
 
 /**
  * The brain's factor math, shared verbatim by production assembly and the
- * backtest harness so tuned weights mean the same thing in both.
+ * backtest harness so tuned weights mean the same thing in both. A factor
+ * contributes only when its input is present and its weight is non-zero.
  */
 export function factorTerms(inputs: FactorInputs, weights: BrainWeights = DEFAULT_BRAIN_WEIGHTS): FactorTerm[] {
   const sportWeights = weights[inputs.sport];
@@ -190,6 +239,27 @@ export function factorTerms(inputs: FactorInputs, weights: BrainWeights = DEFAUL
   const form = formEdge(inputs.homeForm, inputs.awayForm, sportWeights);
   if (Math.abs(form) >= 0.01) terms.push({ kind: "form", homeLogit: form });
   if (inputs.weatherSeverity >= 0.2) terms.push({ kind: "weather", homeLogit: inputs.weatherSeverity * sportWeights.weatherHome });
+  if (inputs.scoringFormGap !== undefined && sportWeights.scoringForm > 0) {
+    terms.push({ kind: "scoring-form", homeLogit: inputs.scoringFormGap * sportWeights.scoringForm });
+  }
+  if (inputs.homeSplitGap !== undefined && sportWeights.homeSplit > 0) {
+    terms.push({ kind: "home-split", homeLogit: inputs.homeSplitGap * sportWeights.homeSplit });
+  }
+  if (inputs.pythagGap !== undefined && sportWeights.pythag > 0) {
+    terms.push({ kind: "pythag", homeLogit: inputs.pythagGap * sportWeights.pythag });
+  }
+  if (inputs.densityGap !== undefined && sportWeights.density > 0) {
+    terms.push({ kind: "density", homeLogit: inputs.densityGap * sportWeights.density });
+  }
+  if (inputs.pitcherFormGap !== undefined && sportWeights.pitcherForm > 0) {
+    terms.push({ kind: "pitcher-form", homeLogit: inputs.pitcherFormGap * sportWeights.pitcherForm });
+  }
+  if (inputs.divisionGame && inputs.baselineLogit !== undefined && sportWeights.divisionDamp > 0) {
+    terms.push({ kind: "division", homeLogit: -Math.tanh(inputs.baselineLogit) * sportWeights.divisionDamp });
+  }
+  if ((inputs.homeOffBye ?? false) !== (inputs.awayOffBye ?? false) && sportWeights.bye > 0) {
+    terms.push({ kind: "bye", homeLogit: inputs.homeOffBye ? sportWeights.bye : -sportWeights.bye });
+  }
   return terms;
 }
 
@@ -235,6 +305,14 @@ export function applyLogitDelta(probability: number, logitDelta: number): number
   const clamped = Math.max(0.02, Math.min(0.98, probability));
   const logit = Math.log(clamped / (1 - clamped)) + logitDelta;
   return Number((1 / (1 + Math.exp(-logit))).toFixed(4));
+}
+
+/** Pythagorean win expectation from runs/points scored and allowed (MLB exponent ≈ 1.83, NFL ≈ 2.37). */
+export function pythagoreanExpectation(scored: number, allowed: number, exponent: number): number {
+  if (scored <= 0 && allowed <= 0) return 0.5;
+  const s = Math.max(0, scored) ** exponent;
+  const a = Math.max(0, allowed) ** exponent;
+  return s + a > 0 ? s / (s + a) : 0.5;
 }
 
 /** League percentile (0–100) of a value among peers; higher is better unless inverted. */
