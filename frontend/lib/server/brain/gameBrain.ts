@@ -4,7 +4,8 @@ import type { Sport } from "@/lib/sports";
 import {
   applyLogitDelta,
   combineFactors,
-  formEdge,
+  DEFAULT_BRAIN_WEIGHTS,
+  factorTerms,
   weatherSeverity,
   type BrainFactor,
   type TeamForm,
@@ -49,10 +50,6 @@ export type GameBrainContext = {
   };
 };
 
-/** Injury-burden gaps move NFL games more than MLB games (weekly reports, QB leverage). */
-const INJURY_GAP_LOGIT: Record<Sport, number> = { nfl: 0.4, mlb: 0.15 };
-const QB_OUT_LOGIT = 0.25;
-
 type MlbVenueRef = { id: number | null; name: string | null };
 
 async function getMlbVenueRefs(date: string): Promise<Map<string, MlbVenueRef>> {
@@ -79,46 +76,49 @@ async function getMlbVenueRefs(date: string): Promise<Map<string, MlbVenueRef>> 
 }
 
 function buildFactors(sport: Sport, game: TeamPrediction, home: TeamBrainSide, away: TeamBrainSide, weather: WeatherSnapshot | null): BrainFactor[] {
-  const factors: BrainFactor[] = [];
-  const burdenGap = away.injuries.burden - home.injuries.burden;
-  if (Math.abs(burdenGap) >= 0.02) {
-    const healthier = burdenGap > 0 ? game.home_team : game.away_team;
-    const keyNames = (burdenGap > 0 ? away : home).injuries.entries.slice(0, 3).map((entry) => entry.playerName);
-    factors.push({
-      label: "Injury edge",
-      detail: `${healthier} is healthier${keyNames.length ? ` (${keyNames.join(", ")} on the other side's report)` : ""}`,
-      homeLogit: burdenGap * INJURY_GAP_LOGIT[sport]
-    });
-  }
-  if (sport === "nfl" && home.injuries.qbOut !== away.injuries.qbOut) {
-    const side = home.injuries.qbOut ? game.home_team : game.away_team;
-    factors.push({
-      label: "QB availability",
-      detail: `${side} may be without their starting quarterback`,
-      homeLogit: home.injuries.qbOut ? -QB_OUT_LOGIT : QB_OUT_LOGIT
-    });
-  }
-  const form = formEdge(home.form, away.form);
-  if (Math.abs(form) >= 0.01) {
-    const hotter = form > 0 ? game.home_team : game.away_team;
-    const hotterSide = form > 0 ? home : away;
-    factors.push({
-      label: "Recent form",
-      detail: `${hotter} enters ${hotterSide.form.lastTenWins}-${hotterSide.form.lastTenGames - hotterSide.form.lastTenWins} over their last ${hotterSide.form.lastTenGames}${hotterSide.form.restDays !== null ? ` with ${hotterSide.form.restDays} rest day${hotterSide.form.restDays === 1 ? "" : "s"}` : ""}`,
-      homeLogit: form
-    });
-  }
-  if (weather) {
-    const severity = weatherSeverity(weather);
-    if (severity >= 0.2) {
-      factors.push({
-        label: "Weather",
-        detail: `${Math.round(weather.tempF)}°F, wind ${Math.round(weather.windMph)} mph${weather.snowfall ? ", snow expected" : weather.precipProbability >= 0.7 ? ", rain likely" : ""} — favors the home side's familiarity`,
-        homeLogit: severity * 0.04
-      });
+  const terms = factorTerms(
+    {
+      sport,
+      burdenGap: away.injuries.burden - home.injuries.burden,
+      homeQbOut: home.injuries.qbOut,
+      awayQbOut: away.injuries.qbOut,
+      homeForm: home.form,
+      awayForm: away.form,
+      weatherSeverity: weather ? weatherSeverity(weather) : 0
+    },
+    DEFAULT_BRAIN_WEIGHTS
+  );
+  return terms.map((term) => {
+    if (term.kind === "injury") {
+      const healthier = term.homeLogit > 0 ? game.home_team : game.away_team;
+      const keyNames = (term.homeLogit > 0 ? away : home).injuries.entries.slice(0, 3).map((entry) => entry.playerName);
+      return {
+        label: "Injury edge",
+        detail: `${healthier} is healthier${keyNames.length ? ` (${keyNames.join(", ")} on the other side's report)` : ""}`,
+        homeLogit: term.homeLogit
+      };
     }
-  }
-  return factors;
+    if (term.kind === "qb") {
+      const side = term.homeLogit < 0 ? game.home_team : game.away_team;
+      return { label: "QB availability", detail: `${side} may be without their starting quarterback`, homeLogit: term.homeLogit };
+    }
+    if (term.kind === "form") {
+      const hotter = term.homeLogit > 0 ? game.home_team : game.away_team;
+      const hotterSide = term.homeLogit > 0 ? home : away;
+      return {
+        label: "Recent form",
+        detail: `${hotter} enters ${hotterSide.form.lastTenWins}-${hotterSide.form.lastTenGames - hotterSide.form.lastTenWins} over their last ${hotterSide.form.lastTenGames}${hotterSide.form.restDays !== null ? ` with ${hotterSide.form.restDays} rest day${hotterSide.form.restDays === 1 ? "" : "s"}` : ""}`,
+        homeLogit: term.homeLogit
+      };
+    }
+    return {
+      label: "Weather",
+      detail: weather
+        ? `${Math.round(weather.tempF)}°F, wind ${Math.round(weather.windMph)} mph${weather.snowfall ? ", snow expected" : weather.precipProbability >= 0.7 ? ", rain likely" : ""} — favors the home side's familiarity`
+        : "Adverse conditions favor the home side's familiarity",
+      homeLogit: term.homeLogit
+    };
+  });
 }
 
 export async function getGameBrainContexts(sport: Sport, date: string, games: TeamPrediction[]): Promise<GameBrainContext[]> {

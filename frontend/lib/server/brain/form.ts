@@ -1,5 +1,5 @@
 import "server-only";
-import type { TeamForm } from "@/lib/server/brain/brainScoring";
+import { computeTeamForm, type CompletedTeamResult, type TeamForm } from "@/lib/server/brain/brainScoring";
 import { fetchEspnNflSeason } from "@/lib/server/espnNflFeed";
 
 /**
@@ -31,29 +31,9 @@ type NflSeasonEvent = {
   }>;
 };
 
-type CompletedResult = { date: string; won: boolean };
+type CompletedResult = CompletedTeamResult;
 
-function formFrom(results: CompletedResult[], gameDate: string): TeamForm {
-  const prior = results.filter((game) => game.date < gameDate).toSorted((a, b) => a.date.localeCompare(b.date));
-  if (prior.length === 0) return EMPTY_FORM;
-  const lastTen = prior.slice(-10);
-  let streak = 0;
-  for (let index = prior.length - 1; index >= 0; index -= 1) {
-    const won = prior[index].won;
-    if (index === prior.length - 1) streak = won ? 1 : -1;
-    else if (won === streak > 0) streak += won ? 1 : -1;
-    else break;
-  }
-  const lastDate = new Date(`${prior.at(-1)!.date}T12:00:00Z`);
-  const slateDate = new Date(`${gameDate}T12:00:00Z`);
-  const restDays = Math.max(0, Math.round((slateDate.getTime() - lastDate.getTime()) / 86400000) - 1);
-  return {
-    lastTenWins: lastTen.filter((game) => game.won).length,
-    lastTenGames: lastTen.length,
-    streak,
-    restDays
-  };
-}
+const formFrom = computeTeamForm;
 
 /** Completed-game results per MLB team id over the window before `date`. */
 export async function getMlbTeamForms(teamIds: number[], date: string, lookbackDays = 18): Promise<Map<number, TeamForm>> {

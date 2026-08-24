@@ -40,6 +40,41 @@ export type BrainFactor = { label: string; detail: string; homeLogit: number };
 /** Max total logit swing ≈ ±8 percentage points of win probability. */
 export const MAX_BRAIN_LOGIT = 0.35;
 
+/**
+ * Tunable factor coefficients, per sport. Values are fit by the walk-forward
+ * backtest harness (`frontend/scripts/brain-backtest.mjs`); the runs behind
+ * them live in docs/backtests/. Hand-edit only with a rerun to back it up.
+ *
+ * Provenance (2026-08-24 runs — 2024 Elo burn-in, walk-forward tuning, frozen
+ * holdouts): MLB tuned across 2025 (2,434 games), held out 2026-to-date
+ * (1,965 games): brain 54.9% vs baseline 54.6%. NFL tuned across 2025 weeks
+ * 1–14, held out weeks 15–18: brain 62.5% vs baseline 59.4%. NFL formWinRate
+ * hit its 0.35 tuning bound in the priors-start run and converged to 0.28
+ * from a zero start with identical holdout accuracy, so it ships at 0.30;
+ * NFL weather runs disagreed (0.01 vs 0.046) with identical holdouts, so it
+ * ships small. NFL injuryGap/qbOut are research priors — free historical
+ * injury reports don't exist, so the sim can't tune them.
+ */
+export type SportWeightSet = {
+  /** Logit per unit of injury-burden gap (away − home). */
+  injuryGap: number;
+  /** Flat logit against a side likely missing its starting QB. */
+  qbOut: number;
+  /** Logit per unit of last-10 win-rate gap. */
+  formWinRate: number;
+  /** Logit per rest-day advantage (clamped ±3 days). */
+  restDay: number;
+  /** Home-familiarity logit per unit of weather severity. */
+  weatherHome: number;
+};
+
+export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
+
+export const DEFAULT_BRAIN_WEIGHTS: BrainWeights = {
+  mlb: { injuryGap: 0.075, qbOut: 0, formWinRate: 0.03, restDay: 0.04, weatherHome: 0.065 },
+  nfl: { injuryGap: 0.4, qbOut: 0.25, formWinRate: 0.3, restDay: 0.05, weatherHome: 0.02 }
+};
+
 /** Availability multiplier per injury designation. */
 const STATUS_WEIGHTS: Record<InjuryStatusBucket, number> = {
   out: 1,
@@ -116,15 +151,71 @@ export function weatherSeverity(weather: WeatherSnapshot): number {
   return Math.min(1, Number(severity.toFixed(2)));
 }
 
-export function formEdge(home: TeamForm, away: TeamForm): number {
+export function formEdge(home: TeamForm, away: TeamForm, weights: SportWeightSet = DEFAULT_BRAIN_WEIGHTS.mlb): number {
   const homeRate = home.lastTenGames ? home.lastTenWins / home.lastTenGames : 0.5;
   const awayRate = away.lastTenGames ? away.lastTenWins / away.lastTenGames : 0.5;
-  let edge = (homeRate - awayRate) * 0.12;
+  let edge = (homeRate - awayRate) * weights.formWinRate;
   if (home.restDays !== null && away.restDays !== null) {
     const restGap = Math.max(-3, Math.min(3, home.restDays - away.restDays));
-    edge += restGap * 0.015;
+    edge += restGap * weights.restDay;
   }
   return edge;
+}
+
+export type FactorInputs = {
+  sport: "mlb" | "nfl";
+  /** away burden − home burden; positive favors home. */
+  burdenGap: number;
+  homeQbOut: boolean;
+  awayQbOut: boolean;
+  homeForm: TeamForm;
+  awayForm: TeamForm;
+  /** 0 when sheltered or unknown. */
+  weatherSeverity: number;
+};
+
+export type FactorTerm = { kind: "injury" | "qb" | "form" | "weather"; homeLogit: number };
+
+/**
+ * The brain's factor math, shared verbatim by production assembly and the
+ * backtest harness so tuned weights mean the same thing in both.
+ */
+export function factorTerms(inputs: FactorInputs, weights: BrainWeights = DEFAULT_BRAIN_WEIGHTS): FactorTerm[] {
+  const sportWeights = weights[inputs.sport];
+  const terms: FactorTerm[] = [];
+  if (Math.abs(inputs.burdenGap) >= 0.02) terms.push({ kind: "injury", homeLogit: inputs.burdenGap * sportWeights.injuryGap });
+  if (inputs.sport === "nfl" && inputs.homeQbOut !== inputs.awayQbOut) {
+    terms.push({ kind: "qb", homeLogit: inputs.homeQbOut ? -sportWeights.qbOut : sportWeights.qbOut });
+  }
+  const form = formEdge(inputs.homeForm, inputs.awayForm, sportWeights);
+  if (Math.abs(form) >= 0.01) terms.push({ kind: "form", homeLogit: form });
+  if (inputs.weatherSeverity >= 0.2) terms.push({ kind: "weather", homeLogit: inputs.weatherSeverity * sportWeights.weatherHome });
+  return terms;
+}
+
+export type CompletedTeamResult = { date: string; won: boolean };
+
+/** Last-10 record, streak, and rest days from results strictly before `gameDate`. */
+export function computeTeamForm(results: CompletedTeamResult[], gameDate: string): TeamForm {
+  const prior = results.filter((game) => game.date < gameDate).toSorted((a, b) => a.date.localeCompare(b.date));
+  if (prior.length === 0) return { lastTenWins: 0, lastTenGames: 0, streak: 0, restDays: null };
+  const lastTen = prior.slice(-10);
+  let streak = 0;
+  for (let index = prior.length - 1; index >= 0; index -= 1) {
+    const won = prior[index].won;
+    if (index === prior.length - 1) streak = won ? 1 : -1;
+    else if (won === streak > 0) streak += won ? 1 : -1;
+    else break;
+  }
+  const lastDate = new Date(`${prior.at(-1)!.date}T12:00:00Z`);
+  const slateDate = new Date(`${gameDate}T12:00:00Z`);
+  const restDays = Math.max(0, Math.round((slateDate.getTime() - lastDate.getTime()) / 86400000) - 1);
+  return {
+    lastTenWins: lastTen.filter((game) => game.won).length,
+    lastTenGames: lastTen.length,
+    streak,
+    restDays
+  };
 }
 
 /**

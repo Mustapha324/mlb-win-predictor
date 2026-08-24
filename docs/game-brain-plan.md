@@ -133,10 +133,30 @@ The brain's lineup/injury layer also guards the DFS board: skip player picks for
 posted MLB lineup, flagged Out/Doubtful in the NFL, or facing extreme weather — fewer voided and
 doomed picks.
 
+## Backtest harness + tuned weights (2026-08-24)
+
+`frontend/scripts/brain-backtest.mjs` (`npm run backtest`) replays past seasons walk-forward:
+2024 Elo burn-in, chronological batches, per-loss diagnosis (coin-flip / signal-missed /
+rating-gap / fluke — flukes are logged but excluded from tuning), then a bounded
+coordinate-descent step on trailing log-loss after each batch. Internal charts land in
+`docs/backtests/{mlb,nfl}-backtest.{html,json}` — not linked from the site.
+
+Results that set today's `DEFAULT_BRAIN_WEIGHTS`:
+
+- **NFL** (tuned 2025 wks 1–14, frozen holdout wks 15–18): brain **62.5%** vs baseline 59.4%.
+  Form weight grew to ~0.3 (last-10 form spans 10 weeks — real signal a slow Elo misses);
+  weather stays tiny (moves totals, not winners). Injury/QB weights remain research priors —
+  free historical injury reports don't exist to tune them.
+- **MLB** (tuned 2025, frozen holdout 2026-to-date, 1,965 games): brain ≈ baseline
+  (54.6–54.9% vs 54.6%). Loss research: 71% of losses are sub-57.5% coin flips (baseball),
+  and raw IL counts are a noisy proxy — the upgrade path is Phase 2's importance-weighted
+  injuries and probable-pitcher scratch detection, not bigger weights on weak signals.
+
 ## Phases
 
 - **Phase 1 (this branch):** `venues` + `weather` + `injuries` + `form` + pure scoring; `gameBrain`
   assembly in shadow mode; `/api/game-brain` per-game endpoint; unit tests. No DB, no cron changes.
+  ✅ Plus the backtest harness above (Phase 5's re-weighting loop, delivered early as offline tooling).
 - **Phase 2:** Supabase migration (3 tables above), `brain-refresh` cron + vercel.json entry,
   news ingestion + tagging, team dossiers.
 - **Phase 3:** shadow evaluation report; enable bounded adjustment where it wins; UI "Game Brain"
