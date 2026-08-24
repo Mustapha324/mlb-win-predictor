@@ -19,7 +19,11 @@
   "pitcherForm": 0,
   "divisionDamp": 0,
   "bye": 0,
-  "rosterChurn": 0
+  "rosterChurn": 0,
+  "starterFip": 0,
+  "qbValue": 0,
+  "travel": 0,
+  "shortWeek": 0
  },
  "validation": {
   "games": 2434,
@@ -69,7 +73,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -101,7 +109,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -134,7 +146,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -166,7 +182,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -198,7 +218,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -230,7 +254,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -261,7 +289,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -293,7 +325,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -325,7 +361,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -357,7 +397,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -389,7 +433,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -421,7 +469,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -454,7 +506,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -485,7 +541,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -518,7 +578,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -549,7 +613,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -580,7 +648,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -611,7 +683,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -644,7 +720,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -676,7 +756,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -708,7 +792,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -740,7 +828,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -771,7 +863,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -802,7 +898,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -834,7 +934,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -866,7 +970,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -898,7 +1006,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -931,7 +1043,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -963,7 +1079,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -995,7 +1115,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1026,7 +1150,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1059,7 +1187,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1092,7 +1224,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1125,7 +1261,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1157,7 +1297,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1190,7 +1334,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1222,7 +1370,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1253,7 +1405,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1285,7 +1441,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1318,7 +1478,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1351,7 +1515,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1382,7 +1550,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1414,7 +1586,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1445,7 +1621,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1477,7 +1657,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1509,7 +1693,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1538,7 +1726,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1569,7 +1761,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1600,7 +1796,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1633,7 +1833,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1665,7 +1869,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1698,7 +1906,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1731,7 +1943,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1763,7 +1979,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1796,7 +2016,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1828,7 +2052,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1860,7 +2088,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1893,7 +2125,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1926,7 +2162,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1958,7 +2198,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1989,7 +2233,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2020,7 +2268,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2051,7 +2303,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2083,7 +2339,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2114,7 +2374,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2146,7 +2410,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2177,7 +2445,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2209,7 +2481,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2242,7 +2518,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2274,7 +2554,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2303,7 +2587,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2334,7 +2622,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2366,7 +2658,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2398,7 +2694,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2430,7 +2730,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2462,7 +2766,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2494,7 +2802,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2527,7 +2839,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2560,7 +2876,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2592,7 +2912,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2625,7 +2949,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2658,7 +2986,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2691,7 +3023,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2724,7 +3060,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2757,7 +3097,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2790,7 +3134,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2821,7 +3169,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2853,7 +3205,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2886,7 +3242,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2917,7 +3277,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2948,7 +3312,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2980,7 +3348,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3012,7 +3384,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3044,7 +3420,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3075,7 +3455,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3106,7 +3490,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3138,7 +3526,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3170,7 +3562,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3202,7 +3598,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3235,7 +3635,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3268,7 +3672,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3300,7 +3708,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3331,7 +3743,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3364,7 +3780,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3397,7 +3817,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3429,7 +3853,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3461,7 +3889,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3492,7 +3924,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3525,7 +3961,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3556,7 +3996,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3588,7 +4032,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3619,7 +4067,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -3651,7 +4103,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0,
+    "travel": 0,
+    "shortWeek": 0
    }
   }
  ]

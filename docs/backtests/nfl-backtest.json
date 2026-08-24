@@ -4,6 +4,7 @@
   "formWinRate",
   "restDay",
   "weatherHome",
+  "qbValue",
   "pythag",
   "divisionDamp"
  ],
@@ -20,38 +21,42 @@
   "pitcherForm": 0,
   "divisionDamp": 0.27,
   "bye": 0,
-  "rosterChurn": 0
+  "rosterChurn": 0,
+  "starterFip": 0,
+  "qbValue": 0.05,
+  "travel": 0,
+  "shortWeek": 0
  },
  "validation": {
   "games": 272,
-  "baseAccuracy": 0.6544117647058824,
-  "brainAccuracy": 0.6617647058823529,
-  "baseWins": 178,
-  "brainWins": 180,
-  "baseLogLoss": 0.6177559837634613,
-  "brainLogLoss": 0.6083125490951926
+  "baseAccuracy": 0.6654411764705882,
+  "brainAccuracy": 0.6764705882352942,
+  "baseWins": 181,
+  "brainWins": 184,
+  "baseLogLoss": 0.61626504793738,
+  "brainLogLoss": 0.6049756697131667
  },
  "holdout": {
   "games": 271,
-  "baseAccuracy": 0.6420664206642066,
-  "brainAccuracy": 0.6494464944649446,
-  "baseWins": 174,
-  "brainWins": 176,
-  "baseLogLoss": 0.6602094213276797,
-  "brainLogLoss": 0.6563396608595576
+  "baseAccuracy": 0.6457564575645757,
+  "brainAccuracy": 0.6383763837638377,
+  "baseWins": 175,
+  "brainWins": 173,
+  "baseLogLoss": 0.6582286535203016,
+  "brainLogLoss": 0.6563850231328918
  },
  "batches": [
   {
    "label": "2022-wk01",
    "phase": "train",
    "games": 15,
-   "baseWins": 9,
-   "brainWins": 9,
+   "baseWins": 10,
+   "brainWins": 10,
    "causes": {
     "fluke": 1,
     "coin-flip": 2,
     "signal-missed": 1,
-    "rating-gap": 2
+    "rating-gap": 1
    },
    "missedBy": {
     "division": 2
@@ -69,7 +74,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -79,12 +88,13 @@
    "baseWins": 11,
    "brainWins": 11,
    "causes": {
-    "fluke": 1,
+    "fluke": 0,
     "coin-flip": 3,
-    "signal-missed": 1,
+    "signal-missed": 2,
     "rating-gap": 0
    },
    "missedBy": {
+    "qb-value": 2,
     "division": 1
    },
    "weights": {
@@ -100,24 +110,29 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2022-wk03",
    "phase": "train",
    "games": 16,
-   "baseWins": 8,
+   "baseWins": 7,
    "brainWins": 8,
    "causes": {
-    "fluke": 2,
+    "fluke": 1,
     "coin-flip": 1,
-    "signal-missed": 1,
+    "signal-missed": 2,
     "rating-gap": 4
    },
    "missedBy": {
     "form": 1,
-    "division": 2
+    "division": 2,
+    "qb-value": 2
    },
    "weights": {
     "injuryGap": 0.4,
@@ -132,23 +147,27 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2022-wk04",
    "phase": "train",
    "games": 16,
-   "baseWins": 9,
-   "brainWins": 9,
+   "baseWins": 11,
+   "brainWins": 11,
    "causes": {
     "fluke": 0,
-    "coin-flip": 5,
-    "signal-missed": 0,
-    "rating-gap": 2
+    "coin-flip": 2,
+    "signal-missed": 3,
+    "rating-gap": 0
    },
    "missedBy": {
-    "division": 1,
+    "qb-value": 4,
     "weather": 1
    },
    "weights": {
@@ -164,22 +183,27 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2022-wk05",
    "phase": "train",
    "games": 16,
-   "baseWins": 10,
+   "baseWins": 11,
    "brainWins": 11,
    "causes": {
     "fluke": 0,
     "coin-flip": 1,
-    "signal-missed": 2,
-    "rating-gap": 2
+    "signal-missed": 3,
+    "rating-gap": 1
    },
    "missedBy": {
+    "qb-value": 2,
     "division": 3
    },
    "weights": {
@@ -195,7 +219,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -203,16 +231,15 @@
    "phase": "train",
    "games": 14,
    "baseWins": 6,
-   "brainWins": 7,
+   "brainWins": 9,
    "causes": {
     "fluke": 1,
-    "coin-flip": 3,
-    "signal-missed": 0,
+    "coin-flip": 0,
+    "signal-missed": 1,
     "rating-gap": 3
    },
    "missedBy": {
-    "form": 2,
-    "pythag": 1
+    "form": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -227,7 +254,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -244,7 +275,8 @@
    },
    "missedBy": {
     "form": 3,
-    "division": 1
+    "division": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -259,14 +291,18 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2022-wk08",
    "phase": "train",
    "games": 15,
-   "baseWins": 9,
+   "baseWins": 10,
    "brainWins": 9,
    "causes": {
     "fluke": 0,
@@ -276,7 +312,9 @@
    },
    "missedBy": {
     "pythag": 3,
-    "division": 3
+    "qb-value": 2,
+    "form": 1,
+    "division": 2
    },
    "weights": {
     "injuryGap": 0.4,
@@ -291,14 +329,18 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2022-wk09",
    "phase": "train",
    "games": 13,
-   "baseWins": 8,
+   "baseWins": 9,
    "brainWins": 9,
    "causes": {
     "fluke": 0,
@@ -309,6 +351,7 @@
    "missedBy": {
     "form": 3,
     "division": 2,
+    "qb-value": 2,
     "pythag": 1
    },
    "weights": {
@@ -324,7 +367,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -332,16 +379,18 @@
    "phase": "train",
    "games": 14,
    "baseWins": 7,
-   "brainWins": 7,
+   "brainWins": 5,
    "causes": {
     "fluke": 2,
-    "coin-flip": 2,
-    "signal-missed": 3,
+    "coin-flip": 5,
+    "signal-missed": 2,
     "rating-gap": 0
    },
    "missedBy": {
     "weather": 1,
     "division": 4,
+    "qb-value": 1,
+    "form": 1,
     "pythag": 1
    },
    "weights": {
@@ -357,22 +406,27 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2022-wk11",
    "phase": "train",
    "games": 14,
-   "baseWins": 11,
+   "baseWins": 10,
    "brainWins": 11,
    "causes": {
     "fluke": 0,
     "coin-flip": 2,
-    "signal-missed": 0,
-    "rating-gap": 1
+    "signal-missed": 1,
+    "rating-gap": 0
    },
    "missedBy": {
+    "qb-value": 2,
     "pythag": 2,
     "division": 1
    },
@@ -389,7 +443,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -406,6 +464,7 @@
    },
    "missedBy": {
     "weather": 2,
+    "qb-value": 3,
     "pythag": 2,
     "form": 2
    },
@@ -422,7 +481,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -451,7 +514,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -462,12 +529,13 @@
    "brainWins": 8,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
+    "coin-flip": 0,
     "signal-missed": 3,
-    "rating-gap": 0
+    "rating-gap": 2
    },
    "missedBy": {
     "division": 2,
+    "qb-value": 1,
     "pythag": 1,
     "form": 1
    },
@@ -484,7 +552,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -492,15 +564,16 @@
    "phase": "train",
    "games": 16,
    "baseWins": 9,
-   "brainWins": 8,
+   "brainWins": 9,
    "causes": {
     "fluke": 0,
-    "coin-flip": 5,
+    "coin-flip": 4,
     "signal-missed": 2,
     "rating-gap": 1
    },
    "missedBy": {
     "division": 2,
+    "qb-value": 5,
     "form": 2,
     "pythag": 2
    },
@@ -517,7 +590,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -525,14 +602,15 @@
    "phase": "train",
    "games": 16,
    "baseWins": 11,
-   "brainWins": 11,
+   "brainWins": 10,
    "causes": {
     "fluke": 0,
-    "coin-flip": 1,
-    "signal-missed": 1,
-    "rating-gap": 3
+    "coin-flip": 2,
+    "signal-missed": 2,
+    "rating-gap": 2
    },
    "missedBy": {
+    "qb-value": 2,
     "division": 1
    },
    "weights": {
@@ -548,7 +626,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -565,7 +647,8 @@
    },
    "missedBy": {
     "pythag": 1,
-    "division": 2
+    "division": 2,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -580,7 +663,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -598,6 +685,7 @@
    "missedBy": {
     "pythag": 3,
     "division": 6,
+    "qb-value": 2,
     "form": 1
    },
    "weights": {
@@ -613,23 +701,27 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2023-wk01",
    "phase": "train",
    "games": 16,
-   "baseWins": 10,
-   "brainWins": 10,
+   "baseWins": 9,
+   "brainWins": 9,
    "causes": {
-    "fluke": 2,
-    "coin-flip": 0,
+    "fluke": 1,
+    "coin-flip": 1,
     "signal-missed": 3,
-    "rating-gap": 1
+    "rating-gap": 2
    },
    "missedBy": {
-    "division": 3
+    "division": 4
    },
    "weights": {
     "injuryGap": 0.4,
@@ -644,7 +736,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -652,15 +748,16 @@
    "phase": "train",
    "games": 16,
    "baseWins": 11,
-   "brainWins": 10,
+   "brainWins": 12,
    "causes": {
     "fluke": 0,
-    "coin-flip": 3,
+    "coin-flip": 1,
     "signal-missed": 1,
     "rating-gap": 2
    },
    "missedBy": {
-    "division": 2
+    "division": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -675,7 +772,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -685,13 +786,14 @@
    "baseWins": 12,
    "brainWins": 12,
    "causes": {
-    "fluke": 1,
+    "fluke": 0,
     "coin-flip": 0,
-    "signal-missed": 1,
+    "signal-missed": 2,
     "rating-gap": 2
    },
    "missedBy": {
-    "division": 1
+    "division": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -706,23 +808,28 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2023-wk04",
    "phase": "train",
    "games": 16,
-   "baseWins": 10,
+   "baseWins": 11,
    "brainWins": 10,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
-    "signal-missed": 3,
-    "rating-gap": 1
+    "coin-flip": 4,
+    "signal-missed": 2,
+    "rating-gap": 0
    },
    "missedBy": {
     "division": 3,
+    "qb-value": 4,
     "form": 1
    },
    "weights": {
@@ -738,24 +845,29 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2023-wk05",
    "phase": "train",
    "games": 14,
-   "baseWins": 7,
+   "baseWins": 8,
    "brainWins": 7,
    "causes": {
     "fluke": 0,
-    "coin-flip": 5,
-    "signal-missed": 0,
-    "rating-gap": 2
+    "coin-flip": 3,
+    "signal-missed": 1,
+    "rating-gap": 3
    },
    "missedBy": {
     "division": 2,
     "form": 1,
+    "qb-value": 1,
     "weather": 1
    },
    "weights": {
@@ -771,7 +883,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -779,16 +895,314 @@
    "phase": "train",
    "games": 15,
    "baseWins": 10,
-   "brainWins": 10,
+   "brainWins": 11,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
-    "signal-missed": 1,
-    "rating-gap": 2
+    "coin-flip": 1,
+    "signal-missed": 2,
+    "rating-gap": 1
    },
    "missedBy": {
     "form": 2,
+    "qb-value": 2,
+    "weather": 1
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2023-wk07",
+   "phase": "train",
+   "games": 13,
+   "baseWins": 7,
+   "brainWins": 6,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 1,
+    "signal-missed": 4,
+    "rating-gap": 2
+   },
+   "missedBy": {
+    "weather": 2,
+    "division": 3,
+    "qb-value": 1
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2023-wk08",
+   "phase": "train",
+   "games": 16,
+   "baseWins": 12,
+   "brainWins": 13,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 0,
+    "signal-missed": 2,
+    "rating-gap": 1
+   },
+   "missedBy": {
     "weather": 1,
+    "division": 1,
+    "qb-value": 1,
+    "form": 1
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2023-wk09",
+   "phase": "train",
+   "games": 14,
+   "baseWins": 10,
+   "brainWins": 11,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 2,
+    "signal-missed": 0,
+    "rating-gap": 1
+   },
+   "missedBy": {
+    "pythag": 2,
+    "qb-value": 2
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2023-wk10",
+   "phase": "train",
+   "games": 14,
+   "baseWins": 8,
+   "brainWins": 9,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 1,
+    "signal-missed": 3,
+    "rating-gap": 1
+   },
+   "missedBy": {
+    "form": 3,
+    "pythag": 2,
+    "qb-value": 2,
+    "division": 1
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2023-wk11",
+   "phase": "train",
+   "games": 14,
+   "baseWins": 9,
+   "brainWins": 9,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 1,
+    "signal-missed": 3,
+    "rating-gap": 1
+   },
+   "missedBy": {
+    "division": 2,
+    "form": 1,
+    "qb-value": 2
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2023-wk12",
+   "phase": "train",
+   "games": 16,
+   "baseWins": 10,
+   "brainWins": 9,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 2,
+    "signal-missed": 5,
+    "rating-gap": 0
+   },
+   "missedBy": {
+    "division": 4,
+    "form": 2,
+    "pythag": 1,
+    "qb-value": 4
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2023-wk13",
+   "phase": "train",
+   "games": 13,
+   "baseWins": 5,
+   "brainWins": 9,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 2,
+    "signal-missed": 2,
+    "rating-gap": 0
+   },
+   "missedBy": {
+    "qb-value": 2,
+    "form": 1
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2023-wk14",
+   "phase": "train",
+   "games": 15,
+   "baseWins": 7,
+   "brainWins": 7,
+   "causes": {
+    "fluke": 1,
+    "coin-flip": 2,
+    "signal-missed": 4,
+    "rating-gap": 1
+   },
+   "missedBy": {
+    "qb-value": 3,
+    "form": 4,
+    "division": 2,
     "pythag": 1
    },
    "weights": {
@@ -804,276 +1218,18 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2023-wk07",
-   "phase": "train",
-   "games": 13,
-   "baseWins": 6,
-   "brainWins": 6,
-   "causes": {
-    "fluke": 1,
-    "coin-flip": 2,
-    "signal-missed": 2,
-    "rating-gap": 2
-   },
-   "missedBy": {
-    "form": 1,
-    "pythag": 1,
-    "weather": 1,
-    "division": 3
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2023-wk08",
-   "phase": "train",
-   "games": 16,
-   "baseWins": 12,
-   "brainWins": 12,
-   "causes": {
-    "fluke": 0,
-    "coin-flip": 2,
-    "signal-missed": 2,
-    "rating-gap": 0
-   },
-   "missedBy": {
-    "form": 2,
-    "pythag": 1,
-    "weather": 1,
-    "division": 1
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2023-wk09",
-   "phase": "train",
-   "games": 14,
-   "baseWins": 11,
-   "brainWins": 10,
-   "causes": {
-    "fluke": 0,
-    "coin-flip": 3,
-    "signal-missed": 1,
-    "rating-gap": 0
-   },
-   "missedBy": {
-    "pythag": 3
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2023-wk10",
-   "phase": "train",
-   "games": 14,
-   "baseWins": 8,
-   "brainWins": 8,
-   "causes": {
-    "fluke": 0,
-    "coin-flip": 3,
-    "signal-missed": 3,
-    "rating-gap": 0
-   },
-   "missedBy": {
-    "form": 4,
-    "pythag": 3,
-    "division": 1
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2023-wk11",
-   "phase": "train",
-   "games": 14,
-   "baseWins": 9,
-   "brainWins": 9,
-   "causes": {
-    "fluke": 1,
-    "coin-flip": 2,
-    "signal-missed": 1,
-    "rating-gap": 1
-   },
-   "missedBy": {
-    "division": 2,
-    "form": 1
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2023-wk12",
-   "phase": "train",
-   "games": 16,
-   "baseWins": 10,
-   "brainWins": 11,
-   "causes": {
-    "fluke": 0,
-    "coin-flip": 0,
-    "signal-missed": 4,
-    "rating-gap": 1
-   },
-   "missedBy": {
-    "division": 4,
-    "form": 1
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2023-wk13",
-   "phase": "train",
-   "games": 13,
-   "baseWins": 6,
-   "brainWins": 6,
-   "causes": {
-    "fluke": 0,
-    "coin-flip": 4,
-    "signal-missed": 1,
-    "rating-gap": 2
-   },
-   "missedBy": {
-    "form": 3,
-    "pythag": 3,
-    "division": 1
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2023-wk14",
-   "phase": "train",
-   "games": 15,
-   "baseWins": 6,
-   "brainWins": 6,
-   "causes": {
-    "fluke": 2,
-    "coin-flip": 3,
-    "signal-missed": 3,
-    "rating-gap": 1
-   },
-   "missedBy": {
-    "pythag": 2,
-    "division": 3,
-    "form": 4
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2023-wk15",
    "phase": "train",
    "games": 16,
-   "baseWins": 11,
+   "baseWins": 9,
    "brainWins": 10,
    "causes": {
     "fluke": 0,
@@ -1082,8 +1238,9 @@
     "rating-gap": 0
    },
    "missedBy": {
-    "division": 3,
-    "pythag": 2,
+    "division": 2,
+    "pythag": 1,
+    "qb-value": 1,
     "form": 3,
     "weather": 1
    },
@@ -1100,7 +1257,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1110,13 +1271,14 @@
    "baseWins": 9,
    "brainWins": 9,
    "causes": {
-    "fluke": 1,
-    "coin-flip": 3,
-    "signal-missed": 2,
+    "fluke": 0,
+    "coin-flip": 2,
+    "signal-missed": 4,
     "rating-gap": 1
    },
    "missedBy": {
     "division": 3,
+    "qb-value": 3,
     "pythag": 1,
     "form": 1
    },
@@ -1133,7 +1295,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1144,12 +1310,13 @@
    "brainWins": 11,
    "causes": {
     "fluke": 0,
-    "coin-flip": 1,
-    "signal-missed": 4,
+    "coin-flip": 2,
+    "signal-missed": 3,
     "rating-gap": 0
    },
    "missedBy": {
     "form": 4,
+    "qb-value": 1,
     "pythag": 1,
     "division": 2
    },
@@ -1166,7 +1333,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1183,6 +1354,7 @@
    },
    "missedBy": {
     "division": 6,
+    "qb-value": 2,
     "pythag": 2,
     "form": 1
    },
@@ -1199,7 +1371,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1230,23 +1406,28 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2024-wk02",
    "phase": "validation",
    "games": 16,
-   "baseWins": 7,
-   "brainWins": 7,
+   "baseWins": 9,
+   "brainWins": 8,
    "causes": {
-    "fluke": 2,
-    "coin-flip": 3,
-    "signal-missed": 3,
-    "rating-gap": 1
+    "fluke": 1,
+    "coin-flip": 2,
+    "signal-missed": 5,
+    "rating-gap": 0
    },
    "missedBy": {
-    "form": 4,
+    "qb-value": 4,
+    "form": 3,
     "division": 2
    },
    "weights": {
@@ -1262,7 +1443,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1270,15 +1455,16 @@
    "phase": "validation",
    "games": 16,
    "baseWins": 9,
-   "brainWins": 8,
+   "brainWins": 9,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
-    "signal-missed": 1,
-    "rating-gap": 5
+    "coin-flip": 1,
+    "signal-missed": 2,
+    "rating-gap": 4
    },
    "missedBy": {
-    "division": 1
+    "division": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -1293,7 +1479,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1303,13 +1493,52 @@
    "baseWins": 6,
    "brainWins": 6,
    "causes": {
-    "fluke": 1,
-    "coin-flip": 5,
-    "signal-missed": 1,
-    "rating-gap": 3
+    "fluke": 0,
+    "coin-flip": 4,
+    "signal-missed": 5,
+    "rating-gap": 1
    },
    "missedBy": {
     "division": 2,
+    "weather": 1,
+    "qb-value": 7,
+    "form": 2
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2024-wk05",
+   "phase": "validation",
+   "games": 14,
+   "baseWins": 9,
+   "brainWins": 8,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 2,
+    "signal-missed": 4,
+    "rating-gap": 0
+   },
+   "missedBy": {
+    "division": 2,
+    "qb-value": 1,
     "weather": 1,
     "form": 2
    },
@@ -1326,56 +1555,29 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2024-wk05",
-   "phase": "validation",
-   "games": 14,
-   "baseWins": 8,
-   "brainWins": 9,
-   "causes": {
-    "fluke": 0,
-    "coin-flip": 1,
-    "signal-missed": 4,
-    "rating-gap": 0
-   },
-   "missedBy": {
-    "division": 2,
-    "form": 2
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2024-wk06",
    "phase": "validation",
    "games": 14,
-   "baseWins": 10,
+   "baseWins": 11,
    "brainWins": 10,
    "causes": {
     "fluke": 0,
-    "coin-flip": 3,
-    "signal-missed": 1,
+    "coin-flip": 4,
+    "signal-missed": 0,
     "rating-gap": 0
    },
    "missedBy": {
-    "division": 3,
     "form": 3,
+    "division": 2,
+    "qb-value": 2,
     "pythag": 1
    },
    "weights": {
@@ -1391,7 +1593,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1399,14 +1605,53 @@
    "phase": "validation",
    "games": 15,
    "baseWins": 11,
-   "brainWins": 12,
+   "brainWins": 13,
+   "causes": {
+    "fluke": 0,
+    "coin-flip": 0,
+    "signal-missed": 2,
+    "rating-gap": 0
+   },
+   "missedBy": {
+    "pythag": 1,
+    "qb-value": 1
+   },
+   "weights": {
+    "injuryGap": 0.4,
+    "qbOut": 0.25,
+    "formWinRate": 0.085,
+    "restDay": 0.045,
+    "weatherHome": 0.055,
+    "scoringForm": 0,
+    "homeSplit": 0,
+    "pythag": 0.69,
+    "density": 0,
+    "pitcherForm": 0,
+    "divisionDamp": 0.27,
+    "bye": 0,
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
+   }
+  },
+  {
+   "label": "2024-wk08",
+   "phase": "validation",
+   "games": 16,
+   "baseWins": 9,
+   "brainWins": 10,
    "causes": {
     "fluke": 0,
     "coin-flip": 1,
-    "signal-missed": 1,
-    "rating-gap": 1
+    "signal-missed": 5,
+    "rating-gap": 0
    },
    "missedBy": {
+    "qb-value": 4,
+    "form": 3,
+    "division": 3,
     "pythag": 1
    },
    "weights": {
@@ -1422,57 +1667,29 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
-   }
-  },
-  {
-   "label": "2024-wk08",
-   "phase": "validation",
-   "games": 16,
-   "baseWins": 10,
-   "brainWins": 9,
-   "causes": {
-    "fluke": 0,
-    "coin-flip": 2,
-    "signal-missed": 4,
-    "rating-gap": 1
-   },
-   "missedBy": {
-    "pythag": 2,
-    "form": 3,
-    "division": 3
-   },
-   "weights": {
-    "injuryGap": 0.4,
-    "qbOut": 0.25,
-    "formWinRate": 0.085,
-    "restDay": 0.045,
-    "weatherHome": 0.055,
-    "scoringForm": 0,
-    "homeSplit": 0,
-    "pythag": 0.69,
-    "density": 0,
-    "pitcherForm": 0,
-    "divisionDamp": 0.27,
-    "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2024-wk09",
    "phase": "validation",
    "games": 15,
-   "baseWins": 9,
+   "baseWins": 10,
    "brainWins": 10,
    "causes": {
     "fluke": 0,
     "coin-flip": 1,
-    "signal-missed": 2,
-    "rating-gap": 2
+    "signal-missed": 3,
+    "rating-gap": 1
    },
    "missedBy": {
     "form": 2,
     "pythag": 1,
+    "qb-value": 3,
     "division": 2
    },
    "weights": {
@@ -1488,22 +1705,29 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2024-wk10",
    "phase": "validation",
    "games": 14,
-   "baseWins": 11,
+   "baseWins": 10,
    "brainWins": 10,
    "causes": {
-    "fluke": 0,
+    "fluke": 1,
     "coin-flip": 1,
-    "signal-missed": 0,
-    "rating-gap": 3
+    "signal-missed": 2,
+    "rating-gap": 0
    },
-   "missedBy": {},
+   "missedBy": {
+    "qb-value": 3,
+    "division": 1
+   },
    "weights": {
     "injuryGap": 0.4,
     "qbOut": 0.25,
@@ -1517,25 +1741,30 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2024-wk11",
    "phase": "validation",
    "games": 14,
-   "baseWins": 10,
-   "brainWins": 10,
+   "baseWins": 11,
+   "brainWins": 11,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
+    "coin-flip": 1,
     "signal-missed": 2,
     "rating-gap": 0
    },
    "missedBy": {
-    "pythag": 3,
+    "pythag": 2,
     "division": 2,
-    "form": 1
+    "form": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -1550,7 +1779,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1569,7 +1802,8 @@
     "weather": 1,
     "division": 3,
     "form": 2,
-    "pythag": 1
+    "pythag": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -1584,7 +1818,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1595,9 +1833,9 @@
    "brainWins": 14,
    "causes": {
     "fluke": 0,
-    "coin-flip": 0,
+    "coin-flip": 1,
     "signal-missed": 1,
-    "rating-gap": 1
+    "rating-gap": 0
    },
    "missedBy": {
     "form": 1,
@@ -1616,7 +1854,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1627,14 +1869,15 @@
    "brainWins": 10,
    "causes": {
     "fluke": 0,
-    "coin-flip": 1,
-    "signal-missed": 2,
+    "coin-flip": 2,
+    "signal-missed": 1,
     "rating-gap": 0
    },
    "missedBy": {
     "pythag": 2,
     "division": 1,
-    "form": 1
+    "form": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -1649,7 +1892,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1660,13 +1907,14 @@
    "brainWins": 12,
    "causes": {
     "fluke": 0,
-    "coin-flip": 0,
-    "signal-missed": 3,
-    "rating-gap": 1
+    "coin-flip": 3,
+    "signal-missed": 1,
+    "rating-gap": 0
    },
    "missedBy": {
     "division": 1,
     "pythag": 1,
+    "qb-value": 1,
     "form": 1
    },
    "weights": {
@@ -1682,7 +1930,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1693,12 +1945,13 @@
    "brainWins": 10,
    "causes": {
     "fluke": 0,
-    "coin-flip": 3,
+    "coin-flip": 2,
     "signal-missed": 1,
-    "rating-gap": 2
+    "rating-gap": 3
    },
    "missedBy": {
-    "division": 2
+    "division": 2,
+    "qb-value": 2
    },
    "weights": {
     "injuryGap": 0.4,
@@ -1713,14 +1966,18 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2024-wk17",
    "phase": "validation",
    "games": 16,
-   "baseWins": 14,
+   "baseWins": 13,
    "brainWins": 14,
    "causes": {
     "fluke": 0,
@@ -1729,7 +1986,8 @@
     "rating-gap": 1
    },
    "missedBy": {
-    "form": 1
+    "form": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -1744,7 +2002,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1755,12 +2017,13 @@
    "brainWins": 8,
    "causes": {
     "fluke": 0,
-    "coin-flip": 0,
-    "signal-missed": 8,
+    "coin-flip": 2,
+    "signal-missed": 6,
     "rating-gap": 0
    },
    "missedBy": {
     "division": 8,
+    "qb-value": 3,
     "form": 4,
     "weather": 1,
     "pythag": 2
@@ -1778,7 +2041,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1789,9 +2056,9 @@
    "brainWins": 11,
    "causes": {
     "fluke": 0,
-    "coin-flip": 3,
-    "signal-missed": 2,
-    "rating-gap": 0
+    "coin-flip": 1,
+    "signal-missed": 3,
+    "rating-gap": 1
    },
    "missedBy": {
     "division": 3,
@@ -1810,23 +2077,28 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2025-wk02",
    "phase": "holdout",
    "games": 16,
-   "baseWins": 11,
+   "baseWins": 12,
    "brainWins": 12,
    "causes": {
-    "fluke": 0,
+    "fluke": 1,
     "coin-flip": 0,
-    "signal-missed": 2,
-    "rating-gap": 2
+    "signal-missed": 3,
+    "rating-gap": 0
    },
    "missedBy": {
     "division": 1,
+    "qb-value": 2,
     "form": 1
    },
    "weights": {
@@ -1842,7 +2114,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1850,16 +2126,17 @@
    "phase": "holdout",
    "games": 16,
    "baseWins": 11,
-   "brainWins": 11,
+   "brainWins": 10,
    "causes": {
     "fluke": 1,
     "coin-flip": 1,
-    "signal-missed": 1,
+    "signal-missed": 2,
     "rating-gap": 2
    },
    "missedBy": {
     "form": 2,
-    "division": 2
+    "division": 2,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -1874,7 +2151,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1882,14 +2163,17 @@
    "phase": "holdout",
    "games": 15,
    "baseWins": 10,
-   "brainWins": 10,
+   "brainWins": 9,
    "causes": {
     "fluke": 1,
-    "coin-flip": 2,
-    "signal-missed": 0,
-    "rating-gap": 2
+    "coin-flip": 3,
+    "signal-missed": 1,
+    "rating-gap": 1
    },
-   "missedBy": {},
+   "missedBy": {
+    "qb-value": 2,
+    "form": 1
+   },
    "weights": {
     "injuryGap": 0.4,
     "qbOut": 0.25,
@@ -1903,7 +2187,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1913,13 +2201,14 @@
    "baseWins": 5,
    "brainWins": 5,
    "causes": {
-    "fluke": 2,
-    "coin-flip": 0,
-    "signal-missed": 3,
-    "rating-gap": 4
+    "fluke": 1,
+    "coin-flip": 1,
+    "signal-missed": 5,
+    "rating-gap": 2
    },
    "missedBy": {
     "division": 2,
+    "qb-value": 5,
     "form": 1
    },
    "weights": {
@@ -1935,26 +2224,31 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2025-wk06",
    "phase": "holdout",
    "games": 15,
-   "baseWins": 8,
+   "baseWins": 9,
    "brainWins": 9,
    "causes": {
     "fluke": 0,
-    "coin-flip": 0,
-    "signal-missed": 5,
+    "coin-flip": 1,
+    "signal-missed": 4,
     "rating-gap": 1
    },
    "missedBy": {
     "division": 1,
     "weather": 1,
     "form": 3,
-    "pythag": 1
+    "pythag": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -1969,7 +2263,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -1980,13 +2278,14 @@
    "brainWins": 9,
    "causes": {
     "fluke": 0,
-    "coin-flip": 4,
-    "signal-missed": 2,
+    "coin-flip": 3,
+    "signal-missed": 3,
     "rating-gap": 0
    },
    "missedBy": {
     "division": 2,
     "weather": 1,
+    "qb-value": 2,
     "form": 2,
     "pythag": 2
    },
@@ -2003,7 +2302,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2019,6 +2322,7 @@
     "rating-gap": 0
    },
    "missedBy": {
+    "qb-value": 2,
     "form": 1,
     "pythag": 1
    },
@@ -2035,23 +2339,28 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2025-wk09",
    "phase": "holdout",
    "games": 14,
-   "baseWins": 10,
-   "brainWins": 10,
+   "baseWins": 9,
+   "brainWins": 9,
    "causes": {
     "fluke": 0,
-    "coin-flip": 0,
+    "coin-flip": 1,
     "signal-missed": 4,
     "rating-gap": 0
    },
    "missedBy": {
     "pythag": 2,
+    "qb-value": 1,
     "division": 1,
     "form": 2
    },
@@ -2068,7 +2377,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2086,7 +2399,8 @@
    "missedBy": {
     "form": 1,
     "division": 2,
-    "pythag": 1
+    "pythag": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -2101,14 +2415,18 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2025-wk11",
    "phase": "holdout",
    "games": 15,
-   "baseWins": 12,
+   "baseWins": 10,
    "brainWins": 10,
    "causes": {
     "fluke": 0,
@@ -2118,8 +2436,9 @@
    },
    "missedBy": {
     "form": 3,
-    "division": 2,
-    "pythag": 1
+    "division": 3,
+    "pythag": 1,
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -2134,24 +2453,29 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2025-wk12",
    "phase": "holdout",
    "games": 14,
-   "baseWins": 8,
-   "brainWins": 10,
+   "baseWins": 11,
+   "brainWins": 11,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
-    "signal-missed": 2,
+    "coin-flip": 0,
+    "signal-missed": 3,
     "rating-gap": 0
    },
    "missedBy": {
-    "pythag": 2,
-    "division": 2
+    "pythag": 1,
+    "qb-value": 1,
+    "division": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -2166,7 +2490,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2176,14 +2504,15 @@
    "baseWins": 10,
    "brainWins": 10,
    "causes": {
-    "fluke": 2,
+    "fluke": 1,
     "coin-flip": 1,
-    "signal-missed": 2,
+    "signal-missed": 3,
     "rating-gap": 1
    },
    "missedBy": {
     "pythag": 1,
-    "division": 2
+    "division": 2,
+    "qb-value": 2
    },
    "weights": {
     "injuryGap": 0.4,
@@ -2198,7 +2527,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2206,10 +2539,10 @@
    "phase": "holdout",
    "games": 14,
    "baseWins": 9,
-   "brainWins": 9,
+   "brainWins": 8,
    "causes": {
     "fluke": 1,
-    "coin-flip": 0,
+    "coin-flip": 1,
     "signal-missed": 4,
     "rating-gap": 0
    },
@@ -2230,23 +2563,30 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2025-wk15",
    "phase": "holdout",
    "games": 16,
-   "baseWins": 13,
-   "brainWins": 12,
+   "baseWins": 11,
+   "brainWins": 10,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
-    "signal-missed": 2,
+    "coin-flip": 3,
+    "signal-missed": 3,
     "rating-gap": 0
    },
    "missedBy": {
-    "division": 2
+    "division": 3,
+    "qb-value": 1,
+    "form": 1,
+    "pythag": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -2261,7 +2601,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
@@ -2269,17 +2613,18 @@
    "phase": "holdout",
    "games": 16,
    "baseWins": 8,
-   "brainWins": 8,
+   "brainWins": 9,
    "causes": {
     "fluke": 0,
-    "coin-flip": 1,
-    "signal-missed": 4,
-    "rating-gap": 3
+    "coin-flip": 0,
+    "signal-missed": 5,
+    "rating-gap": 2
    },
    "missedBy": {
     "division": 2,
-    "form": 3,
-    "pythag": 2
+    "form": 2,
+    "qb-value": 3,
+    "pythag": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -2294,26 +2639,30 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2025-wk17",
    "phase": "holdout",
    "games": 16,
-   "baseWins": 8,
-   "brainWins": 8,
+   "baseWins": 10,
+   "brainWins": 10,
    "causes": {
     "fluke": 1,
-    "coin-flip": 3,
-    "signal-missed": 3,
-    "rating-gap": 1
+    "coin-flip": 1,
+    "signal-missed": 4,
+    "rating-gap": 0
    },
    "missedBy": {
-    "pythag": 3,
-    "division": 3,
+    "division": 2,
+    "qb-value": 1,
     "weather": 1,
-    "form": 1
+    "form": 2
    },
    "weights": {
     "injuryGap": 0.4,
@@ -2328,24 +2677,29 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   },
   {
    "label": "2025-wk18",
    "phase": "holdout",
    "games": 16,
-   "baseWins": 11,
-   "brainWins": 11,
+   "baseWins": 10,
+   "brainWins": 10,
    "causes": {
     "fluke": 0,
-    "coin-flip": 1,
+    "coin-flip": 2,
     "signal-missed": 4,
     "rating-gap": 0
    },
    "missedBy": {
-    "division": 5,
-    "form": 1
+    "division": 6,
+    "form": 2,
+    "qb-value": 2
    },
    "weights": {
     "injuryGap": 0.4,
@@ -2360,7 +2714,11 @@
     "pitcherForm": 0,
     "divisionDamp": 0.27,
     "bye": 0,
-    "rosterChurn": 0
+    "rosterChurn": 0,
+    "starterFip": 0,
+    "qbValue": 0.05,
+    "travel": 0,
+    "shortWeek": 0
    }
   }
  ]

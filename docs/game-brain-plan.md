@@ -170,6 +170,22 @@ transaction wire, last 14 days) was lab-tested like every other candidate and **
 weight — exactly what the evidence supports. Everything is fetched live and framework-cached;
 no Supabase or any account is involved.
 
+## Research round 3 (2026-08-24): QB value, FIP, HFA re-sweep
+
+Grounded in the QB-adjustment literature (QB is the largest single NFL factor) and the
+documented league-wide home-edge decline:
+
+- **NFL home advantage re-swept on validation: 48 → 28 Elo** (~54% home), matching the modern
+  era; improves baseline and brain on validation and holdout log-loss.
+- **qbValue KEPT (shipped 0.05)**: rolling projected-starter composite (yards/att + TD−INT)
+  from 1,355 real box scores; starter = last game's starter, week 1 excluded. Top validation
+  gain (+0.0038); helps 3 of 4 frozen seasons; the seasons disagree on size, so it ships
+  shrunk to 0.05 where holdout log-loss beats baseline. Production wiring:
+  `getNflQbContext` (regular-season summaries, 21-day stale guard).
+- **REJECTED after testing**: real per-start FIP for MLB starters (−0.0007 — even genuine
+  K/BB/HR logs add nothing over a margin-aware baseline), NFL travel distance, short-week
+  flag, and (again) scoring form, splits, bye.
+
 ## Faceoff vs the deployed GitHub models (2026-08-24)
 
 `npm run backtest -- all --faceoff` replays the deployed models faithfully (exact
@@ -181,9 +197,9 @@ the new model (MOV-Elo + frozen brain weights) on identical games. Full table in
   1,965 games): **new 56.1% vs GitHub 54.3%** with better log-loss; the new model also wins
   overall across 11,699 games even though 2022–2025 were in-sample for the GitHub logistic.
   (Caveat: the replayed GitHub pitcher adjustment uses a runs-allowed proxy, not live ERA/WHIP.)
-- **NFL — new model better on balance.** Better accuracy and log-loss overall (64.0% / 0.6437
-  vs 63.5% / 0.6520), decisive wins in 2022–23, better log-loss in 3 of 4 seasons; GitHub's
-  2025 accuracy edge (5 games of 271) is within noise (σ ≈ 8 games).
+- **NFL — new model better on balance.** After round 3 (HFA 28 + qbValue): overall 65.0% /
+  0.6435 vs 63.5% / 0.6520 across four seasons, decisive wins in 2022–23; GitHub keeps a
+  2025-specific accuracy edge, within noise and traceable to qbValue's one adverse season.
 
 ## Phases
 

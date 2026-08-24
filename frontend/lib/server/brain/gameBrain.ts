@@ -17,7 +17,7 @@ import { getMlbTeamForms, getNflTeamForms } from "@/lib/server/brain/form";
 import { getGameWeather } from "@/lib/server/brain/weather";
 import { getMlbVenueContext, getNflVenueContext, type VenueContext } from "@/lib/server/brain/venues";
 import { NFL_DIVISIONS } from "@/lib/server/brain/nflStadiums";
-import { getNflSeasonContext, type TeamSeasonContext } from "@/lib/server/brain/teamContext";
+import { getNflQbContext, getNflSeasonContext, type NflQbContext, type TeamSeasonContext } from "@/lib/server/brain/teamContext";
 import { getEspnTeamNews, getMlbTransactionNews, type NewsFlag, type TeamTransactionNews } from "@/lib/server/brain/news";
 import { pickStatus } from "@/lib/server/playerPickScoring";
 
@@ -86,7 +86,9 @@ function buildFactors(
   away: TeamBrainSide,
   weather: WeatherSnapshot | null,
   season: { home?: TeamSeasonContext; away?: TeamSeasonContext },
-  rosterChurnGap?: number
+  rosterChurnGap?: number,
+  qbValueGap?: number,
+  qb: { home?: NflQbContext; away?: NflQbContext } = {}
 ): BrainFactor[] {
   const divisionGame =
     sport === "nfl" &&
@@ -110,7 +112,8 @@ function buildFactors(
       baselineLogit: Math.log(baseline / (1 - baseline)),
       homeOffBye: sport === "nfl" ? (home.form.restDays ?? 0) >= 10 && home.form.lastTenGames > 0 : undefined,
       awayOffBye: sport === "nfl" ? (away.form.restDays ?? 0) >= 10 && away.form.lastTenGames > 0 : undefined,
-      rosterChurnGap
+      rosterChurnGap,
+      qbValueGap
     },
     DEFAULT_BRAIN_WEIGHTS
   );
@@ -154,6 +157,15 @@ function buildFactors(
         homeLogit: term.homeLogit
       };
     }
+    if (term.kind === "qb-value") {
+      const better = term.homeLogit > 0 ? game.home_team : game.away_team;
+      const starter = (term.homeLogit > 0 ? qb.home : qb.away)?.starterName;
+      return {
+        label: "Quarterback edge",
+        detail: `${better}${starter ? ` (${starter})` : ""} has the stronger recent quarterback play`,
+        homeLogit: term.homeLogit
+      };
+    }
     if (term.kind === "roster-churn") {
       const steadier = term.homeLogit > 0 ? game.home_team : game.away_team;
       return { label: "Roster stability", detail: `${steadier} has had the quieter transaction wire over the last two weeks`, homeLogit: term.homeLogit };
@@ -180,7 +192,7 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
   if (scheduled.length === 0) return [];
 
   const teamIds = [...new Set(scheduled.flatMap((game) => [game.homeTeam.id, game.awayTeam.id]))];
-  const [forms, injuryPairs, mlbVenues, seasonContexts, transactionNews, espnNewsPairs] = await Promise.all([
+  const [forms, injuryPairs, mlbVenues, seasonContexts, transactionNews, qbContexts, espnNewsPairs] = await Promise.all([
     sport === "mlb"
       ? getMlbTeamForms(teamIds, date)
       : getNflTeamForms(teamIds.map(String), date),
@@ -194,6 +206,7 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
     // Season context feeds the record-derived factors; only the NFL has ones with non-zero weights today.
     sport === "nfl" ? getNflSeasonContext(teamIds.map(String), date) : Promise.resolve(new Map<string, TeamSeasonContext>()),
     sport === "mlb" ? getMlbTransactionNews(teamIds, date) : Promise.resolve(new Map<number, TeamTransactionNews>()),
+    sport === "nfl" ? getNflQbContext(teamIds.map(String), date) : Promise.resolve(new Map<string, NflQbContext>()),
     Promise.all(
       scheduled
         .flatMap((game) => [game.homeTeam, game.awayTeam])
@@ -229,7 +242,10 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
         sport === "mlb"
           ? (transactionNews.get(game.awayTeam.id)?.churn ?? 0) - (transactionNews.get(game.homeTeam.id)?.churn ?? 0)
           : undefined;
-      const { logitDelta, factors } = combineFactors(buildFactors(sport, game, home, away, weather, season, churnGap));
+      const homeQb = qbContexts.get(String(game.homeTeam.id));
+      const awayQb = qbContexts.get(String(game.awayTeam.id));
+      const qbGap = homeQb?.value != null && awayQb?.value != null ? Number((homeQb.value - awayQb.value).toFixed(3)) : undefined;
+      const { logitDelta, factors } = combineFactors(buildFactors(sport, game, home, away, weather, season, churnGap, qbGap, { home: homeQb, away: awayQb }));
       return {
         gameId: game.gameId,
         sport,

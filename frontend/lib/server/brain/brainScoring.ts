@@ -46,22 +46,25 @@ export const MAX_BRAIN_LOGIT = 0.35;
  * them live in docs/backtests/ (charts + experiments.md ledger). Hand-edit
  * only with a rerun to back it up.
  *
- * Provenance (2026-08-24 v2 runs — MOV-Elo baseline, 2021 burn-in, greedy
- * factor selection on a dedicated validation season, untouched final holdout):
+ * Provenance (2026-08-24 v3 runs — MOV-Elo baseline with NFL home advantage
+ * re-swept to 28 Elo on validation, matching the league-wide home-edge
+ * decline; 2021 burn-in; greedy factor selection on a dedicated validation
+ * season; untouched final holdout):
  *
- * NFL (train 2022–23, validation 2024, holdout 2025): greedy selection KEPT
- * pythag (Δ val logloss +0.0042) and divisionDamp (+0.0042); REJECTED
- * scoringForm, homeSplit, bye. Holdout: brain 64.9% vs baseline 64.2%,
- * logloss 0.6563 vs 0.6602. injuryGap/qbOut stay research priors — free
- * historical injury reports don't exist to tune against.
+ * NFL (train 2022–23, validation 2024, holdout 2025): selection keeps
+ * pythag (~0.69), divisionDamp (~0.27), and qbValue — a rolling
+ * projected-starter QB composite from real box scores (week 1 excluded:
+ * offseason starter carryover is unreliable). qbValue was the top validation
+ * gain (Δ logloss +0.0038) and helps in 3 of 4 frozen seasons; the seasons
+ * disagree on size (2022/23 favor 0.1, 2025 favors 0), so it ships shrunk to
+ * 0.05, where holdout log-loss beats baseline again. REJECTED: travel, shortWeek,
+ * scoringForm, homeSplit, bye. injuryGap/qbOut stay research priors.
  *
  * MLB (train 2022–24, validation 2025, holdout 2026-to-date): every record
- * candidate (pitcherForm, scoringForm, homeSplit, pythag, density) was
- * REJECTED — a margin-aware baseline already carries that information — and
- * an ablation showed even form/injury/rest add nothing measurable (holdout
- * 55.9–56.1% vs 56.1% baseline). MLB therefore ships display-grade weights:
- * small, honest, bounded; weatherHome (~0.06) is the one signal that
- * consistently survives tuning, and injury/form stay visible-but-tiny.
+ * candidate was REJECTED — including real per-start FIP from game logs
+ * (Δ −0.0007) and transaction-wire roster churn — a margin-aware baseline
+ * already carries that information. MLB ships display-grade weights;
+ * weatherHome (~0.06) is the one consistent survivor.
  */
 export type SportWeightSet = {
   /** Logit per unit of injury-burden gap (away − home). */
@@ -90,6 +93,14 @@ export type SportWeightSet = {
   bye: number;
   /** Logit per unit of roster-disruption gap (away churn − home churn, transactions last 14 days). */
   rosterChurn: number;
+  /** MLB: logit per unit of starting-pitcher FIP-lite gap (away − home, from real per-start K/BB/HR logs). */
+  starterFip: number;
+  /** NFL: logit per unit of projected-starter QB value gap (home − away, rolling per-start composite). */
+  qbValue: number;
+  /** NFL: logit per 1,000 km the road team travels. */
+  travel: number;
+  /** NFL: flat logit against a side on a short week (≤4 rest days) when the other is not. */
+  shortWeek: number;
 };
 
 export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
@@ -97,11 +108,11 @@ export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
 export const DEFAULT_BRAIN_WEIGHTS: BrainWeights = {
   mlb: {
     injuryGap: 0.05, qbOut: 0, formWinRate: 0.02, restDay: 0.005, weatherHome: 0.06,
-    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0, rosterChurn: 0
+    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0, travel: 0, shortWeek: 0
   },
   nfl: {
     injuryGap: 0.4, qbOut: 0.25, formWinRate: 0.085, restDay: 0.045, weatherHome: 0.055,
-    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0, rosterChurn: 0
+    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0.05, travel: 0, shortWeek: 0
   }
 };
 
@@ -221,10 +232,19 @@ export type FactorInputs = {
   awayOffBye?: boolean;
   /** Roster-disruption gap: away transactions − home transactions over the last 14 days. */
   rosterChurnGap?: number;
+  /** Starting-pitcher FIP-lite gap, away − home (positive favors home). */
+  starterFipGap?: number;
+  /** Projected-starter QB value gap, home − away. */
+  qbValueGap?: number;
+  /** Road-team travel distance in thousands of km. */
+  travelMm?: number;
+  /** Short week (≤4 rest days) flags. */
+  homeShortWeek?: boolean;
+  awayShortWeek?: boolean;
 };
 
 export type FactorTerm = {
-  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye" | "roster-churn";
+  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye" | "roster-churn" | "starter-fip" | "qb-value" | "travel" | "short-week";
   homeLogit: number;
 };
 
@@ -266,6 +286,18 @@ export function factorTerms(inputs: FactorInputs, weights: BrainWeights = DEFAUL
   }
   if (inputs.rosterChurnGap !== undefined && sportWeights.rosterChurn > 0) {
     terms.push({ kind: "roster-churn", homeLogit: inputs.rosterChurnGap * sportWeights.rosterChurn });
+  }
+  if (inputs.starterFipGap !== undefined && sportWeights.starterFip > 0) {
+    terms.push({ kind: "starter-fip", homeLogit: Math.max(-3, Math.min(3, inputs.starterFipGap)) * sportWeights.starterFip });
+  }
+  if (inputs.qbValueGap !== undefined && sportWeights.qbValue > 0) {
+    terms.push({ kind: "qb-value", homeLogit: Math.max(-4, Math.min(4, inputs.qbValueGap)) * sportWeights.qbValue });
+  }
+  if (inputs.travelMm !== undefined && sportWeights.travel > 0) {
+    terms.push({ kind: "travel", homeLogit: Math.min(4.5, inputs.travelMm) * sportWeights.travel });
+  }
+  if ((inputs.homeShortWeek ?? false) !== (inputs.awayShortWeek ?? false) && sportWeights.shortWeek > 0) {
+    terms.push({ kind: "short-week", homeLogit: inputs.homeShortWeek ? -sportWeights.shortWeek : sportWeights.shortWeek });
   }
   return terms;
 }

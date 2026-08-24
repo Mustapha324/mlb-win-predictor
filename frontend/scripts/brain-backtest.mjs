@@ -50,6 +50,7 @@ const FROZEN = process.argv.includes("--frozen"); // evaluate current production
 const FACEOFF = process.argv.includes("--faceoff"); // deployed GitHub models vs the new model, head to head
 const SPORT_ARG = process.argv.find((arg) => ["mlb", "nfl", "all"].includes(arg)) ?? "all";
 const TODAY = "2026-08-24";
+const NFL_HFA = Number((process.argv.find((arg) => arg.startsWith("--hfa=")) ?? "--hfa=28").slice(6)); // 28 Elo ~ modern-era home edge; swept on validation 2026-08-24
 
 fs.mkdirSync(CACHE_DIR, { recursive: true });
 fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -167,6 +168,7 @@ async function nflSeasonGames(seasonYear) {
       if (!Number.isFinite(homeScore) || !Number.isFinite(awayScore) || homeScore === awayScore) continue;
       events.set(event.id, {
         sport: "nfl",
+        eventId: event.id,
         season: seasonYear,
         date: event.date.slice(0, 10),
         timeUtc: event.date,
@@ -225,7 +227,9 @@ function teamState() {
 }
 
 function buildFeatures(games, options) {
-  const { sport, ilIntervals, churnEvents, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
+  const { sport, ilIntervals, churnEvents, starterLogs, qbByEvent, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
+  const teamStarter = new Map();
+  const qbHistory = new Map();
   const teams = new Map();
   const stateOf = (id) => teams.get(id) ?? teams.set(id, teamState()).get(id);
   const starters = new Map();
@@ -271,12 +275,32 @@ function buildFeatures(games, options) {
       const awayStarter = game.awayStarterId ? starterAvg(game.awayStarterId) : null;
       game.pitcherFormGap = homeStarter !== null && awayStarter !== null ? Number((awayStarter - homeStarter).toFixed(3)) : undefined;
       game.rosterChurnGap = churnEvents ? churnCount(churnEvents, game.awayId, game.date) - churnCount(churnEvents, game.homeId, game.date) : undefined;
+      if (starterLogs) {
+        const homeFip = starterFip(starterLogs, game.homeStarterId, game.date);
+        const awayFip = starterFip(starterLogs, game.awayStarterId, game.date);
+        game.starterFipGap = homeFip !== null && awayFip !== null ? Number((awayFip - homeFip).toFixed(3)) : undefined;
+      }
     } else {
       game.homeBurden = 0;
       game.awayBurden = 0;
       game.divisionGame = NFL_DIVISIONS[game.homeAbbr] !== undefined && NFL_DIVISIONS[game.homeAbbr] === NFL_DIVISIONS[game.awayAbbr];
       game.homeOffBye = (game.homeForm.restDays ?? 0) >= 10 && game.homeForm.lastTenGames > 0;
       game.awayOffBye = (game.awayForm.restDays ?? 0) >= 10 && game.awayForm.lastTenGames > 0;
+      game.homeShortWeek = (game.homeForm.restDays ?? 7) <= 4 && game.homeForm.lastTenGames > 0;
+      game.awayShortWeek = (game.awayForm.restDays ?? 7) <= 4 && game.awayForm.lastTenGames > 0;
+      const homeStadium = NFL_STADIUMS[game.homeAbbr];
+      const awayStadium = NFL_STADIUMS[game.awayAbbr];
+      game.travelMm = homeStadium && awayStadium ? Number((haversineKm(awayStadium, homeStadium) / 1000).toFixed(3)) : undefined;
+      if (qbByEvent) {
+        const qbValueOf = (qbId) => {
+          const history = qbId ? qbHistory.get(qbId) ?? [] : [];
+          return history.length >= 2 ? history.slice(-8).reduce((sum, value) => sum + value, 0) / Math.min(8, history.length) : null;
+        };
+        const homeQb = qbValueOf(teamStarter.get(game.homeId));
+        const awayQb = qbValueOf(teamStarter.get(game.awayId));
+        // Week 1 projections carry last season's starter across the offseason — too unreliable to trade on.
+        game.qbValueGap = game.week >= 2 && homeQb !== null && awayQb !== null ? Number((homeQb - awayQb).toFixed(3)) : undefined;
+      }
     }
     const snapshot = weatherFor ? weatherFor(game) : null;
     game.weatherSeverity = snapshot ? weatherSeverity(snapshot) : 0;
@@ -301,6 +325,14 @@ function buildFeatures(games, options) {
     if (sport === "mlb") {
       if (game.homeStarterId) starters.set(game.homeStarterId, [...(starters.get(game.homeStarterId) ?? []), game.awayScore].slice(-8));
       if (game.awayStarterId) starters.set(game.awayStarterId, [...(starters.get(game.awayStarterId) ?? []), game.homeScore].slice(-8));
+    } else if (qbByEvent) {
+      const lines = qbByEvent.get(game.eventId);
+      for (const teamId of [game.homeId, game.awayId]) {
+        const line = lines?.[teamId];
+        if (!line?.qbId) continue;
+        teamStarter.set(teamId, line.qbId);
+        qbHistory.set(line.qbId, [...(qbHistory.get(line.qbId) ?? []), line.value].slice(-12));
+      }
     }
   }
 }
@@ -346,6 +378,135 @@ async function mlbChurnEvents(seasons) {
 function churnCount(byTeam, teamId, date) {
   const cutoff = new Date(`${date}T12:00:00Z`).getTime() - 14 * 86400000;
   return (byTeam.get(teamId) ?? []).filter((d) => d < date && new Date(`${d}T12:00:00Z`).getTime() >= cutoff).length;
+}
+
+function inningsToOuts(value) {
+  const [whole = "0", fraction = "0"] = String(value ?? "0").split(".");
+  return (Number(whole) || 0) * 3 + Math.min(2, Number(fraction) || 0);
+}
+
+/** Per-start K/BB/HR/IP logs for every probable starter, batched 40 ids per call. */
+async function mlbStarterLogs(games) {
+  const bySeason = new Map();
+  for (const game of games) {
+    for (const pitcherId of [game.homeStarterId, game.awayStarterId]) {
+      if (!pitcherId) continue;
+      const ids = bySeason.get(game.season) ?? new Set();
+      ids.add(pitcherId);
+      bySeason.set(game.season, ids);
+    }
+  }
+  const logs = new Map();
+  for (const [season, idSet] of bySeason) {
+    const ids = [...idSet].toSorted((a, b) => a - b);
+    for (let index = 0; index < ids.length; index += 40) {
+      const chunk = ids.slice(index, index + 40);
+      const key = `mlb-plog-${season}-${index}`;
+      const file = path.join(CACHE_DIR, `${key}.json`);
+      let extracted;
+      if (!REFRESH && fs.existsSync(file)) {
+        extracted = JSON.parse(fs.readFileSync(file, "utf8"));
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 150));
+        const url = `https://statsapi.mlb.com/api/v1/people?personIds=${chunk.join(",")}&hydrate=stats(group=[pitching],type=[gameLog],season=${season})`;
+        const response = await fetch(url, { headers: { Accept: "application/json" } });
+        if (!response.ok) continue;
+        const payload = await response.json();
+        extracted = {};
+        for (const person of payload.people ?? []) {
+          const splits = person.stats?.[0]?.splits ?? [];
+          extracted[person.id] = splits
+            .filter((split) => split.date && split.stat)
+            .map((split) => ({
+              date: split.date,
+              outs: inningsToOuts(split.stat.inningsPitched),
+              k: split.stat.strikeOuts ?? 0,
+              bb: split.stat.baseOnBalls ?? 0,
+              hr: split.stat.homeRuns ?? 0
+            }));
+        }
+        fs.writeFileSync(file, JSON.stringify(extracted));
+      }
+      for (const [pitcherId, starts] of Object.entries(extracted)) {
+        logs.set(Number(pitcherId), [...(logs.get(Number(pitcherId)) ?? []), ...starts]);
+      }
+    }
+  }
+  for (const starts of logs.values()) starts.sort((a, b) => a.date.localeCompare(b.date));
+  return logs;
+}
+
+/** Rolling FIP-lite ((13·HR + 3·BB − 2·K) per inning) over the last 10 pregame starts; null under 3 starts / 15 IP. */
+function starterFip(logs, pitcherId, date) {
+  if (!pitcherId) return null;
+  const prior = (logs.get(pitcherId) ?? []).filter((start) => start.date < date).slice(-10);
+  const outs = prior.reduce((sum, start) => sum + start.outs, 0);
+  if (prior.length < 3 || outs < 45) return null;
+  const innings = outs / 3;
+  const hr = prior.reduce((sum, start) => sum + start.hr, 0);
+  const bb = prior.reduce((sum, start) => sum + start.bb, 0);
+  const k = prior.reduce((sum, start) => sum + start.k, 0);
+  return (13 * hr + 3 * bb - 2 * k) / innings;
+}
+
+/** Per-game passer lines from ESPN summaries (slim-cached): eventId -> { [espnTeamId]: {qbId, value} }. */
+async function nflQbGames(games) {
+  const byEvent = new Map();
+  for (const game of games) {
+    const key = `nfl-qb-${game.eventId}`;
+    const file = path.join(CACHE_DIR, `${key}.json`);
+    let extracted;
+    if (!REFRESH && fs.existsSync(file)) {
+      extracted = JSON.parse(fs.readFileSync(file, "utf8"));
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 120));
+      try {
+        const response = await fetch(`https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=${game.eventId}`, {
+          headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0 (compatible; SportIQ/1.0)" }
+        });
+        if (!response.ok) continue;
+        const payload = await response.json();
+        extracted = {};
+        for (const team of payload.boxscore?.players ?? []) {
+          const passing = team.statistics?.find((group) => group.name === "passing");
+          if (!team.team?.id || !passing?.athletes?.length) continue;
+          const labels = passing.labels ?? [];
+          const lines = passing.athletes
+            .map((entry) => {
+              const [completions, attempts] = String(entry.stats?.[labels.indexOf("C/ATT")] ?? "").split("/").map(Number);
+              return {
+                qbId: entry.athlete?.id,
+                attempts: Number.isFinite(attempts) ? attempts : 0,
+                yards: Number(entry.stats?.[labels.indexOf("YDS")]) || 0,
+                tds: Number(entry.stats?.[labels.indexOf("TD")]) || 0,
+                ints: Number(entry.stats?.[labels.indexOf("INT")]) || 0,
+                completions: Number.isFinite(completions) ? completions : 0
+              };
+            })
+            .filter((line) => line.qbId && line.attempts > 0)
+            .toSorted((a, b) => b.attempts - a.attempts);
+          const starter = lines[0];
+          if (!starter || starter.attempts < 8) continue;
+          // Per-start value: yards/attempt centered on 6.5, plus TD-INT rate.
+          const value = starter.yards / starter.attempts - 6.5 + (8 * (starter.tds - starter.ints)) / starter.attempts;
+          extracted[team.team.id] = { qbId: starter.qbId, value: Number(value.toFixed(3)) };
+        }
+        fs.writeFileSync(file, JSON.stringify(extracted));
+      } catch {
+        continue;
+      }
+    }
+    if (extracted) byEvent.set(game.eventId, extracted);
+  }
+  return byEvent;
+}
+
+function haversineKm(a, b) {
+  const rad = Math.PI / 180;
+  const dLat = (b.lat - a.lat) * rad;
+  const dLon = (b.lon - a.lon) * rad;
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2;
+  return 6371 * 2 * Math.asin(Math.sqrt(h));
 }
 
 // ---------------------------------------------------------------------------
@@ -394,6 +555,11 @@ function gameInputs(sport, game, baselineLogit) {
     densityGap: game.densityGap,
     pitcherFormGap: game.pitcherFormGap,
     rosterChurnGap: game.rosterChurnGap,
+    starterFipGap: game.starterFipGap,
+    qbValueGap: game.qbValueGap,
+    travelMm: game.travelMm,
+    homeShortWeek: game.homeShortWeek,
+    awayShortWeek: game.awayShortWeek,
     divisionGame: game.divisionGame,
     baselineLogit,
     homeOffBye: game.homeOffBye,
@@ -542,7 +708,8 @@ const TUNABLE_BOUNDS = {
     pythag: { min: 0, max: 1.2, delta: 0.1 },
     density: { min: 0, max: 0.06, delta: 0.008 },
     pitcherForm: { min: 0, max: 0.12, delta: 0.012 },
-    rosterChurn: { min: 0, max: 0.08, delta: 0.008 }
+    rosterChurn: { min: 0, max: 0.08, delta: 0.008 },
+    starterFip: { min: 0, max: 0.5, delta: 0.04 }
   },
   nfl: {
     formWinRate: { min: 0, max: 0.35, delta: 0.03 },
@@ -552,7 +719,10 @@ const TUNABLE_BOUNDS = {
     homeSplit: { min: 0, max: 0.6, delta: 0.05 },
     pythag: { min: 0, max: 1.2, delta: 0.1 },
     divisionDamp: { min: 0, max: 0.3, delta: 0.03 },
-    bye: { min: 0, max: 0.3, delta: 0.03 }
+    bye: { min: 0, max: 0.3, delta: 0.03 },
+    qbValue: { min: 0, max: 0.2, delta: 0.02 },
+    travel: { min: 0, max: 0.1, delta: 0.01 },
+    shortWeek: { min: 0, max: 0.3, delta: 0.03 }
   }
 };
 
@@ -562,8 +732,8 @@ const BASE_TUNABLES = {
 };
 
 const CANDIDATES = {
-  mlb: ["pitcherForm", "scoringForm", "homeSplit", "pythag", "density", "rosterChurn"],
-  nfl: ["scoringForm", "homeSplit", "pythag", "divisionDamp", "bye"]
+  mlb: ["starterFip", "scoringForm", "homeSplit", "pythag", "density", "rosterChurn"],
+  nfl: ["qbValue", "travel", "shortWeek", "scoringForm", "homeSplit", "pythag", "divisionDamp", "bye"]
 };
 
 function batchesFor(sport, games, phaseOf) {
@@ -584,6 +754,7 @@ async function loadMlb() {
   const bySeason = new Map();
   for (const season of seasons) bySeason.set(season, await mlbSeasonGames(season, season === 2026 ? TODAY : undefined));
   const [venues, intervals, churnEvents] = await Promise.all([mlbVenueInfo(), mlbIlTimeline([2022, 2023, 2024, 2025, 2026]), mlbChurnEvents([2022, 2023, 2024, 2025, 2026])]);
+  const starterLogs = await mlbStarterLogs([2022, 2023, 2024, 2025, 2026].flatMap((season) => bySeason.get(season)));
   const evalGames = [2022, 2023, 2024, 2025, 2026].flatMap((season) => bySeason.get(season));
   const outdoorIds = [...new Set(evalGames.map((game) => game.venueId).filter(Boolean))].filter((id) => venues.get(id)?.open && venues.get(id)?.lat);
   const archives = new Map();
@@ -601,6 +772,7 @@ async function loadMlb() {
     sport: "mlb",
     ilIntervals: intervals,
     churnEvents,
+    starterLogs,
     weatherFor: (game) => weatherAt(archives.get(`${game.venueId}-${game.season}`), game.timeUtc),
     marginWindow: 15,
     pythagExponent: 1.83,
@@ -624,11 +796,13 @@ async function loadNfl() {
       } catch { /* factor absent */ }
     }
   }
-  console.log(`[nfl] seasons ${seasons.join("/")}: ${seasons.map((s) => bySeason.get(s).length).join("/")} games; weather archives ${archives.size}`);
   const all = seasons.flatMap((season) => bySeason.get(season));
+  const qbByEvent = await nflQbGames(all);
+  console.log(`[nfl] seasons ${seasons.join("/")}: ${seasons.map((s) => bySeason.get(s).length).join("/")} games; weather archives ${archives.size}; QB box scores ${qbByEvent.size}`);
   buildFeatures(all, {
     sport: "nfl",
     ilIntervals: null,
+    qbByEvent,
     weatherFor: (game) => weatherAt(archives.get(`${game.homeAbbr}-${game.season}`), game.timeUtc),
     marginWindow: 5,
     pythagExponent: 2.37,
@@ -662,7 +836,7 @@ function runConfig(sport, games, activeKeys, tuneIn) {
     tuneIn,
     closeMargin: sport === "mlb" ? 1 : 3,
     trailingWindow: sport === "mlb" ? 400 : 96,
-    elo: sport === "mlb" ? makeElo(4, 24) : makeElo(20, 48)
+    elo: sport === "mlb" ? makeElo(4, 24) : makeElo(20, NFL_HFA)
   });
 }
 
@@ -858,7 +1032,7 @@ function nflGithubReplayer() {
 
 function runFaceoff(sport, games) {
   const github = sport === "mlb" ? mlbGithubReplayer() : nflGithubReplayer();
-  const elo = sport === "mlb" ? makeElo(4, 24) : makeElo(20, 48);
+  const elo = sport === "mlb" ? makeElo(4, 24) : makeElo(20, NFL_HFA);
   const rows = [];
   for (const game of games) {
     const phase = PHASES[sport](game);

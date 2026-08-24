@@ -125,11 +125,123 @@ export async function getMlbSeasonContext(
 }
 
 type NflSeasonEvent = {
+  id?: string;
   date?: string;
   season?: { year?: number; type?: number };
   status?: { type?: { state?: string; completed?: boolean } };
   competitions?: Array<{ competitors?: Array<{ id?: string; homeAway?: string; winner?: boolean; score?: string }> }>;
 };
+
+export type NflQbContext = {
+  /** Rolling per-start value of the team's projected starter (last game's starter); null when unknown. */
+  value: number | null;
+  starterName: string | null;
+};
+
+type EspnSummaryPassing = {
+  boxscore?: {
+    players?: Array<{
+      team?: { id?: string };
+      statistics?: Array<{ name?: string; labels?: string[]; athletes?: Array<{ athlete?: { id?: string; displayName?: string }; stats?: string[] }> }>;
+    }>;
+  };
+};
+
+/**
+ * Projected-starter QB value per team: the starter is whoever led pass
+ * attempts in the team's most recent completed game, valued by a rolling
+ * composite (yards/attempt centered on 6.5 plus TD−INT rate) over his last
+ * 8 starts. Mirrors the backtested factor exactly, including the guard:
+ * no value when the team's last game is more than 21 days old (offseason
+ * carryover is unreliable — the week-1 exclusion from the lab).
+ */
+export async function getNflQbContext(teamIds: string[], date: string): Promise<Map<string, NflQbContext>> {
+  const contexts = new Map<string, NflQbContext>(teamIds.map((id) => [id, { value: null, starterName: null }]));
+  try {
+    const seasonYear = Number(date.slice(0, 4)) - (Number(date.slice(5, 7)) < 3 ? 1 : 0);
+    const events = (
+      await Promise.all([
+        fetchEspnNflSeason<NflSeasonEvent>(seasonYear).catch(() => []),
+        fetchEspnNflSeason<NflSeasonEvent>(seasonYear + 1).catch(() => [])
+      ])
+    ).flat();
+    const completedByTeam = new Map<string, NflSeasonEvent[]>();
+    for (const event of events) {
+      if (!event.id || !event.date || event.date.slice(0, 10) >= date) continue;
+      // Regular season only — preseason passers are backups and would poison starter detection.
+      if (event.season?.type !== undefined && event.season.type !== 2) continue;
+      if (!(event.status?.type?.completed || event.status?.type?.state === "post")) continue;
+      for (const competitor of event.competitions?.[0]?.competitors ?? []) {
+        if (!competitor.id || !teamIds.includes(competitor.id)) continue;
+        const list = completedByTeam.get(competitor.id) ?? [];
+        list.push(event);
+        completedByTeam.set(competitor.id, list);
+      }
+    }
+    const staleCutoff = new Date(`${date}T12:00:00Z`).getTime() - 21 * 86400000;
+    const summaryCache = new Map<string, EspnSummaryPassing | null>();
+    const fetchSummary = async (eventId: string) => {
+      if (summaryCache.has(eventId)) return summaryCache.get(eventId) ?? null;
+      try {
+        const response = await fetch(`https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=${encodeURIComponent(eventId)}`, {
+          next: { revalidate: 604800 },
+          headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0 (compatible; SportIQ/1.0)" }
+        });
+        const payload = response.ok ? ((await response.json()) as EspnSummaryPassing) : null;
+        summaryCache.set(eventId, payload);
+        return payload;
+      } catch {
+        summaryCache.set(eventId, null);
+        return null;
+      }
+    };
+    const passerLine = (summary: EspnSummaryPassing | null, teamId: string) => {
+      const team = summary?.boxscore?.players?.find((entry) => entry.team?.id === teamId);
+      const passing = team?.statistics?.find((group) => group.name === "passing");
+      if (!passing?.athletes?.length) return null;
+      const labels = passing.labels ?? [];
+      const lines = passing.athletes
+        .map((entry) => {
+          const [, attempts] = String(entry.stats?.[labels.indexOf("C/ATT")] ?? "").split("/").map(Number);
+          return {
+            qbId: entry.athlete?.id ?? null,
+            name: entry.athlete?.displayName ?? null,
+            attempts: Number.isFinite(attempts) ? attempts : 0,
+            yards: Number(entry.stats?.[labels.indexOf("YDS")]) || 0,
+            tds: Number(entry.stats?.[labels.indexOf("TD")]) || 0,
+            ints: Number(entry.stats?.[labels.indexOf("INT")]) || 0
+          };
+        })
+        .filter((line) => line.qbId && line.attempts >= 8)
+        .toSorted((a, b) => b.attempts - a.attempts);
+      return lines[0] ?? null;
+    };
+    await Promise.all(
+      teamIds.map(async (teamId) => {
+        const recent = (completedByTeam.get(teamId) ?? []).toSorted((a, b) => (b.date ?? "").localeCompare(a.date ?? "")).slice(0, 10);
+        if (recent.length === 0 || new Date(recent[0].date!).getTime() < staleCutoff) return;
+        const latestSummary = await fetchSummary(recent[0].id!);
+        const starter = passerLine(latestSummary, teamId);
+        if (!starter?.qbId) return;
+        const values: number[] = [];
+        for (const event of recent) {
+          if (values.length >= 8) break;
+          const line = passerLine(await fetchSummary(event.id!), teamId);
+          if (line?.qbId !== starter.qbId || line.attempts === 0) continue;
+          values.push(line.yards / line.attempts - 6.5 + (8 * (line.tds - line.ints)) / line.attempts);
+        }
+        if (values.length < 2) return;
+        contexts.set(teamId, {
+          value: Number((values.reduce((sum, value) => sum + value, 0) / values.length).toFixed(3)),
+          starterName: starter.name
+        });
+      })
+    );
+    return contexts;
+  } catch {
+    return contexts;
+  }
+}
 
 export async function getNflSeasonContext(teamIds: string[], date: string): Promise<Map<string, TeamSeasonContext>> {
   const teams = new Map<string, TeamSeasonContext>(teamIds.map((id) => [id, EMPTY_CONTEXT]));
