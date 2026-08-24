@@ -127,3 +127,14 @@ test("late-season damp shrinks favorites in weeks 17-18 only", async () => {
   assert.equal(early.some((term) => term.kind === "late-season"), false);
   assert.equal(factorTerms({ ...base, sport: "mlb", lateSeason: true }).some((t) => t.kind === "late-season"), false, "MLB unaffected");
 });
+
+test("confidence tiers match the selective-prediction sweep floors", async () => {
+  const { confidenceTier } = await import("../lib/server/brain/brainScoring.ts");
+  assert.equal(confidenceTier(0.65, "nfl"), "A");
+  assert.equal(confidenceTier(0.35, "nfl"), "A", "tier is side-agnostic");
+  assert.equal(confidenceTier(0.6, "nfl"), "B");
+  assert.equal(confidenceTier(0.55, "nfl"), "C");
+  assert.equal(confidenceTier(0.59, "mlb"), "A");
+  assert.equal(confidenceTier(0.56, "mlb"), "B");
+  assert.equal(confidenceTier(0.52, "mlb"), "C");
+});

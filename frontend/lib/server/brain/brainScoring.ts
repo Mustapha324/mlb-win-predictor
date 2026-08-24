@@ -428,6 +428,25 @@ export function pythagoreanExpectation(scored: number, allowed: number, exponent
   return s + a > 0 ? s / (s + a) : 0.5;
 }
 
+/**
+ * Confidence tiers from the selective-prediction sweep (2026-08-24, fit on
+ * train+validation, verified monotone on untouched holdouts): NFL floor 0.62
+ * gave 72.3% accuracy at 55% coverage on 2025; MLB floor 0.55 gave 58.3% at
+ * 50% coverage on 2026. Tier is computed on the temperature-calibrated pick
+ * probability max(p, 1-p).
+ */
+const TIER_FLOORS: Record<"mlb" | "nfl", { A: number; B: number }> = {
+  nfl: { A: 0.62, B: 0.58 },
+  mlb: { A: 0.58, B: 0.55 }
+};
+
+export function confidenceTier(probability: number, sport: "mlb" | "nfl"): "A" | "B" | "C" {
+  const pick = Math.max(probability, 1 - probability);
+  if (pick >= TIER_FLOORS[sport].A) return "A";
+  if (pick >= TIER_FLOORS[sport].B) return "B";
+  return "C";
+}
+
 /** League percentile (0–100) of a value among peers; higher is better unless inverted. */
 export function percentileRank(value: number, peers: number[], higherIsBetter = true): number {
   if (peers.length === 0) return 50;

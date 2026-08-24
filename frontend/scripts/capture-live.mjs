@@ -27,6 +27,7 @@ import { fileURLToPath } from "node:url";
 import {
   applyLogitDelta,
   applyTemperature,
+  confidenceTier,
   combineFactors,
   computeTeamForm,
   DEFAULT_BRAIN_WEIGHTS,
@@ -197,7 +198,8 @@ async function captureMlb(date) {
       news: { home: txByTeam.get(home.team.id) ?? [], away: txByTeam.get(away.team.id) ?? [] },
       terms,
       baseProbability: applyTemperature(baseProbability, "mlb"),
-      brainProbability: applyTemperature(applyLogitDelta(baseProbability, logitDelta), "mlb")
+      brainProbability: applyTemperature(applyLogitDelta(baseProbability, logitDelta), "mlb"),
+      tier: confidenceTier(applyTemperature(applyLogitDelta(baseProbability, logitDelta), "mlb"), "mlb")
     });
   }
   return snapshots;
@@ -389,7 +391,8 @@ async function captureNfl(date) {
       pythag: { home: homePythag, away: awayPythag },
       terms,
       baseProbability: applyTemperature(baseProbability, "nfl"),
-      brainProbability: applyTemperature(applyLogitDelta(baseProbability, logitDelta), "nfl")
+      brainProbability: applyTemperature(applyLogitDelta(baseProbability, logitDelta), "nfl"),
+      tier: confidenceTier(applyTemperature(applyLogitDelta(baseProbability, logitDelta), "nfl"), "nfl")
     });
   }
   return snapshots;

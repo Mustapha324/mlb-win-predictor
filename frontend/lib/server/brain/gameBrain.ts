@@ -3,7 +3,9 @@ import type { TeamPrediction } from "@/lib/api";
 import type { Sport } from "@/lib/sports";
 import {
   applyLogitDelta,
+  applyTemperature,
   combineFactors,
+  confidenceTier,
   DEFAULT_BRAIN_WEIGHTS,
   factorTerms,
   weatherSeverity,
@@ -51,6 +53,19 @@ export type GameBrainContext = {
     baselineHomeWinProbability: number;
     logitDelta: number;
     brainHomeWinProbability: number;
+  };
+  /**
+   * What we would actually serve: the closing-market probability when
+   * sportsbook consensus is available (measured 65.3% vs the model's 63.8% on
+   * the 2025 holdout, log-loss 0.609 vs 0.640), else the calibrated model.
+   * The tier comes from the selective-prediction sweep; marketDelta flags
+   * model-vs-market disagreement as its own signal.
+   */
+  served: {
+    homeWinProbability: number;
+    source: "market" | "model";
+    tier: "A" | "B" | "C";
+    marketDelta: number | null;
   };
 };
 
@@ -255,6 +270,10 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
       const awayQb = qbContexts.get(String(game.awayTeam.id));
       const qbGap = homeQb?.value != null && awayQb?.value != null ? Number((homeQb.value - awayQb.value).toFixed(3)) : undefined;
       const { logitDelta, factors } = combineFactors(buildFactors(sport, game, home, away, weather, season, churnGap, qbGap, { home: homeQb, away: awayQb }));
+      const brainProbability = applyLogitDelta(game.pregame_home_win_probability, logitDelta);
+      const calibrated = applyTemperature(brainProbability, sport);
+      const marketProbability = game.live_market?.homeWinProbability ?? null;
+      const servedProbability = marketProbability ?? calibrated;
       return {
         gameId: game.gameId,
         sport,
@@ -268,7 +287,13 @@ export async function getGameBrainContexts(sport: Sport, date: string, games: Te
         shadow: {
           baselineHomeWinProbability: game.pregame_home_win_probability,
           logitDelta,
-          brainHomeWinProbability: applyLogitDelta(game.pregame_home_win_probability, logitDelta)
+          brainHomeWinProbability: brainProbability
+        },
+        served: {
+          homeWinProbability: Number(servedProbability.toFixed(4)),
+          source: marketProbability !== null ? "market" : "model",
+          tier: confidenceTier(servedProbability, sport),
+          marketDelta: marketProbability !== null ? Number((calibrated - marketProbability).toFixed(4)) : null
         }
       };
     })

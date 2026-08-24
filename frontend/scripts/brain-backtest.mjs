@@ -52,6 +52,8 @@ const FACEOFF = process.argv.includes("--faceoff"); // deployed GitHub models vs
 const AUTOPSY = process.argv.includes("--autopsy"); // dissect confident losses: what happened, what was knowable pregame
 const TUNE_ONE = process.argv.find((arg) => arg.startsWith("--tune-one="))?.slice(11) ?? null; // walk-forward tune ONE extra factor on train, report frozen validation
 const TRIAL = process.argv.find((arg) => arg.startsWith("--trial="))?.slice(8) ?? null; // "key:weight" — frozen run with one extra factor fixed
+const MARKET = process.argv.includes("--market"); // NFL: closing-line benchmark, blend fit, CLV (nflverse games.csv)
+const TIERS = process.argv.includes("--tiers"); // confidence-tier / selective-prediction analysis on frozen predictions
 const SPORT_ARG = process.argv.find((arg) => ["mlb", "nfl", "all"].includes(arg)) ?? "all";
 const TODAY = "2026-08-24";
 const NFL_HFA = Number((process.argv.find((arg) => arg.startsWith("--hfa=")) ?? "--hfa=28").slice(6)); // 28 Elo ~ modern-era home edge; swept on validation 2026-08-24
@@ -234,7 +236,7 @@ function teamState() {
 }
 
 function buildFeatures(games, options) {
-  const { sport, ilIntervals, churnEvents, starterLogs, starterHands, qbByEvent, teamStatsByEvent, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
+  const { sport, ilIntervals, churnEvents, starterLogs, starterHands, qbByEvent, teamStatsByEvent, epaWeeks, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
   const teamStarter = new Map();
   const qbHistory = new Map();
   const toMargins = new Map(); // teamId -> {sum, games}, reset per season
@@ -380,6 +382,34 @@ function buildFeatures(games, options) {
       if (possMin) game.extra.possessionGap = Number(((possMin.home - possMin.away) / 5).toFixed(4));
       const fdMargin = bothRoll("fdMargin");
       if (fdMargin) game.extra.firstDownsGap = Number(((fdMargin.home - fdMargin.away) / 5).toFixed(4));
+      if (epaWeeks) {
+        const nvAbbr = (abbr) => (abbr === "LAR" ? "LA" : abbr === "WSH" ? "WAS" : abbr);
+        const rollEpa = (listKey, beforeWeek) => {
+          const list = epaWeeks[listKey];
+          if (!list) return null;
+          const prior = list.filter((entry) => entry.week < beforeWeek).slice(-8);
+          if (prior.length < 3) return null;
+          return prior.reduce((sum, entry) => sum + entry.off, 0) / prior.length;
+        };
+        const rollCpoe = (listKey, beforeWeek) => {
+          const list = epaWeeks[listKey];
+          if (!list) return null;
+          const prior = list.filter((entry) => entry.week < beforeWeek && entry.cpoe !== null).slice(-8);
+          if (prior.length < 3) return null;
+          return prior.reduce((sum, entry) => sum + entry.cpoe, 0) / prior.length;
+        };
+        const hT = nvAbbr(game.homeAbbr); const aT = nvAbbr(game.awayAbbr);
+        const hOff = rollEpa(`${game.season}_${hT}`, game.week);
+        const hDef = rollEpa(`allowed_${game.season}_${hT}`, game.week);
+        const aOff = rollEpa(`${game.season}_${aT}`, game.week);
+        const aDef = rollEpa(`allowed_${game.season}_${aT}`, game.week);
+        if (hOff !== null && hDef !== null && aOff !== null && aDef !== null) {
+          game.extra.epaGap = Number((((hOff - hDef) - (aOff - aDef)) / 10).toFixed(4));
+        }
+        const hC = rollCpoe(`${game.season}_${hT}`, game.week);
+        const aC = rollCpoe(`${game.season}_${aT}`, game.week);
+        if (hC !== null && aC !== null) game.extra.cpoeGap = Number(((hC - aC) / 2).toFixed(4));
+      }
       const sackRate = bothRoll("sackRateAllowed");
       if (sackRate) game.extra.sackRateAllowed = Number(((sackRate.away - sackRate.home) * 10).toFixed(4));
       const offAnya = bothRoll("offAnya");
@@ -781,6 +811,88 @@ function haversineKm(a, b) {
 }
 
 // ---------------------------------------------------------------------------
+// nflverse games.csv: free historical closing moneylines/spreads (verified).
+// ---------------------------------------------------------------------------
+
+const NFLVERSE_ABBR = { LAR: "LA", WSH: "WAS" }; // ESPN code -> nflverse code; others identical
+
+async function nflMarketLines() {
+  const key = "nflverse-games";
+  const file = path.join(CACHE_DIR, `${key}.json`);
+  let rows;
+  if (!REFRESH && fs.existsSync(file)) {
+    rows = JSON.parse(fs.readFileSync(file, "utf8"));
+  } else {
+    const response = await fetch("https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv");
+    if (!response.ok) throw new Error(`games.csv ${response.status}`);
+    const text = await response.text();
+    const lines = text.split("\n");
+    const header = lines[0].split(",");
+    const col = (name) => header.indexOf(name);
+    const [iSeason, iType, iWeek, iAway, iHome, iAwayMl, iHomeMl, iSpread] = ["season", "game_type", "week", "away_team", "home_team", "away_moneyline", "home_moneyline", "spread_line"].map(col);
+    rows = [];
+    for (const line of lines.slice(1)) {
+      const parts = line.split(",");
+      if (parts.length < header.length - 2) continue;
+      const season = Number(parts[iSeason]);
+      if (season < 2021 || parts[iType] !== "REG") continue;
+      const awayMl = Number(parts[iAwayMl]);
+      const homeMl = Number(parts[iHomeMl]);
+      if (!Number.isFinite(awayMl) || !Number.isFinite(homeMl) || awayMl === 0 || homeMl === 0) continue;
+      rows.push({ season, week: Number(parts[iWeek]), away: parts[iAway], home: parts[iHome], awayMl, homeMl, spread: Number(parts[iSpread]) });
+    }
+    fs.writeFileSync(file, JSON.stringify(rows));
+  }
+  const toProb = (ml) => (ml < 0 ? -ml / (-ml + 100) : 100 / (ml + 100));
+  const index = new Map();
+  for (const row of rows) {
+    const rawHome = toProb(row.homeMl);
+    const rawAway = toProb(row.awayMl);
+    index.set(`${row.season}_${row.week}_${row.away}_${row.home}`, {
+      marketHome: rawHome / (rawHome + rawAway),
+      spread: row.spread
+    });
+  }
+  return index;
+}
+
+async function nflEpaWeeks() {
+  const key = "nflverse-epa";
+  const file = path.join(CACHE_DIR, `${key}.json`);
+  if (!REFRESH && fs.existsSync(file)) return JSON.parse(fs.readFileSync(file, "utf8"));
+  const out = {};
+  for (const season of [2021, 2022, 2023, 2024, 2025]) {
+    const response = await fetch(`https://github.com/nflverse/nflverse-data/releases/download/stats_team/stats_team_week_${season}.csv`);
+    if (!response.ok) continue;
+    const text = await response.text();
+    const lines = text.split("\n");
+    const header = lines[0].split(",");
+    const col = (name) => header.indexOf(name);
+    const [iSeason, iWeek, iTeam, iOpp, iPassEpa, iRushEpa, iCpoe, iType] = ["season", "week", "team", "opponent_team", "passing_epa", "rushing_epa", "passing_cpoe", "season_type"].map(col);
+    for (const line of lines.slice(1)) {
+      const parts = line.split(",");
+      if (parts.length < 5) continue;
+      if (iType >= 0 && parts[iType] !== "REG") continue;
+      const week = Number(parts[iWeek]);
+      const off = Number(parts[iPassEpa]) + Number(parts[iRushEpa]);
+      if (!Number.isFinite(week) || !Number.isFinite(off)) continue;
+      const team = parts[iTeam];
+      const opp = parts[iOpp];
+      const cpoe = Number(parts[iCpoe]);
+      (out[`${season}_${team}`] ??= []).push({ week, off, cpoe: Number.isFinite(cpoe) ? cpoe : null });
+      (out[`allowed_${season}_${opp}`] ??= []).push({ week, off });
+    }
+  }
+  fs.writeFileSync(file, JSON.stringify(out));
+  return out;
+}
+
+function marketKeyFor(game) {
+  const map = (abbr) => NFLVERSE_ABBR[abbr] ?? abbr;
+  return `${game.season}_${game.week}_${map(game.awayAbbr)}_${map(game.homeAbbr)}`;
+}
+
+// ---------------------------------------------------------------------------
 // Extra candidate factors (NFL deep round): computed in buildFeatures into
 // game.extra[key]; applied in brainProbability when a weight is set. Only
 // factors that survive one-at-a-time trials get promoted into brainScoring.
@@ -796,7 +908,9 @@ const EXTRA_BOUNDS = {
   possessionGap: { min: 0, max: 0.3, delta: 0.03 },    // ball-control identity: time of possession /5
   firstDownsGap: { min: 0, max: 0.5, delta: 0.05 },    // drive-success margin /5
   sackRateAllowed: { min: 0, max: 0.3, delta: 0.03 },  // protection RATE per dropback (literature: the predictive trench side), gap x10
-  anyaGap: { min: 0, max: 0.4, delta: 0.04 }           // ANY/A differential (off minus def-allowed), the best box-score composite
+  anyaGap: { min: 0, max: 0.4, delta: 0.04 },          // ANY/A differential (off minus def-allowed), the best box-score composite
+  epaGap: { min: 0, max: 0.5, delta: 0.05 },           // nflverse rolling EPA margin gap (luck-stripped team strength), /10
+  cpoeGap: { min: 0, max: 0.3, delta: 0.03 }           // rolling completion-pct-over-expected gap, /2
 };
 
 // ---------------------------------------------------------------------------
@@ -1111,12 +1225,14 @@ async function loadNfl() {
   const all = seasons.flatMap((season) => bySeason.get(season));
   const qbByEvent = await nflQbGames(all);
   const teamStatsByEvent = await nflTeamGameStats(all);
+  const epaWeeks = await nflEpaWeeks();
   console.log(`[nfl] seasons ${seasons.join("/")}: ${seasons.map((s) => bySeason.get(s).length).join("/")} games; weather archives ${archives.size}; QB box scores ${qbByEvent.size}`);
   buildFeatures(all, {
     sport: "nfl",
     ilIntervals: null,
     qbByEvent,
     teamStatsByEvent,
+    epaWeeks,
     weatherFor: (game) => weatherAt(archives.get(`${game.homeAbbr}-${game.season}`), game.timeUtc),
     marginWindow: 5,
     pythagExponent: 2.37,
@@ -1537,6 +1653,80 @@ for (const sport of sports) {
   }
 
   let kept;
+  if (sport === "nfl" && MARKET) {
+    const marketIndex = await nflMarketLines();
+    const shippedActive = [...BASE_TUNABLES.nfl, ...Object.keys(DEFAULT_BRAIN_WEIGHTS.nfl).filter((k) => DEFAULT_BRAIN_WEIGHTS.nfl[k] > 0 && !BASE_TUNABLES.nfl.includes(k) && !["injuryGap", "qbOut"].includes(k))];
+    const result = simulate({
+      sport, batches: batchesFor(sport, games, PHASES[sport]),
+      initialWeights: weightsWith(sport, shippedActive), tunable: {}, tuneIn: new Set(),
+      closeMargin: 3, trailingWindow: 96, elo: makeElo(K_OVERRIDE ?? 20, NFL_HFA)
+    });
+    const rows = [];
+    result.record.forEach((row, index) => {
+      const game = result.recordGames[index];
+      const market = marketIndex.get(marketKeyFor(game));
+      if (!market) return;
+      rows.push({ phase: row.phase, homeWon: row.homeWon, model: applyTemperature(row.brainProbability, "nfl"), market: market.marketHome });
+    });
+    console.log(`[nfl] MARKET join: ${rows.length}/${result.record.length} games matched to closing moneylines`);
+    const statsOf = (subset, key) => {
+      const acc = subset.filter((row) => (row[key] >= 0.5) === row.homeWon).length / subset.length;
+      const ll = subset.reduce((sum, row) => sum + logLoss(row[key], row.homeWon), 0) / subset.length;
+      return { acc, ll };
+    };
+    const logit = (p) => Math.log(Math.max(0.02, Math.min(0.98, p)) / (1 - Math.max(0.02, Math.min(0.98, p))));
+    const blend = (row, w) => 1 / (1 + Math.exp(-(w * logit(row.model) + (1 - w) * logit(row.market))));
+    const fit = rows.filter((row) => row.phase === "train" || row.phase === "validation");
+    const holdout = rows.filter((row) => row.phase === "holdout");
+    let bestW = 0, bestLl = Infinity;
+    for (let w = 0; w <= 1.0001; w += 0.05) {
+      const ll = fit.reduce((sum, row) => sum + logLoss(blend(row, w), row.homeWon), 0) / fit.length;
+      if (ll < bestLl - 1e-9) { bestLl = ll; bestW = w; }
+    }
+    for (const [label, subset] of [["train+val", fit], ["HOLDOUT", holdout]]) {
+      const model = statsOf(subset, "model");
+      const market = statsOf(subset, "market");
+      const blendStats = {
+        acc: subset.filter((row) => (blend(row, bestW) >= 0.5) === row.homeWon).length / subset.length,
+        ll: subset.reduce((sum, row) => sum + logLoss(blend(row, bestW), row.homeWon), 0) / subset.length
+      };
+      console.log(`[nfl] MARKET ${label} (${subset.length}): model ${(100 * model.acc).toFixed(1)}%/${model.ll.toFixed(4)} | market ${(100 * market.acc).toFixed(1)}%/${market.ll.toFixed(4)} | blend(w=${bestW.toFixed(2)}) ${(100 * blendStats.acc).toFixed(1)}%/${blendStats.ll.toFixed(4)}`);
+    }
+    // CLV / disagreement analysis on holdout
+    const disagree = holdout.filter((row) => (row.model >= 0.5) !== (row.market >= 0.5));
+    const modelWinsDisagree = disagree.filter((row) => (row.model >= 0.5) === row.homeWon).length;
+    console.log(`[nfl] MARKET disagreements on holdout: ${disagree.length} games; model right ${modelWinsDisagree}, market right ${disagree.length - modelWinsDisagree}`);
+    const edges = holdout.filter((row) => Math.abs(row.model - row.market) >= 0.05);
+    const edgeRight = edges.filter((row) => (row.model >= row.market) === row.homeWon).length;
+    console.log(`[nfl] model-vs-market edges >=5pp on holdout: ${edges.length}; model side right ${edgeRight} (${edges.length ? (100 * edgeRight / edges.length).toFixed(1) : 0}%)`);
+    continue;
+  }
+  if (TIERS) {
+    const shippedActive = sport === "nfl"
+      ? [...BASE_TUNABLES.nfl, ...Object.keys(DEFAULT_BRAIN_WEIGHTS.nfl).filter((k) => DEFAULT_BRAIN_WEIGHTS.nfl[k] > 0 && !BASE_TUNABLES.nfl.includes(k) && !["injuryGap", "qbOut"].includes(k))]
+      : [...BASE_TUNABLES.mlb];
+    const result = simulate({
+      sport, batches: batchesFor(sport, games, PHASES[sport]),
+      initialWeights: weightsWith(sport, shippedActive), tunable: {}, tuneIn: new Set(),
+      closeMargin: sport === "mlb" ? 1 : 3, trailingWindow: sport === "mlb" ? 400 : 96,
+      elo: sport === "mlb" ? makeElo(K_OVERRIDE ?? 4, 24) : makeElo(K_OVERRIDE ?? 20, NFL_HFA)
+    });
+    const rows = result.record.map((row) => ({
+      phase: row.phase, homeWon: row.homeWon,
+      p: applyTemperature(row.brainProbability, sport),
+      correct: row.brainCorrect
+    }));
+    const fit = rows.filter((row) => row.phase === "train" || row.phase === "validation");
+    const holdout = rows.filter((row) => row.phase === "holdout");
+    console.log(`[${sport}] TIERS floor sweep (confidence = max(p, 1-p), temperature-calibrated):`);
+    for (const floor of [0.5, 0.55, 0.58, 0.6, 0.62, 0.65, 0.68]) {
+      const pick = (subset) => subset.filter((row) => Math.max(row.p, 1 - row.p) >= floor);
+      const accOf = (subset) => (subset.length ? subset.filter((row) => row.correct).length / subset.length : 0);
+      const f = pick(fit); const h = pick(holdout);
+      console.log(`[${sport}]   floor ${floor.toFixed(2)}: train+val ${(100 * accOf(f)).toFixed(1)}% @ ${(100 * f.length / fit.length).toFixed(0)}% coverage | holdout ${(100 * accOf(h)).toFixed(1)}% @ ${(100 * h.length / holdout.length).toFixed(0)}% coverage`);
+    }
+    continue;
+  }
   if (sport === "nfl" && TUNE_ONE) {
     const shippedActive = [...BASE_TUNABLES.nfl, ...Object.keys(DEFAULT_BRAIN_WEIGHTS.nfl).filter((key) => DEFAULT_BRAIN_WEIGHTS.nfl[key] > 0 && !BASE_TUNABLES.nfl.includes(key) && !["injuryGap", "qbOut"].includes(key))];
     const bounds = EXTRA_BOUNDS[TUNE_ONE] ?? TUNABLE_BOUNDS.nfl[TUNE_ONE];

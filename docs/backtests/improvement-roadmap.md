@@ -1,5 +1,13 @@
 # Improvement roadmap — every remaining way to raise the score (2026-08-24)
 
+> **Status update (same day, round 8 — tested in simulation):**
+> - **#1 ADOPTED:** market anchor measured on all 1,084 joined games — closing market 65.3%/0.6094 on the 2025 holdout vs model 63.8%/0.6398; the blend fitter chose w=0 (pure market), so production now serves the market probability when sportsbook consensus exists, model as fallback, with a model-vs-market disagreement flag (`served` layer in /api/game-brain).
+> - **#2 ADOPTED:** confidence tiers shipped (NFL A ≥0.62 → 72.3% @ 55% coverage on holdout; MLB A ≥0.58) — `confidenceTier` in brainScoring, on the API and in live captures.
+> - **#4 GATE PASSED:** 538 archive read-off (Wayback): pitcher adjustment +1.53pp/+0.0051 (2022, 2,286 games), +0.38pp/+0.0027 (2021) — the 538-style multi-year regressed pitcher-rating build is green-lit as the next large MLB item.
+> - **#5 SUPERSEDED** by #1 (market beats every blend where odds exist; two-engine ensemble only relevant for no-odds games).
+> - **#6 REJECTED:** rolling EPA gap — tuner chose zero weight (pythag+Elo already carry it). CPOE variant cleared validation (+0.0016) but degraded the holdout even at half size — the same 2025 QB-signal failure that hit qbValue.
+
+
 Produced by a 7-agent research workflow (six domains + a completeness critic), with data
 availability **verified by live fetches**, not assumed. Current level: NFL 64.9% / 0.636
 log-loss over four seasons (market ≈ 66–67%); MLB 56.1% on the current season (market ≈ 57–58%).
