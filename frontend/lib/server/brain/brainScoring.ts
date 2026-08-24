@@ -57,8 +57,14 @@ export const MAX_BRAIN_LOGIT = 0.35;
  * offseason starter carryover is unreliable). qbValue was the top validation
  * gain (Δ logloss +0.0038) and helps in 3 of 4 frozen seasons; the seasons
  * disagree on size (2022/23 favor 0.1, 2025 favors 0), so it ships shrunk to
- * 0.05, where holdout log-loss beats baseline again. REJECTED: travel, shortWeek,
- * scoringForm, homeSplit, bye. injuryGap/qbOut stay research priors.
+ * 0.05, where holdout log-loss beats baseline again. lateSeasonDamp 0.15 was
+ * added from the confident-loss autopsy (worst-ever miss: Bills 93.6% in a
+ * week-18 seed-locked rest spot) — shrinks favorites in weeks 17-18, improving
+ * holdout log-loss with flat accuracy. qbOut raised 0.25 -> 0.35 after the
+ * Chiefs@Titans autopsy (QB out + eliminated, books move 4-6 points).
+ * REJECTED: toMargin (season turnover margin does not predict game-day
+ * turnover swings - 38% of confident losses, all luck), travel, shortWeek,
+ * scoringForm, homeSplit, bye. injuryGap stays a research prior.
  *
  * MLB (train 2022–24, validation 2025, holdout 2026-to-date): every record
  * candidate was REJECTED — including real per-start FIP from game logs
@@ -101,6 +107,10 @@ export type SportWeightSet = {
   travel: number;
   /** NFL: flat logit against a side on a short week (≤4 rest days) when the other is not. */
   shortWeek: number;
+  /** NFL: logit per unit of season-to-date turnover-margin-per-game gap (home − away). */
+  toMargin: number;
+  /** NFL: shrink applied against the favorite in weeks 17-18 (seed-locked rest and motivation risk). */
+  lateSeasonDamp: number;
 };
 
 export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
@@ -108,11 +118,11 @@ export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
 export const DEFAULT_BRAIN_WEIGHTS: BrainWeights = {
   mlb: {
     injuryGap: 0.05, qbOut: 0, formWinRate: 0.02, restDay: 0.005, weatherHome: 0.06,
-    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0, travel: 0, shortWeek: 0
+    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0, travel: 0, shortWeek: 0, toMargin: 0, lateSeasonDamp: 0
   },
   nfl: {
-    injuryGap: 0.4, qbOut: 0.25, formWinRate: 0.085, restDay: 0.045, weatherHome: 0.055,
-    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0.05, travel: 0, shortWeek: 0
+    injuryGap: 0.4, qbOut: 0.35, formWinRate: 0.085, restDay: 0.045, weatherHome: 0.055,
+    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0.05, travel: 0, shortWeek: 0, toMargin: 0, lateSeasonDamp: 0.15
   }
 };
 
@@ -241,10 +251,14 @@ export type FactorInputs = {
   /** Short week (≤4 rest days) flags. */
   homeShortWeek?: boolean;
   awayShortWeek?: boolean;
+  /** Season-to-date turnover-margin-per-game gap, home − away. */
+  toMarginGap?: number;
+  /** Regular-season week 17-18 (rest/motivation risk for locked teams). */
+  lateSeason?: boolean;
 };
 
 export type FactorTerm = {
-  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye" | "roster-churn" | "starter-fip" | "qb-value" | "travel" | "short-week";
+  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye" | "roster-churn" | "starter-fip" | "qb-value" | "travel" | "short-week" | "to-margin" | "late-season";
   homeLogit: number;
 };
 
@@ -298,6 +312,12 @@ export function factorTerms(inputs: FactorInputs, weights: BrainWeights = DEFAUL
   }
   if ((inputs.homeShortWeek ?? false) !== (inputs.awayShortWeek ?? false) && sportWeights.shortWeek > 0) {
     terms.push({ kind: "short-week", homeLogit: inputs.homeShortWeek ? -sportWeights.shortWeek : sportWeights.shortWeek });
+  }
+  if (inputs.toMarginGap !== undefined && sportWeights.toMargin > 0) {
+    terms.push({ kind: "to-margin", homeLogit: Math.max(-1.5, Math.min(1.5, inputs.toMarginGap)) * sportWeights.toMargin });
+  }
+  if (inputs.lateSeason && inputs.baselineLogit !== undefined && sportWeights.lateSeasonDamp > 0) {
+    terms.push({ kind: "late-season", homeLogit: -Math.tanh(inputs.baselineLogit) * sportWeights.lateSeasonDamp });
   }
   return terms;
 }

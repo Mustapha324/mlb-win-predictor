@@ -110,6 +110,7 @@ function buildFactors(
           : undefined,
       divisionGame,
       baselineLogit: Math.log(baseline / (1 - baseline)),
+      lateSeason: sport === "nfl" && (game.week ?? 0) >= 17,
       homeOffBye: sport === "nfl" ? (home.form.restDays ?? 0) >= 10 && home.form.lastTenGames > 0 : undefined,
       awayOffBye: sport === "nfl" ? (away.form.restDays ?? 0) >= 10 && away.form.lastTenGames > 0 : undefined,
       rosterChurnGap,
@@ -169,6 +170,14 @@ function buildFactors(
     if (term.kind === "roster-churn") {
       const steadier = term.homeLogit > 0 ? game.home_team : game.away_team;
       return { label: "Roster stability", detail: `${steadier} has had the quieter transaction wire over the last two weeks`, homeLogit: term.homeLogit };
+    }
+    if (term.kind === "late-season") {
+      const favorite = game.pregame_home_win_probability >= 0.5 ? game.home_team : game.away_team;
+      return {
+        label: "Late-season trap",
+        detail: `Weeks 17-18: locked teams rest starters and motivation splits — the edge for ${favorite} is dampened`,
+        homeLogit: term.homeLogit
+      };
     }
     if (term.kind === "bye") {
       const rested = term.homeLogit > 0 ? game.home_team : game.away_team;

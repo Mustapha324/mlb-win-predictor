@@ -115,3 +115,15 @@ test("temperature calibration shrinks probabilities without changing picks", asy
   assert.ok(applyTemperature(0.3, "mlb") > 0.3 && applyTemperature(0.3, "mlb") < 0.5);
   assert.equal(applyTemperature(0.5, "nfl"), 0.5, "coin flips stay coin flips");
 });
+
+test("late-season damp shrinks favorites in weeks 17-18 only", async () => {
+  const { factorTerms } = await import("../lib/server/brain/brainScoring.ts");
+  const form = { lastTenWins: 5, lastTenGames: 10, streak: 0, restDays: 6 };
+  const base = { sport: "nfl", burdenGap: 0, homeQbOut: false, awayQbOut: false, homeForm: form, awayForm: form, weatherSeverity: 0, baselineLogit: 1.2 };
+  const late = factorTerms({ ...base, lateSeason: true });
+  const early = factorTerms({ ...base, lateSeason: false });
+  const damp = late.find((term) => term.kind === "late-season");
+  assert.ok(damp && damp.homeLogit < -0.05, "week 17-18 home favorite gets dampened");
+  assert.equal(early.some((term) => term.kind === "late-season"), false);
+  assert.equal(factorTerms({ ...base, sport: "mlb", lateSeason: true }).some((t) => t.kind === "late-season"), false, "MLB unaffected");
+});

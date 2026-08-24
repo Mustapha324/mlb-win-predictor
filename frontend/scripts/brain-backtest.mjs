@@ -49,6 +49,7 @@ const REFRESH = process.argv.includes("--refresh");
 const EXPERIMENT = process.argv.includes("--experiment");
 const FROZEN = process.argv.includes("--frozen"); // evaluate current production weights with tuning disabled
 const FACEOFF = process.argv.includes("--faceoff"); // deployed GitHub models vs the new model, head to head
+const AUTOPSY = process.argv.includes("--autopsy"); // dissect confident losses: what happened, what was knowable pregame
 const SPORT_ARG = process.argv.find((arg) => ["mlb", "nfl", "all"].includes(arg)) ?? "all";
 const TODAY = "2026-08-24";
 const NFL_HFA = Number((process.argv.find((arg) => arg.startsWith("--hfa=")) ?? "--hfa=28").slice(6)); // 28 Elo ~ modern-era home edge; swept on validation 2026-08-24
@@ -74,8 +75,8 @@ async function cachedJson(key, url, delayMs = 0) {
 
 async function mlbSeasonGames(season, endDate) {
   const payload = await cachedJson(
-    `mlb-sched2-${season}`,
-    `https://statsapi.mlb.com/api/v1/schedule?sportId=1&gameType=R&hydrate=probablePitcher&startDate=${season}-03-01&endDate=${endDate ?? `${season}-11-10`}`
+    `mlb-sched3-${season}`,
+    `https://statsapi.mlb.com/api/v1/schedule?sportId=1&gameType=R&hydrate=probablePitcher,linescore&startDate=${season}-03-01&endDate=${endDate ?? `${season}-11-10`}`
   );
   const games = [];
   for (const day of payload.dates ?? []) {
@@ -100,7 +101,9 @@ async function mlbSeasonGames(season, endDate) {
         margin: Math.abs(home.score - away.score),
         venueId: game.venue?.id ?? null,
         homeStarterId: home.probablePitcher?.id ?? null,
-        awayStarterId: away.probablePitcher?.id ?? null
+        awayStarterId: away.probablePitcher?.id ?? null,
+        inningsHome: (game.linescore?.innings ?? []).map((inning) => inning.home?.runs ?? 0),
+        inningsAway: (game.linescore?.innings ?? []).map((inning) => inning.away?.runs ?? 0)
       });
     }
   }
@@ -229,9 +232,10 @@ function teamState() {
 }
 
 function buildFeatures(games, options) {
-  const { sport, ilIntervals, churnEvents, starterLogs, qbByEvent, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
+  const { sport, ilIntervals, churnEvents, starterLogs, qbByEvent, teamStatsByEvent, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
   const teamStarter = new Map();
   const qbHistory = new Map();
+  const toMargins = new Map(); // teamId -> {sum, games}, reset per season
   const teams = new Map();
   const stateOf = (id) => teams.get(id) ?? teams.set(id, teamState()).get(id);
   const starters = new Map();
@@ -246,6 +250,7 @@ function buildFeatures(games, options) {
       for (const state of teams.values()) {
         Object.assign(state, { homeW: 0, homeG: 0, roadW: 0, roadG: 0, scored: 0, allowed: 0, games: 0 });
       }
+      toMargins.clear();
       lastSeason = game.season;
     }
     const home = stateOf(game.homeId);
@@ -288,11 +293,19 @@ function buildFeatures(games, options) {
       game.divisionGame = NFL_DIVISIONS[game.homeAbbr] !== undefined && NFL_DIVISIONS[game.homeAbbr] === NFL_DIVISIONS[game.awayAbbr];
       game.homeOffBye = (game.homeForm.restDays ?? 0) >= 10 && game.homeForm.lastTenGames > 0;
       game.awayOffBye = (game.awayForm.restDays ?? 0) >= 10 && game.awayForm.lastTenGames > 0;
+      game.lateSeason = game.week >= 17;
       game.homeShortWeek = (game.homeForm.restDays ?? 7) <= 4 && game.homeForm.lastTenGames > 0;
       game.awayShortWeek = (game.awayForm.restDays ?? 7) <= 4 && game.awayForm.lastTenGames > 0;
       const homeStadium = NFL_STADIUMS[game.homeAbbr];
       const awayStadium = NFL_STADIUMS[game.awayAbbr];
       game.travelMm = homeStadium && awayStadium ? Number((haversineKm(awayStadium, homeStadium) / 1000).toFixed(3)) : undefined;
+      const marginOf = (teamId) => {
+        const tally = toMargins.get(teamId);
+        return tally && tally.games >= 3 ? tally.sum / tally.games : null;
+      };
+      const homeToMargin = marginOf(game.homeId);
+      const awayToMargin = marginOf(game.awayId);
+      game.toMarginGap = homeToMargin !== null && awayToMargin !== null ? Number((homeToMargin - awayToMargin).toFixed(3)) : undefined;
       if (qbByEvent) {
         const qbValueOf = (qbId) => {
           const history = qbId ? qbHistory.get(qbId) ?? [] : [];
@@ -334,6 +347,20 @@ function buildFeatures(games, options) {
         if (!line?.qbId) continue;
         teamStarter.set(teamId, line.qbId);
         qbHistory.set(line.qbId, [...(qbHistory.get(line.qbId) ?? []), line.value].slice(-12));
+      }
+      const stats = teamStatsByEvent?.get(game.eventId);
+      const homeTo = stats?.[game.homeId]?.turnovers;
+      const awayTo = stats?.[game.awayId]?.turnovers;
+      if (homeTo != null && awayTo != null) {
+        const bump = (teamId, margin) => {
+          const tally = toMargins.get(teamId) ?? { sum: 0, games: 0 };
+          tally.sum += margin;
+          tally.games += 1;
+          toMargins.set(teamId, tally);
+        };
+        bump(game.homeId, awayTo - homeTo);
+        bump(game.awayId, homeTo - awayTo);
+        game.actualToMargin = { home: awayTo - homeTo, away: homeTo - awayTo };
       }
     }
   }
@@ -503,6 +530,39 @@ async function nflQbGames(games) {
   return byEvent;
 }
 
+/** Per-game team stats from ESPN summaries (slim-cached): eventId -> { [teamId]: {turnovers} }. */
+async function nflTeamGameStats(games) {
+  const byEvent = new Map();
+  for (const game of games) {
+    const key = `nfl-ts-${game.eventId}`;
+    const file = path.join(CACHE_DIR, `${key}.json`);
+    let extracted;
+    if (!REFRESH && fs.existsSync(file)) {
+      extracted = JSON.parse(fs.readFileSync(file, "utf8"));
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 120));
+      try {
+        const response = await fetch(`https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/summary?event=${game.eventId}`, {
+          headers: { Accept: "application/json", "User-Agent": "Mozilla/5.0 (compatible; SportIQ/1.0)" }
+        });
+        if (!response.ok) continue;
+        const payload = await response.json();
+        extracted = {};
+        for (const team of payload.boxscore?.teams ?? []) {
+          if (!team.team?.id) continue;
+          const stat = (name) => Number(team.statistics?.find((entry) => entry.name === name)?.displayValue ?? NaN);
+          extracted[team.team.id] = { turnovers: Number.isFinite(stat("turnovers")) ? stat("turnovers") : null };
+        }
+        fs.writeFileSync(file, JSON.stringify(extracted));
+      } catch {
+        continue;
+      }
+    }
+    if (extracted) byEvent.set(game.eventId, extracted);
+  }
+  return byEvent;
+}
+
 function haversineKm(a, b) {
   const rad = Math.PI / 180;
   const dLat = (b.lat - a.lat) * rad;
@@ -560,6 +620,8 @@ function gameInputs(sport, game, baselineLogit) {
     starterFipGap: game.starterFipGap,
     qbValueGap: game.qbValueGap,
     travelMm: game.travelMm,
+    toMarginGap: game.toMarginGap,
+    lateSeason: game.lateSeason,
     homeShortWeek: game.homeShortWeek,
     awayShortWeek: game.awayShortWeek,
     divisionGame: game.divisionGame,
@@ -619,6 +681,7 @@ function tuneStep(sport, weights, tunable, window, step) {
 function simulate({ sport, batches, initialWeights, tunable, tuneIn, closeMargin, trailingWindow, elo }) {
   let weights = structuredClone(initialWeights);
   const record = [];
+  const recordGames = [];
   const batchSummaries = [];
   const weightTrail = [];
   const tuningGames = [];
@@ -661,6 +724,7 @@ function simulate({ sport, batches, initialWeights, tunable, tuneIn, closeMargin
         fluke: loss?.cause === "fluke",
         homeWon: game.homeWon
       });
+      recordGames.push(game);
       if (loss?.cause !== "fluke") tuningGames.push(game);
       elo.update(game);
     }
@@ -677,7 +741,7 @@ function simulate({ sport, batches, initialWeights, tunable, tuneIn, closeMargin
     }
     weightTrail.push({ label: batch.label, ...weights[sport] });
   }
-  return { sport, record, batchSummaries, weightTrail, finalWeights: weights };
+  return { sport, record, recordGames, batchSummaries, weightTrail, finalWeights: weights };
 }
 
 function phaseStats(record, phase) {
@@ -724,6 +788,8 @@ const TUNABLE_BOUNDS = {
     divisionDamp: { min: 0, max: 0.3, delta: 0.03 },
     bye: { min: 0, max: 0.3, delta: 0.03 },
     qbValue: { min: 0, max: 0.2, delta: 0.02 },
+    toMargin: { min: 0, max: 0.4, delta: 0.04 },
+    lateSeasonDamp: { min: 0, max: 0.6, delta: 0.06 },
     travel: { min: 0, max: 0.1, delta: 0.01 },
     shortWeek: { min: 0, max: 0.3, delta: 0.03 }
   }
@@ -736,7 +802,7 @@ const BASE_TUNABLES = {
 
 const CANDIDATES = {
   mlb: ["starterFip", "scoringForm", "homeSplit", "pythag", "density", "rosterChurn"],
-  nfl: ["qbValue", "travel", "shortWeek", "scoringForm", "homeSplit", "pythag", "divisionDamp", "bye"]
+  nfl: ["qbValue", "toMargin", "lateSeasonDamp", "travel", "shortWeek", "scoringForm", "homeSplit", "pythag", "divisionDamp", "bye"]
 };
 
 function batchesFor(sport, games, phaseOf) {
@@ -801,11 +867,13 @@ async function loadNfl() {
   }
   const all = seasons.flatMap((season) => bySeason.get(season));
   const qbByEvent = await nflQbGames(all);
+  const teamStatsByEvent = await nflTeamGameStats(all);
   console.log(`[nfl] seasons ${seasons.join("/")}: ${seasons.map((s) => bySeason.get(s).length).join("/")} games; weather archives ${archives.size}; QB box scores ${qbByEvent.size}`);
   buildFeatures(all, {
     sport: "nfl",
     ilIntervals: null,
     qbByEvent,
+    teamStatsByEvent,
     weatherFor: (game) => weatherAt(archives.get(`${game.homeAbbr}-${game.season}`), game.timeUtc),
     marginWindow: 5,
     pythagExponent: 2.37,
@@ -1202,6 +1270,13 @@ const sports = SPORT_ARG === "all" ? ["mlb", "nfl"] : [SPORT_ARG];
 const experimentsLog = [];
 
 const faceoffResults = [];
+if (AUTOPSY) {
+  fs.writeFileSync(path.join(OUT_DIR, "autopsy.md"), `# Confident-loss autopsy — generated ${TODAY} by npm run backtest -- all --autopsy
+
+What actually decided the games the brain was most confident about and lost — from inning-by-inning MLB linescores and NFL team stats — and whether any pregame-knowable signal pointed the right way.
+
+`);
+}
 for (const sport of sports) {
   const games = sport === "mlb" ? await loadMlb() : await loadNfl();
 
@@ -1224,8 +1299,8 @@ for (const sport of sports) {
     kept = [...BASE_TUNABLES[sport], ...CANDIDATES[sport].filter((key) => DEFAULT_BRAIN_WEIGHTS[sport][key] > 0)];
   }
 
-  console.log(`[${sport}] ${FROZEN ? "frozen evaluation of production weights" : "final run"} with factors: ${kept.join(", ")}`);
-  const finalResult = runConfig(sport, games, kept, FROZEN ? new Set() : new Set(["train", "validation"]));
+  console.log(`[${sport}] ${FROZEN || AUTOPSY ? "frozen evaluation of production weights" : "final run"} with factors: ${kept.join(", ")}`);
+  const finalResult = runConfig(sport, games, kept, FROZEN || AUTOPSY ? new Set() : new Set(["train", "validation"]));
   const holdout = phaseStats(finalResult.record, "holdout");
   const validation = phaseStats(finalResult.record, "validation");
   console.log(`[${sport}] validation ${fmt(validation)}`);
@@ -1250,6 +1325,28 @@ for (const sport of sports) {
   }
   console.log(`[${sport}] final weights:`, JSON.stringify(finalResult.finalWeights[sport]));
 
+  if (AUTOPSY) {
+    const report = autopsy(sport, finalResult);
+    const lines = [
+      `## ${sport.toUpperCase()} — confident-loss autopsy (pick >= 60%)`, "",
+      `Confident losses: ${report.confidentLosses} · confident wins: ${report.confidentWins} (win rate ${(100 * report.confidentWins / (report.confidentWins + report.confidentLosses)).toFixed(1)}%)`, "",
+      "### What actually happened in the losses", ""
+    ];
+    for (const [cause, count] of Object.entries(report.causes).toSorted((a, b) => b[1] - a[1])) {
+      lines.push(`- ${cause}: **${count}** (${(100 * count / report.confidentLosses).toFixed(0)}%)`);
+    }
+    lines.push("", "### Pregame signal alignment (mean, positive = pointed at our pick)", "", "| signal | in losses | in wins |", "|---|---|---|");
+    for (const signal of report.signalTable) {
+      lines.push(`| ${signal.name} | ${signal.losses?.toFixed(3) ?? "n/a"} | ${signal.wins?.toFixed(3) ?? "n/a"} |`);
+    }
+    lines.push("", "### Ten most confident losses", "", "| date | matchup | pick | conf | final | phase |", "|---|---|---|---|---|---|");
+    for (const row of report.worst) lines.push(`| ${row.date} | ${row.matchup} | ${row.pick} | ${row.confidence} | ${row.score} | ${row.phase} |`);
+    lines.push("");
+    fs.appendFileSync(path.join(OUT_DIR, "autopsy.md"), lines.join("\n"));
+    console.log(`[${sport}] autopsy: ${report.confidentLosses} confident losses; causes: ${JSON.stringify(report.causes)}`);
+    console.log(`[${sport}] signals: ${report.signalTable.map((signal) => `${signal.name}: losses ${signal.losses?.toFixed(3)} vs wins ${signal.wins?.toFixed(3)}`).join(" | ")}`);
+    continue;
+  }
   const meta = {
     title: `${sport.toUpperCase()} — Game Brain backtest`,
     subtitle:
@@ -1265,6 +1362,63 @@ for (const sport of sports) {
     path.join(OUT_DIR, `${sport}-backtest.json`),
     JSON.stringify({ generated: TODAY, kept, finalWeights: finalResult.finalWeights[sport], validation, holdout, batches: finalResult.batchSummaries }, null, 1)
   );
+}
+
+function autopsy(sport, result) {
+  const rows = result.record.map((row, index) => ({ ...row, game: result.recordGames[index] }));
+  const pickProb = (row) => (row.brainProbability >= 0.5 ? row.brainProbability : 1 - row.brainProbability);
+  const losses = rows.filter((row) => !row.brainCorrect && !row.fluke && pickProb(row) >= 0.6);
+  const wins = rows.filter((row) => row.brainCorrect && pickProb(row) >= 0.6);
+  const causes = {};
+  const tag = (name) => { causes[name] = (causes[name] ?? 0) + 1; };
+  for (const row of losses) {
+    const game = row.game;
+    const pickedHome = row.brainProbability >= 0.5;
+    if (sport === "mlb") {
+      const pickedRunsByInning = pickedHome ? game.inningsHome : game.inningsAway;
+      const allowedByInning = pickedHome ? game.inningsAway : game.inningsHome;
+      const early = (allowedByInning ?? []).slice(0, 3).reduce((sum, runs) => sum + runs, 0);
+      const pickedTotal = pickedHome ? game.homeScore : game.awayScore;
+      const late = (allowedByInning ?? []).slice(6).reduce((sum, runs) => sum + runs, 0);
+      if (game.margin === 1) tag("one-run margin (variance)");
+      else if (early >= 4) tag("our starter shelled early (<=3 innings, 4+ runs)");
+      else if (pickedTotal <= 1) tag("our bats blanked (<=1 run)");
+      else if (late >= 3 && game.margin <= 3) tag("late-inning flip (bullpen)");
+      else tag("other");
+      void pickedRunsByInning;
+    } else {
+      const toMargin = game.actualToMargin ? (pickedHome ? game.actualToMargin.home : game.actualToMargin.away) : null;
+      if (toMargin !== null && toMargin <= -2) tag("turnover swing against our pick (2+)");
+      else if (game.margin <= 3) tag("one-score finish (variance)");
+      else if (game.margin >= 14) tag("our pick no-showed (14+ blowout)");
+      else tag("other");
+    }
+  }
+  const meanSignal = (subset, extractor) => {
+    const values = subset.map(extractor).filter((value) => value !== undefined && value !== null);
+    return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
+  };
+  const towardPick = (row, gap) => (gap === undefined ? undefined : row.brainProbability >= 0.5 ? gap : -gap);
+  const signals = sport === "nfl"
+    ? [
+        ["season TO margin gap (toward pick)", (row) => towardPick(row, row.game.toMarginGap)],
+        ["pythag gap (toward pick)", (row) => towardPick(row, row.game.pythagGap)],
+        ["QB value gap (toward pick)", (row) => towardPick(row, row.game.qbValueGap)]
+      ]
+    : [
+        ["scoring-margin gap (toward pick)", (row) => towardPick(row, row.game.scoringFormGap)],
+        ["pythag gap (toward pick)", (row) => towardPick(row, row.game.pythagGap)]
+      ];
+  const signalTable = signals.map(([name, extractor]) => ({
+    name,
+    losses: meanSignal(losses, extractor),
+    wins: meanSignal(wins, extractor)
+  }));
+  const worst = losses.toSorted((a, b) => pickProb(b) - pickProb(a)).slice(0, 10).map((row) => ({
+    date: row.date, matchup: row.matchup, pick: row.brainProbability >= 0.5 ? "home" : "away",
+    confidence: Number(pickProb(row).toFixed(3)), score: `${row.game.awayScore}-${row.game.homeScore}`, phase: row.phase
+  }));
+  return { sport, confidentLosses: losses.length, confidentWins: wins.length, causes, signalTable, worst };
 }
 
 if (FACEOFF && faceoffResults.length) {

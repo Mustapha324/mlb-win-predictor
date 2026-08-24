@@ -5,12 +5,13 @@
   "restDay",
   "weatherHome",
   "qbValue",
+  "lateSeasonDamp",
   "pythag",
   "divisionDamp"
  ],
  "finalWeights": {
   "injuryGap": 0.4,
-  "qbOut": 0.25,
+  "qbOut": 0.35,
   "formWinRate": 0.085,
   "restDay": 0.045,
   "weatherHome": 0.055,
@@ -25,7 +26,9 @@
   "starterFip": 0,
   "qbValue": 0.05,
   "travel": 0,
-  "shortWeek": 0
+  "shortWeek": 0,
+  "toMargin": 0,
+  "lateSeasonDamp": 0.15
  },
  "validation": {
   "games": 272,
@@ -34,7 +37,7 @@
   "baseWins": 181,
   "brainWins": 184,
   "baseLogLoss": 0.61626504793738,
-  "brainLogLoss": 0.6049756697131667
+  "brainLogLoss": 0.6039890934684364
  },
  "holdout": {
   "games": 271,
@@ -43,7 +46,7 @@
   "baseWins": 175,
   "brainWins": 173,
   "baseLogLoss": 0.6582286535203016,
-  "brainLogLoss": 0.6563850231328918
+  "brainLogLoss": 0.6553681855503412
  },
  "batches": [
   {
@@ -63,7 +66,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -78,7 +81,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -99,7 +104,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -114,7 +119,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -136,7 +143,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -151,7 +158,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -172,7 +181,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -187,7 +196,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -208,7 +219,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -223,7 +234,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -243,7 +256,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -258,7 +271,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -280,7 +295,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -295,7 +310,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -318,7 +335,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -333,7 +350,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -356,7 +375,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -371,7 +390,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -395,7 +416,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -410,7 +431,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -432,7 +455,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -447,7 +470,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -470,7 +495,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -485,7 +510,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -503,7 +530,7 @@
    "missedBy": {},
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -518,7 +545,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -541,7 +570,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -556,7 +585,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -579,7 +610,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -594,7 +625,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -615,7 +648,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -630,7 +663,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -642,17 +677,18 @@
    "causes": {
     "fluke": 0,
     "coin-flip": 2,
-    "signal-missed": 1,
-    "rating-gap": 1
+    "signal-missed": 2,
+    "rating-gap": 0
    },
    "missedBy": {
+    "late-season": 4,
     "pythag": 1,
     "division": 2,
     "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -667,7 +703,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -685,12 +723,13 @@
    "missedBy": {
     "pythag": 3,
     "division": 6,
+    "late-season": 6,
     "qb-value": 2,
     "form": 1
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -705,7 +744,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -725,7 +766,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -740,7 +781,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -761,7 +804,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -776,7 +819,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -797,7 +842,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -812,7 +857,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -834,7 +881,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -849,7 +896,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -872,7 +921,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -887,7 +936,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -909,7 +960,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -924,7 +975,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -946,7 +999,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -961,7 +1014,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -984,7 +1039,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -999,7 +1054,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1020,7 +1077,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1035,7 +1092,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1058,7 +1117,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1073,7 +1132,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1095,7 +1156,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1110,7 +1171,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1133,7 +1196,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1148,7 +1211,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1169,7 +1234,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1184,7 +1249,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1207,7 +1274,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1222,7 +1289,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1246,7 +1315,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1261,7 +1330,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1284,7 +1355,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1299,7 +1370,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1310,19 +1383,20 @@
    "brainWins": 11,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
-    "signal-missed": 3,
+    "coin-flip": 3,
+    "signal-missed": 2,
     "rating-gap": 0
    },
    "missedBy": {
     "form": 4,
     "qb-value": 1,
+    "late-season": 5,
     "pythag": 1,
     "division": 2
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1337,7 +1411,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1345,22 +1421,24 @@
    "phase": "train",
    "games": 16,
    "baseWins": 10,
-   "brainWins": 10,
+   "brainWins": 9,
    "causes": {
     "fluke": 0,
-    "coin-flip": 2,
+    "coin-flip": 3,
     "signal-missed": 4,
     "rating-gap": 0
    },
    "missedBy": {
     "division": 6,
-    "qb-value": 2,
+    "qb-value": 3,
+    "late-season": 6,
     "pythag": 2,
+    "weather": 1,
     "form": 1
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1375,7 +1453,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1395,7 +1475,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1410,7 +1490,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1432,7 +1514,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1447,7 +1529,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1468,7 +1552,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1483,7 +1567,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1506,7 +1592,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1521,7 +1607,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1544,7 +1632,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1559,7 +1647,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1582,7 +1672,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1597,7 +1687,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1618,7 +1710,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1633,7 +1725,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1656,7 +1750,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1671,7 +1765,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1694,7 +1790,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1709,7 +1805,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1730,7 +1828,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1745,7 +1843,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1768,7 +1868,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1783,7 +1883,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1807,7 +1909,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1822,7 +1924,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1843,7 +1947,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1858,7 +1962,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1881,7 +1987,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1896,7 +2002,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1919,7 +2027,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1934,7 +2042,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1955,7 +2065,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -1970,7 +2080,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -1982,16 +2094,17 @@
    "causes": {
     "fluke": 0,
     "coin-flip": 0,
-    "signal-missed": 1,
-    "rating-gap": 1
+    "signal-missed": 2,
+    "rating-gap": 0
    },
    "missedBy": {
     "form": 1,
-    "qb-value": 1
+    "qb-value": 1,
+    "late-season": 2
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2006,7 +2119,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2024,13 +2139,14 @@
    "missedBy": {
     "division": 8,
     "qb-value": 3,
+    "late-season": 8,
     "form": 4,
     "weather": 1,
     "pythag": 2
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2045,7 +2161,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2066,7 +2184,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2081,7 +2199,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2103,7 +2223,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2118,7 +2238,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2140,7 +2262,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2155,7 +2277,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2176,7 +2300,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2191,7 +2315,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2213,7 +2339,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2228,7 +2354,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2252,7 +2380,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2267,7 +2395,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2291,7 +2421,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2306,7 +2436,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2328,7 +2460,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2343,7 +2475,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2366,7 +2500,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2381,7 +2515,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2404,7 +2540,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2419,7 +2555,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2442,7 +2580,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2457,7 +2595,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2479,7 +2619,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2494,7 +2634,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2516,7 +2658,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2531,7 +2673,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2552,7 +2696,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2567,7 +2711,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2590,7 +2736,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2605,7 +2751,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2628,7 +2776,7 @@
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2643,7 +2791,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2653,20 +2803,21 @@
    "baseWins": 10,
    "brainWins": 10,
    "causes": {
-    "fluke": 1,
+    "fluke": 0,
     "coin-flip": 1,
-    "signal-missed": 4,
+    "signal-missed": 5,
     "rating-gap": 0
    },
    "missedBy": {
     "division": 2,
+    "late-season": 6,
     "qb-value": 1,
     "weather": 1,
     "form": 2
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2681,7 +2832,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   },
   {
@@ -2698,12 +2851,13 @@
    },
    "missedBy": {
     "division": 6,
+    "late-season": 6,
     "form": 2,
     "qb-value": 2
    },
    "weights": {
     "injuryGap": 0.4,
-    "qbOut": 0.25,
+    "qbOut": 0.35,
     "formWinRate": 0.085,
     "restDay": 0.045,
     "weatherHome": 0.055,
@@ -2718,7 +2872,9 @@
     "starterFip": 0,
     "qbValue": 0.05,
     "travel": 0,
-    "shortWeek": 0
+    "shortWeek": 0,
+    "toMargin": 0,
+    "lateSeasonDamp": 0.15
    }
   }
  ]

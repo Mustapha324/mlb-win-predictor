@@ -208,6 +208,17 @@ documented league-wide home-edge decline:
   (65.7%, logloss 0.6332) though NEW remains better on the 4-season average — documented in
   faceoff.md as the recommended serving strategy once both engines run side by side.
 
+## Round 5 (2026-08-24): confident-loss autopsy → two changes, one anti-lesson
+
+`npm run backtest -- all --autopsy` dissects every confident loss (≥60% picks) using MLB
+inning-by-inning linescores and NFL team stats, then marquee misses were researched online.
+Findings in `docs/backtests/autopsy.md`; memory of the patterns persisted for future sessions.
+Adopted: `lateSeasonDamp` 0.15 (weeks 17–18 favorite shrink — our worst-ever miss was a
+seed-locked week-18 rest spot) and `qbOut` 0.25→0.35 (Chiefs@Titans-type cases; live-only).
+Rejected: turnover-margin factor — 38% of confident losses are turnover swings but they are
+game-day luck, unpredictable from season data. MLB: ~48% of confident losses are irreducible
+variance; calibration is the correct treatment.
+
 ## Faceoff vs the deployed GitHub models (2026-08-24)
 
 `npm run backtest -- all --faceoff` replays the deployed models faithfully (exact
