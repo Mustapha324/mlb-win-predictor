@@ -868,7 +868,7 @@ async function nflEpaWeeks() {
     const lines = text.split("\n");
     const header = lines[0].split(",");
     const col = (name) => header.indexOf(name);
-    const [iSeason, iWeek, iTeam, iOpp, iPassEpa, iRushEpa, iCpoe, iType] = ["season", "week", "team", "opponent_team", "passing_epa", "rushing_epa", "passing_cpoe", "season_type"].map(col);
+    const [iWeek, iTeam, iOpp, iPassEpa, iRushEpa, iCpoe, iType] = ["week", "team", "opponent_team", "passing_epa", "rushing_epa", "passing_cpoe", "season_type"].map(col);
     for (const line of lines.slice(1)) {
       const parts = line.split(",");
       if (parts.length < 5) continue;
