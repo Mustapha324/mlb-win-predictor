@@ -138,3 +138,38 @@ test("confidence tiers match the selective-prediction sweep floors", async () =>
   assert.equal(confidenceTier(0.56, "mlb"), "B");
   assert.equal(confidenceTier(0.52, "mlb"), "C");
 });
+
+test("factor input vector decomposes exactly into factorTerms contributions", async () => {
+  const { factorTerms, factorInputVector, DEFAULT_BRAIN_WEIGHTS } = await import("../lib/server/brain/brainScoring.ts");
+  const inputs = {
+    sport: "nfl", burdenGap: 0.2, homeQbOut: false, awayQbOut: false,
+    homeForm: { lastTenWins: 7, lastTenGames: 10, streak: 2, restDays: 7 },
+    awayForm: { lastTenWins: 3, lastTenGames: 10, streak: -1, restDays: 6 },
+    weatherSeverity: 0.4, pythagGap: 0.08, divisionGame: true, baselineLogit: 0.9,
+    qbValueGap: 1.2, lateSeason: true
+  };
+  const vector = factorInputVector(inputs);
+  const terms = factorTerms(inputs);
+  for (const term of terms) {
+    const key = { injury: "injuryGap", form: "formWinRate", weather: "weatherHome", pythag: "pythag", division: "divisionDamp", "qb-value": "qbValue", "late-season": "lateSeasonDamp" }[term.kind];
+    if (!key || key === "formWinRate") continue; // form term mixes formWinRate+restDay
+    const reconstructed = vector[key] * DEFAULT_BRAIN_WEIGHTS.nfl[key];
+    assert.ok(Math.abs(reconstructed - term.homeLogit) < 1e-6, `${term.kind}: ${reconstructed} vs ${term.homeLogit}`);
+  }
+});
+
+test("online updates move weights toward outcomes, stay bounded, and anchor to shipped", async () => {
+  const { onlineUpdate, LEARNABLE_BOUNDS, MODEL_TEMPERATURE } = await import("../lib/server/brain/brainScoring.ts");
+  let state = { weights: {}, temperature: MODEL_TEMPERATURE.nfl, gamesLearned: 0, buffer: [], resets: 0 };
+  const inputs = { pythag: 0.1, qbValue: 1.0 };
+  state = onlineUpdate(state, "nfl", 0.1, inputs, true, 0.05);
+  assert.ok(state.weights.pythag > 0.69, "home win with positive pythag input raises the weight");
+  assert.ok(state.weights.qbValue > 0.05, "qbValue rises too");
+  assert.equal(state.gamesLearned, 1);
+  for (let i = 0; i < 500; i++) state = onlineUpdate(state, "nfl", 0.1, inputs, true, 0.05);
+  assert.ok(state.weights.pythag <= LEARNABLE_BOUNDS.nfl.pythag.max + 1e-9, "bounds hold under sustained pressure");
+  assert.ok(state.buffer.length <= 400, "temperature buffer is capped");
+  let down = { weights: {}, temperature: 1.45, gamesLearned: 0, buffer: [], resets: 0 };
+  down = onlineUpdate(down, "nfl", 0.1, inputs, false, 0.05);
+  assert.ok(down.weights.pythag < 0.69, "home loss with positive input lowers the weight");
+});

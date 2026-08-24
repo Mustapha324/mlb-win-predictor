@@ -228,6 +228,19 @@ durable content already inside pythag). Details in autopsy.md. Fifteen historica
 tested to date; the shipped core (pythag, division damp, QB value, late-season damp,
 calibration) is what the evidence supports — further gains come from the live-capture ledger.
 
+## Round 9 (2026-08-24): continuous learning — the brain now learns from every game
+
+The capture Action is now a champion–challenger online learner. Every graded game triggers a
+bounded online-logistic-regression step (w ← w + η(y−p)x, per-factor inputs stored pregame in
+each snapshot, weights clipped to lab-tested bounds, gentle L2 anchor toward shipped weights)
+plus a rolling temperature refit. The SHIPPED weights remain the served champion; the learning
+brain runs as a shadow challenger, graded side by side in the ledger every day. A drift guard
+resets the challenger to shipped if its trailing-60 log-loss falls 0.02 behind (ALARM logged in
+brain-state.json, which the Action commits — the entire learning history is auditable in git).
+Promotion to champion is evidence-gated: when the ledger shows the challenger ahead over a
+sufficient window, its weights graduate into DEFAULT_BRAIN_WEIGHTS by commit. Learning rates:
+MLB η=0.005 (15 games/day), NFL η=0.02 (16/week). Verified end-to-end on real finals.
+
 ## Round 7 (2026-08-24): 14-agent deep-factor sweep
 
 Parallel research plus one-factor-at-a-time trials of ten line-play / coaching / efficiency /

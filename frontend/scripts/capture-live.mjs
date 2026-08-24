@@ -27,7 +27,11 @@ import { fileURLToPath } from "node:url";
 import {
   applyLogitDelta,
   applyTemperature,
+  challengerProbability,
   confidenceTier,
+  factorInputVector,
+  MODEL_TEMPERATURE,
+  onlineUpdate,
   combineFactors,
   computeTeamForm,
   DEFAULT_BRAIN_WEIGHTS,
@@ -169,18 +173,16 @@ async function captureMlb(date) {
     const homeInjuries = ilReports.get(home.team.id) ?? { entries: [], burden: 0 };
     const awayInjuries = ilReports.get(away.team.id) ?? { entries: [], burden: 0 };
     const baseProbability = elo.probability(home.team.id, away.team.id);
-    const terms = factorTerms(
-      {
-        sport: "mlb",
-        burdenGap: awayInjuries.burden - homeInjuries.burden,
-        homeQbOut: false,
-        awayQbOut: false,
-        homeForm,
-        awayForm,
-        weatherSeverity: weather ? weatherSeverity(weather) : 0
-      },
-      DEFAULT_BRAIN_WEIGHTS
-    );
+    const factorInputs = {
+      sport: "mlb",
+      burdenGap: awayInjuries.burden - homeInjuries.burden,
+      homeQbOut: false,
+      awayQbOut: false,
+      homeForm,
+      awayForm,
+      weatherSeverity: weather ? weatherSeverity(weather) : 0
+    };
+    const terms = factorTerms(factorInputs, DEFAULT_BRAIN_WEIGHTS);
     const { logitDelta } = combineFactors(terms.map((term) => ({ label: term.kind, detail: "", homeLogit: term.homeLogit })));
     snapshots.push({
       gameId: String(game.gamePk),
@@ -199,7 +201,8 @@ async function captureMlb(date) {
       terms,
       baseProbability: applyTemperature(baseProbability, "mlb"),
       brainProbability: applyTemperature(applyLogitDelta(baseProbability, logitDelta), "mlb"),
-      tier: confidenceTier(applyTemperature(applyLogitDelta(baseProbability, logitDelta), "mlb"), "mlb")
+      tier: confidenceTier(applyTemperature(applyLogitDelta(baseProbability, logitDelta), "mlb"), "mlb"),
+      learn: { baseLogit: Number(logitOf(baseProbability).toFixed(4)), inputs: factorInputVector(factorInputs) }
     });
   }
   return snapshots;
@@ -357,9 +360,8 @@ async function captureNfl(date) {
     const homeQb = qbContext.get(home.id);
     const awayQb = qbContext.get(away.id);
     const baseProbability = elo.probability(home.id, away.id);
-    const terms = factorTerms(
-      {
-        sport: "nfl",
+    const factorInputs = {
+      sport: "nfl",
         burdenGap: awayInjuries.burden - homeInjuries.burden,
         homeQbOut: homeInjuries.qbOut,
         awayQbOut: awayInjuries.qbOut,
@@ -372,9 +374,8 @@ async function captureNfl(date) {
         homeOffBye: (homeForm.restDays ?? 0) >= 10 && homeForm.lastTenGames > 0,
         awayOffBye: (awayForm.restDays ?? 0) >= 10 && awayForm.lastTenGames > 0,
         qbValueGap: homeQb?.value != null && awayQb?.value != null ? Number((homeQb.value - awayQb.value).toFixed(3)) : undefined
-      },
-      DEFAULT_BRAIN_WEIGHTS
-    );
+    };
+    const terms = factorTerms(factorInputs, DEFAULT_BRAIN_WEIGHTS);
     const { logitDelta } = combineFactors(terms.map((term) => ({ label: term.kind, detail: "", homeLogit: term.homeLogit })));
     snapshots.push({
       gameId: String(event.id),
@@ -392,7 +393,8 @@ async function captureNfl(date) {
       terms,
       baseProbability: applyTemperature(baseProbability, "nfl"),
       brainProbability: applyTemperature(applyLogitDelta(baseProbability, logitDelta), "nfl"),
-      tier: confidenceTier(applyTemperature(applyLogitDelta(baseProbability, logitDelta), "nfl"), "nfl")
+      tier: confidenceTier(applyTemperature(applyLogitDelta(baseProbability, logitDelta), "nfl"), "nfl"),
+      learn: { baseLogit: Number(logitOf(baseProbability).toFixed(4)), inputs: factorInputVector(factorInputs) }
     });
   }
   return snapshots;
@@ -429,6 +431,19 @@ async function finalsFor(sport, date) {
   return finals;
 }
 
+const LEARN_ETA = { mlb: 0.005, nfl: 0.02 };
+const STATE_PATH = path.join(OUT_ROOT, "brain-state.json");
+
+function loadBrainState() {
+  if (fs.existsSync(STATE_PATH)) return JSON.parse(fs.readFileSync(STATE_PATH, "utf8"));
+  const fresh = (sport) => ({
+    state: { weights: {}, temperature: MODEL_TEMPERATURE[sport], gamesLearned: 0, buffer: [], resets: 0 },
+    guard: [],
+    events: []
+  });
+  return { mlb: fresh("mlb"), nfl: fresh("nfl") };
+}
+
 async function grade(date) {
   for (const sport of ["mlb", "nfl"]) {
     const dayDir = path.join(OUT_ROOT, sport, date);
@@ -446,11 +461,24 @@ async function grade(date) {
         if (!game.gameTimeUtc || capture.capturedAt < game.gameTimeUtc) lastPregame.set(game.gameId, { ...game, capturedAt: capture.capturedAt });
       }
     }
+    const brainState = loadBrainState();
+    const slot = brainState[sport];
     const graded = [];
     for (const [gameId, snapshot] of lastPregame) {
       const final = finals.get(gameId);
       if (!final) continue;
+      let challenger = null;
+      if (snapshot.learn) {
+        const p = challengerProbability(slot.state, sport, snapshot.learn.baseLogit, snapshot.learn.inputs);
+        challenger = { probability: p, correct: p >= 0.5 === final.homeWon };
+        const champLl = -Math.log(Math.max(1e-9, final.homeWon ? snapshot.brainProbability : 1 - snapshot.brainProbability));
+        const chalLl = -Math.log(Math.max(1e-9, final.homeWon ? p : 1 - p));
+        slot.guard = [...slot.guard, [chalLl, champLl]].slice(-60);
+        slot.state = onlineUpdate(slot.state, sport, snapshot.learn.baseLogit, snapshot.learn.inputs, final.homeWon, LEARN_ETA[sport]);
+      }
       graded.push({
+        challengerProbability: challenger?.probability ?? null,
+        challengerCorrect: challenger?.correct ?? null,
         gameId,
         matchup: `${snapshot.away} @ ${snapshot.home}`,
         capturedAt: snapshot.capturedAt,
@@ -463,15 +491,31 @@ async function grade(date) {
       });
     }
     if (!graded.length) continue;
+    // Drift guard: if the learning challenger is clearly losing to the shipped
+    // champion over the trailing window, reset it to shipped (ALARM + RESET).
+    if (slot.guard.length >= 40) {
+      const challengerMean = slot.guard.reduce((sum, [chal]) => sum + chal, 0) / slot.guard.length;
+      const championMean = slot.guard.reduce((sum, [, champ]) => sum + champ, 0) / slot.guard.length;
+      if (challengerMean > championMean + 0.02) {
+        slot.events = [...slot.events, { at: new Date().toISOString(), event: "reset", challengerMean: Number(challengerMean.toFixed(4)), championMean: Number(championMean.toFixed(4)) }].slice(-20);
+        slot.state = { weights: {}, temperature: MODEL_TEMPERATURE[sport], gamesLearned: slot.state.gamesLearned, buffer: [], resets: slot.state.resets + 1 };
+        slot.guard = [];
+        console.log(`[${sport}] LEARNER RESET: challenger trailing logloss ${challengerMean.toFixed(4)} vs champion ${championMean.toFixed(4)}`);
+      }
+    }
+    fs.writeFileSync(STATE_PATH, JSON.stringify(brainState, null, 1));
     fs.writeFileSync(resultPath, JSON.stringify({ date, graded }, null, 1));
     const ledgerPath = path.join(OUT_ROOT, `ledger-${sport}.json`);
     const ledger = fs.existsSync(ledgerPath) ? JSON.parse(fs.readFileSync(ledgerPath, "utf8")) : { games: 0, baseWins: 0, brainWins: 0, days: [] };
     ledger.games += graded.length;
     ledger.baseWins += graded.filter((game) => game.baseCorrect).length;
     ledger.brainWins += graded.filter((game) => game.brainCorrect).length;
-    ledger.days.push({ date, games: graded.length, baseWins: graded.filter((game) => game.baseCorrect).length, brainWins: graded.filter((game) => game.brainCorrect).length });
+    const challengerGraded = graded.filter((game) => game.challengerCorrect !== null);
+    ledger.challengerWins = (ledger.challengerWins ?? 0) + challengerGraded.filter((game) => game.challengerCorrect).length;
+    ledger.challengerGames = (ledger.challengerGames ?? 0) + challengerGraded.length;
+    ledger.days.push({ date, games: graded.length, baseWins: graded.filter((game) => game.baseCorrect).length, brainWins: graded.filter((game) => game.brainCorrect).length, challengerWins: challengerGraded.filter((game) => game.challengerCorrect).length });
     fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 1));
-    console.log(`[${sport}] graded ${graded.length} games for ${date}; ledger now ${ledger.brainWins}-${ledger.games - ledger.brainWins} brain vs ${ledger.baseWins}-${ledger.games - ledger.baseWins} base over ${ledger.games} games`);
+    console.log(`[${sport}] graded ${graded.length} games for ${date}; ledger: champion ${ledger.brainWins}-${ledger.games - ledger.brainWins}, challenger ${ledger.challengerWins ?? 0}-${(ledger.challengerGames ?? 0) - (ledger.challengerWins ?? 0)} (learned ${loadBrainState()[sport].state.gamesLearned} games, ${loadBrainState()[sport].state.resets} resets)`);
   }
 }
 

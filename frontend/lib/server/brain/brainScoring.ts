@@ -279,6 +279,134 @@ export type FactorTerm = {
  * backtest harness so tuned weights mean the same thing in both. A factor
  * contributes only when its input is present and its weight is non-zero.
  */
+/**
+ * Per-factor input multiplicands x_k such that a factor's logit contribution
+ * is exactly weight_k * x_k. Single source of truth shared by factorTerms and
+ * the online learner (capture-live grading), so learned weights mean the same
+ * thing as shipped weights.
+ */
+export function factorInputVector(inputs: FactorInputs): Record<string, number> {
+  const sportWeights = DEFAULT_BRAIN_WEIGHTS[inputs.sport];
+  const vector: Record<string, number> = {};
+  if (Math.abs(inputs.burdenGap) >= 0.02) vector.injuryGap = inputs.burdenGap;
+  if (inputs.sport === "nfl" && inputs.homeQbOut !== inputs.awayQbOut) vector.qbOut = inputs.homeQbOut ? -1 : 1;
+  const formWeights = { ...sportWeights, formWinRate: 1, restDay: 0 };
+  const restWeights = { ...sportWeights, formWinRate: 0, restDay: 1 };
+  const formX = formEdge(inputs.homeForm, inputs.awayForm, formWeights as SportWeightSet);
+  const restX = formEdge(inputs.homeForm, inputs.awayForm, restWeights as SportWeightSet);
+  if (Math.abs(formX) >= 1e-9) vector.formWinRate = formX;
+  if (Math.abs(restX) >= 1e-9) vector.restDay = restX;
+  if (inputs.weatherSeverity >= 0.2) vector.weatherHome = inputs.weatherSeverity;
+  if (inputs.pythagGap !== undefined) vector.pythag = inputs.pythagGap;
+  if (inputs.divisionGame && inputs.baselineLogit !== undefined) vector.divisionDamp = -Math.tanh(inputs.baselineLogit);
+  if ((inputs.homeOffBye ?? false) !== (inputs.awayOffBye ?? false)) vector.bye = inputs.homeOffBye ? 1 : -1;
+  if (inputs.rosterChurnGap !== undefined) vector.rosterChurn = inputs.rosterChurnGap;
+  if (inputs.starterFipGap !== undefined) vector.starterFip = Math.max(-3, Math.min(3, inputs.starterFipGap));
+  if (inputs.qbValueGap !== undefined) vector.qbValue = Math.max(-4, Math.min(4, inputs.qbValueGap));
+  if (inputs.travelMm !== undefined) vector.travel = Math.min(4.5, inputs.travelMm);
+  if ((inputs.homeShortWeek ?? false) !== (inputs.awayShortWeek ?? false)) vector.shortWeek = inputs.homeShortWeek ? -1 : 1;
+  if (inputs.toMarginGap !== undefined) vector.toMargin = Math.max(-1.5, Math.min(1.5, inputs.toMarginGap));
+  if (inputs.lateSeason && inputs.baselineLogit !== undefined) vector.lateSeasonDamp = -Math.tanh(inputs.baselineLogit);
+  return vector;
+}
+
+/** Which factor weights the online learner may touch, and their lab-tested bounds. */
+export const LEARNABLE_BOUNDS: Record<"mlb" | "nfl", Record<string, { min: number; max: number }>> = {
+  mlb: {
+    injuryGap: { min: 0, max: 0.6 },
+    formWinRate: { min: 0, max: 0.35 },
+    restDay: { min: 0, max: 0.06 },
+    weatherHome: { min: 0, max: 0.15 }
+  },
+  nfl: {
+    formWinRate: { min: 0, max: 0.35 },
+    restDay: { min: 0, max: 0.06 },
+    weatherHome: { min: 0, max: 0.15 },
+    pythag: { min: 0, max: 1.2 },
+    divisionDamp: { min: 0, max: 0.3 },
+    qbValue: { min: 0, max: 0.2 },
+    lateSeasonDamp: { min: 0, max: 0.6 }
+  }
+};
+
+export type OnlineLearnState = {
+  weights: Record<string, number>;
+  temperature: number;
+  gamesLearned: number;
+  /** trailing (rawLogit, outcome) pairs for temperature refits, newest last */
+  buffer: Array<[number, number]>;
+  resets: number;
+};
+
+/**
+ * One online-logistic-regression step after a graded game
+ * (w <- w + eta*(y - p)*x, clipped to the lab-tested bounds), with a gentle
+ * L2 anchor toward the shipped weights so the challenger cannot wander into
+ * untested territory (the low-dimensional answer to catastrophic forgetting).
+ * Returns the updated state; the caller persists it.
+ */
+export function onlineUpdate(
+  state: OnlineLearnState,
+  sport: "mlb" | "nfl",
+  baseLogit: number,
+  inputs: Record<string, number>,
+  homeWon: boolean,
+  eta: number
+): OnlineLearnState {
+  const bounds = LEARNABLE_BOUNDS[sport];
+  const shipped = DEFAULT_BRAIN_WEIGHTS[sport] as unknown as Record<string, number>;
+  let delta = 0;
+  for (const [key, x] of Object.entries(inputs)) {
+    const weight = state.weights[key] ?? shipped[key] ?? 0;
+    if (bounds[key]) delta += weight * x;
+    else delta += (shipped[key] ?? 0) * x; // non-learnable factors contribute at shipped weight
+  }
+  delta = Math.max(-MAX_BRAIN_LOGIT, Math.min(MAX_BRAIN_LOGIT, delta));
+  const rawLogit = baseLogit + delta;
+  const probability = 1 / (1 + Math.exp(-rawLogit));
+  const y = homeWon ? 1 : 0;
+  const weights = { ...state.weights };
+  for (const [key, x] of Object.entries(inputs)) {
+    if (!bounds[key]) continue;
+    const current = weights[key] ?? shipped[key] ?? 0;
+    const gradientStep = eta * (y - probability) * Math.max(-2, Math.min(2, x));
+    const anchorStep = 0.001 * ((shipped[key] ?? 0) - current);
+    weights[key] = Number(Math.max(bounds[key].min, Math.min(bounds[key].max, current + gradientStep + anchorStep)).toFixed(5));
+  }
+  const buffer = [...state.buffer, [rawLogit, y] as [number, number]].slice(-400);
+  let temperature = state.temperature;
+  if (buffer.length >= 100) {
+    let bestTau = temperature;
+    let bestLoss = Infinity;
+    for (let tau = 1.0; tau <= 1.8001; tau += 0.05) {
+      const loss = buffer.reduce((sum, [logitValue, outcome]) => {
+        const p = 1 / (1 + Math.exp(-logitValue / tau));
+        return sum - (outcome ? Math.log(Math.max(1e-9, p)) : Math.log(Math.max(1e-9, 1 - p)));
+      }, 0) / buffer.length;
+      if (loss < bestLoss - 1e-9) { bestLoss = loss; bestTau = tau; }
+    }
+    temperature = Number(bestTau.toFixed(2));
+  }
+  return { weights, temperature, gamesLearned: state.gamesLearned + 1, buffer, resets: state.resets };
+}
+
+export function challengerProbability(
+  state: OnlineLearnState,
+  sport: "mlb" | "nfl",
+  baseLogit: number,
+  inputs: Record<string, number>
+): number {
+  const bounds = LEARNABLE_BOUNDS[sport];
+  const shipped = DEFAULT_BRAIN_WEIGHTS[sport] as unknown as Record<string, number>;
+  let delta = 0;
+  for (const [key, x] of Object.entries(inputs)) {
+    const weight = bounds[key] ? state.weights[key] ?? shipped[key] ?? 0 : shipped[key] ?? 0;
+    delta += weight * x;
+  }
+  delta = Math.max(-MAX_BRAIN_LOGIT, Math.min(MAX_BRAIN_LOGIT, delta));
+  return Number((1 / (1 + Math.exp(-(baseLogit + delta) / state.temperature))).toFixed(4));
+}
+
 export function factorTerms(inputs: FactorInputs, weights: BrainWeights = DEFAULT_BRAIN_WEIGHTS): FactorTerm[] {
   const sportWeights = weights[inputs.sport];
   const terms: FactorTerm[] = [];
