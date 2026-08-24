@@ -12,6 +12,21 @@ import {
   TOP_PLAYER_PICK_COUNT
 } from "@/lib/server/playerPickAccess";
 import { calculatePerformance, confidenceFromEdge, gradePlayerPick, pickStatus } from "@/lib/server/playerPickScoring";
+import { getDfsBoard, normalizePlayerName, type DfsBoardProp } from "@/lib/server/dfsBoards";
+import {
+  diversifyBoard,
+  isBoardRealisticConfidence,
+  isBoardSelectionAllowed,
+  MAX_REAL_BOARD_CONFIDENCE,
+  MIN_RARE_OVER_PROBABILITY,
+  MLB_HITTER_MARKETS,
+  MLB_PITCHER_MARKETS,
+  mlbBoardLine,
+  NFL_MARKETS,
+  nflBoardLine,
+  RARE_EVENT_MARKETS,
+  type BoardMarketKind
+} from "@/lib/server/propBoardCatalog";
 import {
   loadPlayerPickSnapshots,
   loadRecentPlayerPickResults,
@@ -94,20 +109,54 @@ function poissonOver(mean: number, line: number): number {
   return Math.max(0.02, Math.min(0.98, 1 - cumulative));
 }
 
+function boardStatChip(boardProp: DfsBoardProp | undefined): string[] {
+  return boardProp ? [`Live on the ${boardProp.sources.join(" + ")} board${boardProp.sources.length > 1 ? "s" : ""}`] : [];
+}
+
+/**
+ * Builds a pick only when it is a proposition a DFS board would sell at full
+ * payout: rare-event markets stay over-only longshot boosts, 0.5-line unders
+ * are refused, and standard picks must land in the contested-probability band.
+ */
 function baseCandidate(
   base: Omit<Candidate, "selection" | "confidence" | "projection" | "supportingStats" | "explanation" | "modelEdge">,
   projection: number,
   seasonRate: number,
   recentRate: number,
-  teamProbability: number
-): Candidate {
-  const overProbability = poissonOver(Math.max(0.01, projection), base.line);
-  const selection = overProbability >= 0.5 ? "Over" : "Under";
-  const confidenceCap = base.market === "Home runs" && selection === "Under" ? 0.78 : 0.88;
-  const confidence = Math.min(confidenceCap, Math.max(0.51, Math.max(overProbability, 1 - overProbability)));
-  const edge = projection - base.line;
+  teamProbability: number,
+  kind: BoardMarketKind,
+  boardProp?: DfsBoardProp
+): Candidate | null {
+  const line = boardProp?.line ?? base.line;
+  const overProbability = poissonOver(Math.max(0.01, projection), line);
+  const edge = projection - line;
+  if (kind === "rare") {
+    if (overProbability < MIN_RARE_OVER_PROBABILITY) return null;
+    return {
+      ...base,
+      line,
+      selection: "Over",
+      projection: Number(projection.toFixed(2)),
+      confidence: Number(overProbability.toFixed(4)),
+      modelEdge: Number(edge.toFixed(2)),
+      seasonRate,
+      recentRate,
+      supportingStats: [
+        ...boardStatChip(boardProp),
+        `${seasonRate.toFixed(2)} per game this season`,
+        `${recentRate.toFixed(2)} per game over the last 10`,
+        `${Math.round(overProbability * 100)}% model chance of the over`
+      ],
+      explanation: `Boost-style pick: boards list ${base.market.toLowerCase()} over-only with elevated payouts, so it is shown for this genuinely elite rate but ranked below the standard board as a longshot.`
+    };
+  }
+  const selection: "Over" | "Under" = overProbability >= 0.5 ? "Over" : "Under";
+  if (!isBoardSelectionAllowed(base.market, line, selection)) return null;
+  const confidence = Math.min(MAX_REAL_BOARD_CONFIDENCE, Math.max(overProbability, 1 - overProbability));
+  if (!isBoardRealisticConfidence(confidence, Boolean(boardProp))) return null;
   return {
     ...base,
+    line,
     selection,
     projection: Number(projection.toFixed(2)),
     confidence: Number(confidence.toFixed(4)),
@@ -115,13 +164,31 @@ function baseCandidate(
     seasonRate,
     recentRate,
     supportingStats: [
+      ...boardStatChip(boardProp),
       `${seasonRate.toFixed(2)} per game this season`,
       `${recentRate.toFixed(2)} per game over the last 10`,
       `${edge >= 0 ? "+" : ""}${edge.toFixed(2)} model edge vs line`,
       `${Math.round(teamProbability * 100)}% team win chance`
     ],
-    explanation: `${selection} ${base.line} is the stronger side after blending season production, recent form, opponent history, and the matchup-adjusted team outlook.`
+    explanation: `${selection} ${line} is the stronger side of a board-realistic line after blending season production, recent form, and the matchup-adjusted team outlook.${boardProp ? "" : " The line mirrors standard DFS board conventions for this market."}`
   };
+}
+
+/** Converts MLB innings-pitched notation (e.g. "175.2" = 175 IP + 2 outs) to total outs. */
+function inningsToOuts(value: number | string | undefined): number {
+  const [whole = "0", fraction = "0"] = String(value ?? "0").split(".");
+  const innings = Number(whole);
+  const outs = Number(fraction);
+  if (!Number.isFinite(innings)) return 0;
+  return innings * 3 + (Number.isFinite(outs) ? Math.min(2, outs) : 0);
+}
+
+/** Allowed-stat projections shrink as the pitcher's team gets stronger; strikeouts and outs grow mildly. */
+function pitcherMatchupFactor(market: string, probability: number): number {
+  if (market === "Earned runs allowed" || market === "Hits allowed" || market === "Walks allowed") {
+    return 1.08 - probability * 0.16;
+  }
+  return 0.95 + probability * 0.1;
 }
 
 async function fetchMlbStats(group: "hitting" | "pitching", stats: "season" | "lastXGames", season: number): Promise<MlbSplit[]> {
@@ -186,9 +253,21 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
     ])
   ]);
   const teamContext = mlbTeamContext(slate.predictions);
+  const scheduledGames = slate.predictions.filter((game) => pickStatus(game.status, game.is_final) === "scheduled");
+  const dfsBoard = await getDfsBoard("mlb", scheduledGames.map((game) => ({ homeTeam: game.home_team, awayTeam: game.away_team })));
   const recentHitters = new Map(recentHitting.map((split) => [String(split.player?.id), split]));
   const recentPitchers = new Map(recentPitching.map((split) => [String(split.player?.id), split]));
   const candidates: Candidate[] = [];
+
+  const hitterRates = (stat: MlbStat | undefined, games: number): Record<string, number> => ({
+    Hits: numberValue(stat, "hits") / games,
+    "Total bases": numberValue(stat, "totalBases") / games,
+    "Hits+Runs+RBIs": (numberValue(stat, "hits") + numberValue(stat, "runs") + numberValue(stat, "rbi")) / games,
+    RBIs: numberValue(stat, "rbi") / games,
+    Runs: numberValue(stat, "runs") / games,
+    "Home runs": numberValue(stat, "homeRuns") / games,
+    "Stolen bases": numberValue(stat, "stolenBases") / games
+  });
 
   for (const split of seasonHitting) {
     const playerId = String(split.player?.id ?? "");
@@ -200,16 +279,18 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
     const games = Math.max(1, numberValue(split.stat, "gamesPlayed"));
     const recentGames = Math.max(1, numberValue(recent, "gamesPlayed"));
     const matchupFactor = 0.9 + context.probability * 0.2;
-    const props = [
-      ["Hits", 0.5, numberValue(split.stat, "hits") / games, numberValue(recent, "hits") / recentGames],
-      ["Total bases", 1.5, numberValue(split.stat, "totalBases") / games, numberValue(recent, "totalBases") / recentGames],
-      ["Home runs", 0.5, numberValue(split.stat, "homeRuns") / games, numberValue(recent, "homeRuns") / recentGames],
-      ["RBIs", 0.5, numberValue(split.stat, "rbi") / games, numberValue(recent, "rbi") / recentGames]
-    ] as const;
-    for (const [market, line, seasonRate, recentRate] of props) {
+    const seasonRates = hitterRates(split.stat, games);
+    const recentRates = hitterRates(recent, recentGames);
+    const boardMarkets = dfsBoard.get(normalizePlayerName(playerName));
+    for (const definition of MLB_HITTER_MARKETS) {
+      const seasonRate = seasonRates[definition.market];
+      const recentRate = recentRates[definition.market];
       const projection = (seasonRate * 0.58 + recentRate * 0.42) * matchupFactor;
-      candidates.push(baseCandidate({
-        id: `mlb-${context.gameId}-${playerId}-${market.toLowerCase().replace(/\s/g, "-")}`,
+      const boardProp = boardMarkets?.get(definition.market);
+      const line = boardProp?.line ?? mlbBoardLine(definition, projection);
+      if (line === null) continue;
+      const candidate = baseCandidate({
+        id: `mlb-${context.gameId}-${playerId}-${definition.market.toLowerCase().replace(/[\s+]/g, "-")}`,
         sport: "mlb",
         gameId: context.gameId,
         playerId,
@@ -219,13 +300,22 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
         team,
         opponent: context.opponent,
         gameTime: context.gameTime,
-        market,
+        market: definition.market,
         line,
         group: "hitting",
-        ...pendingFields("mlb-player-blend-v2", Math.round(games))
-      }, projection, seasonRate, recentRate, context.probability));
+        ...pendingFields("mlb-player-board-v3", Math.round(games))
+      }, projection, seasonRate, recentRate, context.probability, definition.kind, boardProp);
+      if (candidate) candidates.push(candidate);
     }
   }
+
+  const pitcherRates = (stat: MlbStat | undefined, starts: number): Record<string, number> => ({
+    Strikeouts: numberValue(stat, "strikeOuts") / starts,
+    "Pitching outs": inningsToOuts(stat?.inningsPitched) / starts,
+    "Earned runs allowed": numberValue(stat, "earnedRuns") / starts,
+    "Hits allowed": numberValue(stat, "hits") / starts,
+    "Walks allowed": numberValue(stat, "baseOnBalls") / starts
+  });
 
   const probableNames = new Set(slate.predictions.flatMap((game) => [game.homeProbablePitcher, game.awayProbablePitcher].filter((name): name is string => Boolean(name))));
   for (const split of seasonPitching) {
@@ -235,20 +325,34 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
     const context = team ? teamContext.get(team) : undefined;
     if (!playerId || !playerName || !team || !context || !probableNames.has(playerName)) continue;
     const recent = recentPitchers.get(playerId)?.stat;
-    const games = Math.max(1, numberValue(split.stat, "gamesStarted") || numberValue(split.stat, "gamesPitched"));
-    const recentGames = Math.max(1, numberValue(recent, "gamesStarted") || numberValue(recent, "gamesPitched"));
-    const seasonRate = numberValue(split.stat, "strikeOuts") / games;
-    const recentRate = numberValue(recent, "strikeOuts") / recentGames;
-    const projection = (seasonRate * 0.58 + recentRate * 0.42) * (0.95 + context.probability * 0.1);
-    candidates.push(baseCandidate({
-      id: `mlb-${context.gameId}-${playerId}-strikeouts`, sport: "mlb", gameId: context.gameId, playerId, playerName,
-      headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/w_240,q_auto:best/v1/people/${playerId}/headshot/67/current`,
-      position: "P", team, opponent: context.opponent, gameTime: context.gameTime, market: "Strikeouts", line: 4.5, group: "pitching",
-      ...pendingFields("mlb-player-blend-v2", Math.round(games))
-    }, projection, seasonRate, recentRate, context.probability));
+    const starts = Math.max(1, numberValue(split.stat, "gamesStarted") || numberValue(split.stat, "gamesPitched"));
+    const recentStarts = Math.max(1, numberValue(recent, "gamesStarted") || numberValue(recent, "gamesPitched"));
+    const seasonRates = pitcherRates(split.stat, starts);
+    const recentRates = pitcherRates(recent, recentStarts);
+    const boardMarkets = dfsBoard.get(normalizePlayerName(playerName));
+    for (const definition of MLB_PITCHER_MARKETS) {
+      const seasonRate = seasonRates[definition.market];
+      const recentRate = recentRates[definition.market];
+      const projection = (seasonRate * 0.58 + recentRate * 0.42) * pitcherMatchupFactor(definition.market, context.probability);
+      const boardProp = boardMarkets?.get(definition.market);
+      const line = boardProp?.line ?? mlbBoardLine(definition, projection);
+      if (line === null) continue;
+      const candidate = baseCandidate({
+        id: `mlb-${context.gameId}-${playerId}-${definition.market.toLowerCase().replace(/[\s+]/g, "-")}`,
+        sport: "mlb", gameId: context.gameId, playerId, playerName,
+        headshotUrl: `https://img.mlbstatic.com/mlb-photos/image/upload/w_240,q_auto:best/v1/people/${playerId}/headshot/67/current`,
+        position: "P", team, opponent: context.opponent, gameTime: context.gameTime, market: definition.market, line, group: "pitching",
+        ...pendingFields("mlb-player-board-v3", Math.round(starts))
+      }, projection, seasonRate, recentRate, context.probability, definition.kind, boardProp);
+      if (candidate) candidates.push(candidate);
+    }
   }
 
-  const initial = candidates.toSorted((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0)).slice(0, 60);
+  const byConfidence = (a: Candidate, b: Candidate) => (b.confidence ?? 0) - (a.confidence ?? 0);
+  const initial = [
+    ...candidates.filter((pick) => !RARE_EVENT_MARKETS.has(pick.market)).toSorted(byConfidence).slice(0, 60),
+    ...candidates.filter((pick) => RARE_EVENT_MARKETS.has(pick.market)).toSorted(byConfidence).slice(0, 6)
+  ];
   await Promise.all(initial.slice(0, 20).map(async (pick) => {
     const context = teamContext.get(pick.team);
     if (!context || !pick.group) return;
@@ -259,37 +363,11 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
 }
 
 function diversify(candidates: Candidate[]): Candidate[] {
-  const ordered = candidates.toSorted((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0) || Math.abs(b.modelEdge ?? 0) - Math.abs(a.modelEdge ?? 0));
-  const selected: Candidate[] = [];
-  const selectedIds = new Set<string>();
-  const playerCounts = new Map<string, number>();
-  const marketCounts = new Map<string, number>();
-  const add = (pick: Candidate) => {
-    selected.push(pick);
-    selectedIds.add(pick.id);
-    playerCounts.set(pick.playerId, (playerCounts.get(pick.playerId) ?? 0) + 1);
-    marketCounts.set(pick.market, (marketCounts.get(pick.market) ?? 0) + 1);
-  };
-  for (const pick of ordered) {
-    if (selected.length >= TOP_PLAYER_PICK_COUNT) break;
-    if ((playerCounts.get(pick.playerId) ?? 0) >= 1 || (marketCounts.get(pick.market) ?? 0) >= 2) continue;
-    add(pick);
-  }
-  for (const pick of ordered) {
-    if (selected.length >= TOP_PLAYER_PICK_COUNT + FREE_PLAYER_PICK_COUNT) break;
-    if (selectedIds.has(pick.id) || (playerCounts.get(pick.playerId) ?? 0) >= 1 || (marketCounts.get(pick.market) ?? 0) >= 3) continue;
-    add(pick);
-  }
-  for (const pick of ordered) {
-    if (selected.length >= MAX_PLAYER_PICK_COUNT) break;
-    if (selectedIds.has(pick.id) || (playerCounts.get(pick.playerId) ?? 0) >= 2 || (marketCounts.get(pick.market) ?? 0) >= 12) continue;
-    add(pick);
-  }
-  for (const pick of ordered) {
-    if (selected.length >= MAX_PLAYER_PICK_COUNT) break;
-    if (!selectedIds.has(pick.id)) add(pick);
-  }
-  return selected.slice(0, MAX_PLAYER_PICK_COUNT);
+  return diversifyBoard(candidates, {
+    top: TOP_PLAYER_PICK_COUNT,
+    freePreview: FREE_PLAYER_PICK_COUNT,
+    maximum: MAX_PLAYER_PICK_COUNT
+  });
 }
 
 async function fetchNflSeason(year: number): Promise<EspnEvent[]> {
@@ -335,15 +413,21 @@ function extractNflBoxscore(summary: EspnSummary | null, teamId: string): Map<st
       const record = players.get(athlete.id) ?? { athlete, values: new Map<string, number>(), position: athlete.position?.abbreviation ?? inferredPosition(name) };
       const stat = (label: string) => numericStat(entry.stats?.[labels.indexOf(label)]);
       if (name === "passing") {
+        const [completions, attempts] = (entry.stats?.[labels.indexOf("C/ATT")] ?? "").split("/").map(Number);
+        if (Number.isFinite(completions)) record.values.set("Completions", completions);
+        if (Number.isFinite(attempts)) record.values.set("Pass attempts", attempts);
         record.values.set("Passing yards", stat("YDS"));
         record.values.set("Passing touchdowns", stat("TD"));
       } else if (name === "rushing") {
         record.values.set("Rushing yards", stat("YDS"));
-        record.values.set("Anytime touchdown", (record.values.get("Anytime touchdown") ?? 0) + stat("TD"));
+        record.values.set("Rush attempts", stat("CAR"));
+        record.values.set("Rush+Rec yards", (record.values.get("Rush+Rec yards") ?? 0) + stat("YDS"));
+        record.values.set("Rush+Rec TDs", (record.values.get("Rush+Rec TDs") ?? 0) + stat("TD"));
       } else if (name === "receiving") {
         record.values.set("Receptions", stat("REC"));
         record.values.set("Receiving yards", stat("YDS"));
-        record.values.set("Anytime touchdown", (record.values.get("Anytime touchdown") ?? 0) + stat("TD"));
+        record.values.set("Rush+Rec yards", (record.values.get("Rush+Rec yards") ?? 0) + stat("YDS"));
+        record.values.set("Rush+Rec TDs", (record.values.get("Rush+Rec TDs") ?? 0) + stat("TD"));
       }
       players.set(athlete.id, record);
     }
@@ -353,14 +437,6 @@ function extractNflBoxscore(summary: EspnSummary | null, teamId: string): Map<st
 
 function eventHasTeam(event: EspnEvent, teamId: string): boolean {
   return event.competitions?.[0]?.competitors?.some((team) => (team.id ?? team.team?.id) === teamId) ?? false;
-}
-
-function nflLine(market: string, average: number): { line: number; scale: number } {
-  if (market === "Passing yards") return { line: Math.max(174.5, Math.min(299.5, Math.round(average / 25) * 25 - 0.5)), scale: 70 };
-  if (market === "Rushing yards" || market === "Receiving yards") return { line: Math.max(19.5, Math.min(99.5, Math.round(average / 10) * 10 - 0.5)), scale: 32 };
-  if (market === "Receptions") return { line: Math.max(1.5, Math.min(7.5, Math.round(average) - 0.5)), scale: 2.5 };
-  if (market === "Passing touchdowns") return { line: average >= 2.25 ? 2.5 : 1.5, scale: 1.25 };
-  return { line: 0.5, scale: 0.75 };
 }
 
 async function teamForms(teamId: string, gameTime: string, events: EspnEvent[], summaries: Map<string, EspnSummary | null>): Promise<Map<string, NflPlayerForm>> {
@@ -403,6 +479,7 @@ async function getNflPlayerPicks(date: string, slateOverride?: TodayPredictionsR
     }
   }
   const summaries = new Map(await Promise.all([...priorEventIds].map(async (id) => [id, await fetchNflSummary(id)] as const)));
+  const dfsBoard = await getDfsBoard("nfl", scheduled.map((game) => ({ homeTeam: game.home_team, awayTeam: game.away_team })));
   const candidates: Candidate[] = [];
   for (const game of scheduled) {
     const sides = [
@@ -412,27 +489,51 @@ async function getNflPlayerPicks(date: string, slateOverride?: TodayPredictionsR
     for (const side of sides) {
       const forms = await teamForms(side.teamId, game.game_time_utc!, events, summaries);
       for (const form of forms.values()) {
-        for (const [market, values] of form.values) {
+        const boardMarkets = dfsBoard.get(normalizePlayerName(form.playerName));
+        for (const definition of NFL_MARKETS) {
+          const values = form.values.get(definition.market) ?? [];
           if (values.length === 0) continue;
           const recentAverage = values.reduce((sum, value) => sum + value, 0) / values.length;
-          if (recentAverage <= 0 && market !== "Anytime touchdown") continue;
+          if (recentAverage <= 0 && definition.kind !== "rare") continue;
           const projection = recentAverage * (0.94 + side.probability * 0.12);
-          const { line, scale } = nflLine(market, recentAverage);
+          const boardProp = boardMarkets?.get(definition.market);
+          const synthetic = nflBoardLine(definition, recentAverage);
+          const line = boardProp?.line ?? synthetic?.line;
+          if (line === undefined) continue;
           const edge = projection - line;
-          const selection = edge >= 0 ? "Over" : "Under";
+          const sharedFields = {
+            id: `nfl-${game.gameId}-${form.playerId}-${definition.market.toLowerCase().replace(/[\s+]/g, "-")}`,
+            sport: "nfl" as const, gameId: game.gameId, playerId: form.playerId, playerName: form.playerName, headshotUrl: form.headshotUrl,
+            position: form.position, team: side.team, opponent: side.opponent, gameTime: game.game_time_utc, market: definition.market, line,
+            projection: Number(projection.toFixed(1)), modelEdge: Number(edge.toFixed(1)),
+            ...pendingFields("nfl-player-board-v3", values.length)
+          };
+          const formStats = [
+            `${recentAverage.toFixed(1)} average over ${values.length} recent game${values.length === 1 ? "" : "s"}`,
+            `${values.at(-1)?.toFixed(1) ?? "0.0"} in the latest game`
+          ];
+          if (definition.kind === "rare") {
+            const overProbability = poissonOver(Math.max(0.01, projection), line);
+            if (overProbability < MIN_RARE_OVER_PROBABILITY) continue;
+            candidates.push({
+              ...sharedFields, selection: "Over", confidence: Number(overProbability.toFixed(4)),
+              supportingStats: [...boardStatChip(boardProp), ...formStats, `${Math.round(overProbability * 100)}% model chance of the over`],
+              explanation: `Boost-style pick: boards list ${definition.market.toLowerCase()} over-only with elevated payouts, so it is shown for this player's genuine scoring role but ranked below the standard board as a longshot.`
+            });
+            continue;
+          }
+          const selection: "Over" | "Under" = edge >= 0 ? "Over" : "Under";
+          if (!isBoardSelectionAllowed(definition.market, line, selection)) continue;
+          const confidence = confidenceFromEdge(edge, values.length, synthetic?.scale ?? definition.scale);
+          if (!isBoardRealisticConfidence(confidence, Boolean(boardProp))) continue;
           candidates.push({
-            id: `nfl-${game.gameId}-${form.playerId}-${market.toLowerCase().replace(/\s/g, "-")}`,
-            sport: "nfl", gameId: game.gameId, playerId: form.playerId, playerName: form.playerName, headshotUrl: form.headshotUrl,
-            position: form.position, team: side.team, opponent: side.opponent, gameTime: game.game_time_utc, market, selection, line,
-            projection: Number(projection.toFixed(1)), confidence: confidenceFromEdge(edge, values.length, scale), modelEdge: Number(edge.toFixed(1)),
+            ...sharedFields, selection, confidence,
             supportingStats: [
-              `${recentAverage.toFixed(1)} average over ${values.length} recent game${values.length === 1 ? "" : "s"}`,
-              `${values.at(-1)?.toFixed(1) ?? "0.0"} in the latest game`,
+              ...boardStatChip(boardProp), ...formStats,
               `${edge >= 0 ? "+" : ""}${edge.toFixed(1)} model edge vs line`,
               `${Math.round(side.probability * 100)}% team win chance`, `${side.record} team record`
             ],
-            explanation: `${selection} ${line} is the calibrated side after weighting the player’s last three available games, role continuity, team strength, and the ${side.opponent} matchup. Small samples are deliberately confidence-capped.`,
-            ...pendingFields("nfl-player-form-v2", values.length)
+            explanation: `${selection} ${line} is the calibrated side of a board-realistic line after weighting the player’s last three available games, role continuity, team strength, and the ${side.opponent} matchup. Small samples are deliberately confidence-capped.`
           });
         }
       }
@@ -469,10 +570,25 @@ function mlbActualValue(boxscore: MlbBoxscore | null, playerId: string, market: 
   const players = { ...(boxscore?.teams?.away?.players ?? {}), ...(boxscore?.teams?.home?.players ?? {}) };
   const player = Object.values(players).find((entry) => String(entry.person?.id ?? "") === playerId);
   if (!player) return { value: null, didPlay: false };
-  const battingKeys: Record<string, string> = { Hits: "hits", "Total bases": "totalBases", "Home runs": "homeRuns", RBIs: "rbi" };
-  const key = battingKeys[market];
-  if (key) return { value: numberValue(player.stats?.batting, key), didPlay: Boolean(player.stats?.batting) };
-  if (market === "Strikeouts") return { value: numberValue(player.stats?.pitching, "strikeOuts"), didPlay: Boolean(player.stats?.pitching) };
+  const batting = player.stats?.batting;
+  const pitching = player.stats?.pitching;
+  const battingKeys: Record<string, string> = {
+    Hits: "hits", "Total bases": "totalBases", "Home runs": "homeRuns", RBIs: "rbi", Runs: "runs", "Stolen bases": "stolenBases"
+  };
+  const battingKey = battingKeys[market];
+  if (battingKey) return { value: numberValue(batting, battingKey), didPlay: Boolean(batting) };
+  if (market === "Hits+Runs+RBIs") {
+    return { value: numberValue(batting, "hits") + numberValue(batting, "runs") + numberValue(batting, "rbi"), didPlay: Boolean(batting) };
+  }
+  const pitchingKeys: Record<string, string> = {
+    Strikeouts: "strikeOuts", "Earned runs allowed": "earnedRuns", "Hits allowed": "hits", "Walks allowed": "baseOnBalls"
+  };
+  const pitchingKey = pitchingKeys[market];
+  if (pitchingKey) return { value: numberValue(pitching, pitchingKey), didPlay: Boolean(pitching) };
+  if (market === "Pitching outs") {
+    const outs = numberValue(pitching, "outs") || inningsToOuts(pitching?.inningsPitched);
+    return { value: outs, didPlay: Boolean(pitching) };
+  }
   return { value: null, didPlay: false };
 }
 
@@ -500,7 +616,9 @@ async function enrichLiveResults(picks: PlayerPick[], slate: TodayPredictionsRes
     else {
       const teamId = pick.team === game.home_team ? String(game.homeTeam.id) : String(game.awayTeam.id);
       const record = extractNflBoxscore(nflBoxes.get(pick.gameId) ?? null, teamId).get(pick.playerId);
-      actual = { value: record?.values.get(pick.market) ?? null, didPlay: Boolean(record?.values.has(pick.market)) };
+      // "Anytime touchdown" is the pre-board-alignment name for Rush+Rec TDs; keep old snapshots gradeable.
+      const marketKey = pick.market === "Anytime touchdown" ? "Rush+Rec TDs" : pick.market;
+      actual = { value: record?.values.get(marketKey) ?? null, didPlay: Boolean(record?.values.has(marketKey)) };
     }
     return {
       ...pick, status, statusLabel, actualValue: actual.value,
