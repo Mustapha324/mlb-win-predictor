@@ -50,6 +50,8 @@ const EXPERIMENT = process.argv.includes("--experiment");
 const FROZEN = process.argv.includes("--frozen"); // evaluate current production weights with tuning disabled
 const FACEOFF = process.argv.includes("--faceoff"); // deployed GitHub models vs the new model, head to head
 const AUTOPSY = process.argv.includes("--autopsy"); // dissect confident losses: what happened, what was knowable pregame
+const TUNE_ONE = process.argv.find((arg) => arg.startsWith("--tune-one="))?.slice(11) ?? null; // walk-forward tune ONE extra factor on train, report frozen validation
+const TRIAL = process.argv.find((arg) => arg.startsWith("--trial="))?.slice(8) ?? null; // "key:weight" — frozen run with one extra factor fixed
 const SPORT_ARG = process.argv.find((arg) => ["mlb", "nfl", "all"].includes(arg)) ?? "all";
 const TODAY = "2026-08-24";
 const NFL_HFA = Number((process.argv.find((arg) => arg.startsWith("--hfa=")) ?? "--hfa=28").slice(6)); // 28 Elo ~ modern-era home edge; swept on validation 2026-08-24
@@ -237,6 +239,8 @@ function buildFeatures(games, options) {
   const qbHistory = new Map();
   const toMargins = new Map(); // teamId -> {sum, games}, reset per season
   const units = new Map(); // NFL: teamId -> rolling {offPass, offRush, offTot, defPass, defRush, defTot} arrays
+  const deep = new Map(); // NFL: teamId -> rolling arrays for the extra-factor registry
+  const leagueDef = { pass: [], rush: [] }; // running league context for modeEdge
   const platoon = new Map(); // MLB: teamId -> {L:{w,g}, R:{w,g}}, reset per season
   const teams = new Map();
   const stateOf = (id) => teams.get(id) ?? teams.set(id, teamState()).get(id);
@@ -346,6 +350,50 @@ function buildFeatures(games, options) {
       const homeYards = yardsMarginOf(game.homeId);
       const awayYards = yardsMarginOf(game.awayId);
       game.yardsMarginGap = homeYards !== null && awayYards !== null ? Number(((homeYards - awayYards) / 100).toFixed(4)) : undefined;
+      // extra-factor gaps (all rolling last-6, need >=3 games both sides)
+      const roll = (teamId, key) => {
+        const values = deep.get(teamId)?.[key];
+        if (!values || values.length < 3) return null;
+        const window = values.slice(-6);
+        return window.reduce((sum, value) => sum + value, 0) / window.length;
+      };
+      const bothRoll = (key) => {
+        const home = roll(game.homeId, key);
+        const away = roll(game.awayId, key);
+        return home !== null && away !== null ? { home, away } : null;
+      };
+      game.extra = {};
+      const sacksMade = bothRoll("sacksMade");
+      const sacksTaken = bothRoll("sacksTaken");
+      if (sacksMade && sacksTaken) {
+        game.extra.sackMatchup = Number((((sacksMade.home + sacksTaken.away) - (sacksMade.away + sacksTaken.home)) / 2).toFixed(4));
+        game.extra.sacksAllowedGap = Number(((sacksTaken.away - sacksTaken.home) / 2).toFixed(4));
+      }
+      const penYds = bothRoll("penYds");
+      if (penYds) game.extra.penaltyDiscipline = Number(((penYds.away - penYds.home) / 10).toFixed(4));
+      const off3 = bothRoll("off3Pct");
+      const def3 = bothRoll("def3Pct");
+      if (off3 && def3) game.extra.thirdDown = Number(((off3.home - off3.away) + (def3.away - def3.home)).toFixed(4));
+      const fourth = bothRoll("fourthAtt");
+      if (fourth) game.extra.fourthAggression = Number((fourth.home - fourth.away).toFixed(4));
+      const possMin = bothRoll("possMin");
+      if (possMin) game.extra.possessionGap = Number(((possMin.home - possMin.away) / 5).toFixed(4));
+      const fdMargin = bothRoll("fdMargin");
+      if (fdMargin) game.extra.firstDownsGap = Number(((fdMargin.home - fdMargin.away) / 5).toFixed(4));
+      const sackRate = bothRoll("sackRateAllowed");
+      if (sackRate) game.extra.sackRateAllowed = Number(((sackRate.away - sackRate.home) * 10).toFixed(4));
+      const offAnya = bothRoll("offAnya");
+      const defAnya = bothRoll("defAnyaAllowed");
+      if (offAnya && defAnya) game.extra.anyaGap = Number((((offAnya.home - defAnya.home) - (offAnya.away - defAnya.away))).toFixed(4));
+      const passRate = bothRoll("passRate");
+      const defPassRoll = bothRoll("defPassY");
+      const defRushRoll = bothRoll("defRushY");
+      if (passRate && defPassRoll && defRushRoll && leagueDef.pass.length >= 50) {
+        const lgPass = leagueDef.pass.slice(-200).reduce((sum, value) => sum + value, 0) / Math.min(200, leagueDef.pass.length);
+        const lgRush = leagueDef.rush.slice(-200).reduce((sum, value) => sum + value, 0) / Math.min(200, leagueDef.rush.length);
+        const edge = (rate, oppDefPass, oppDefRush) => rate * ((oppDefPass - lgPass) / 50) + (1 - rate) * ((oppDefRush - lgRush) / 50);
+        game.extra.modeEdge = Number((edge(passRate.home, defPassRoll.away, defRushRoll.away) - edge(passRate.away, defPassRoll.home, defRushRoll.home)).toFixed(4));
+      }
       const homeToMargin = marginOf(game.homeId);
       const awayToMargin = marginOf(game.awayId);
       game.toMarginGap = homeToMargin !== null && awayToMargin !== null ? Number((homeToMargin - awayToMargin).toFixed(3)) : undefined;
@@ -417,6 +465,45 @@ function buildFeatures(games, options) {
       };
       pushUnit(game.homeId, stats?.[game.homeId], stats?.[game.awayId]);
       pushUnit(game.awayId, stats?.[game.awayId], stats?.[game.homeId]);
+      const qbLines = qbByEvent?.get(game.eventId);
+      const pushDeep = (teamId, own, opposing) => {
+        if (!own || !opposing) return;
+        const record = deep.get(teamId) ?? {};
+        const add = (key, value, cap = 8) => {
+          if (value === null || value === undefined || !Number.isFinite(value)) return;
+          record[key] = [...(record[key] ?? []), value].slice(-cap);
+        };
+        add("sacksMade", opposing.sacked?.made ?? null);
+        add("sacksTaken", own.sacked?.made ?? null);
+        add("penYds", own.penalties?.att ?? null); // pair is "count-yards": att holds yards
+        add("off3Pct", own.third && own.third.att > 0 ? own.third.made / own.third.att : null);
+        add("def3Pct", opposing.third && opposing.third.att > 0 ? opposing.third.made / opposing.third.att : null);
+        add("fourthAtt", own.fourth ? own.fourth.att : null);
+        add("possMin", own.possMin);
+        add("fdMargin", own.firstDowns !== null && opposing.firstDowns !== null ? own.firstDowns - opposing.firstDowns : null);
+        add("passRate", own.passAtt !== null && own.rushAtt !== null && own.passAtt + own.rushAtt > 0 ? own.passAtt / (own.passAtt + own.rushAtt) : null);
+        add("defPassY", opposing.passYds);
+        add("defRushY", opposing.rushYds);
+        const ownQb = qbLines?.[teamId];
+        const oppTeamId = teamId === game.homeId ? game.awayId : game.homeId;
+        const oppQb = qbLines?.[oppTeamId];
+        if (own.passAtt !== null && own.sacked) {
+          const dropbacks = own.passAtt + own.sacked.made;
+          if (dropbacks > 0) {
+            add("sackRateAllowed", own.sacked.made / dropbacks);
+            if (own.passYds !== null && ownQb) add("offAnya", (own.passYds - own.sacked.att + 20 * (ownQb.tds ?? 0) - 45 * (ownQb.ints ?? 0)) / dropbacks);
+          }
+        }
+        if (opposing.passAtt !== null && opposing.sacked && opposing.passYds !== null && oppQb) {
+          const oppDropbacks = opposing.passAtt + opposing.sacked.made;
+          if (oppDropbacks > 0) add("defAnyaAllowed", (opposing.passYds - opposing.sacked.att + 20 * (oppQb.tds ?? 0) - 45 * (oppQb.ints ?? 0)) / oppDropbacks);
+        }
+        deep.set(teamId, record);
+        if (opposing.passYds !== null) leagueDef.pass.push(opposing.passYds);
+        if (opposing.rushYds !== null) leagueDef.rush.push(opposing.rushYds);
+      };
+      pushDeep(game.homeId, stats?.[game.homeId], stats?.[game.awayId]);
+      pushDeep(game.awayId, stats?.[game.awayId], stats?.[game.homeId]);
       const homeTo = stats?.[game.homeId]?.turnovers;
       const awayTo = stats?.[game.awayId]?.turnovers;
       if (homeTo != null && awayTo != null) {
@@ -631,7 +718,7 @@ async function nflQbGames(games) {
 async function nflTeamGameStats(games) {
   const byEvent = new Map();
   for (const game of games) {
-    const key = `nfl-ts2-${game.eventId}`;
+    const key = `nfl-ts3-${game.eventId}`;
     const file = path.join(CACHE_DIR, `${key}.json`);
     let extracted;
     if (!REFRESH && fs.existsSync(file)) {
@@ -647,13 +734,32 @@ async function nflTeamGameStats(games) {
         extracted = {};
         for (const team of payload.boxscore?.teams ?? []) {
           if (!team.team?.id) continue;
-          const stat = (name) => Number(team.statistics?.find((entry) => entry.name === name)?.displayValue ?? NaN);
-          const numberOrNull = (value) => (Number.isFinite(value) ? value : null);
+          const raw = (name) => team.statistics?.find((entry) => entry.name === name)?.displayValue;
+          const stat = (name) => {
+            const value = Number(raw(name));
+            return Number.isFinite(value) ? value : null;
+          };
+          const pair = (name) => {
+            const [made, att] = String(raw(name) ?? "").split(/[-/]/).map(Number);
+            return Number.isFinite(made) && Number.isFinite(att) ? { made, att } : null;
+          };
+          const minutes = (name) => {
+            const [mm, ss] = String(raw(name) ?? "").split(":").map(Number);
+            return Number.isFinite(mm) && Number.isFinite(ss) ? mm + ss / 60 : null;
+          };
           extracted[team.team.id] = {
-            turnovers: numberOrNull(stat("turnovers")),
-            passYds: numberOrNull(stat("netPassingYards")),
-            rushYds: numberOrNull(stat("rushingYards")),
-            totalYds: numberOrNull(stat("totalYards"))
+            turnovers: stat("turnovers"),
+            passYds: stat("netPassingYards"),
+            rushYds: stat("rushingYards"),
+            totalYds: stat("totalYards"),
+            firstDowns: stat("firstDowns"),
+            third: pair("thirdDownEff"),
+            fourth: pair("fourthDownEff"),
+            penalties: pair("totalPenaltiesYards"),
+            sacked: pair("sacksYardsLost"),
+            rushAtt: stat("rushingAttempts"),
+            passAtt: pair("completionAttempts")?.att ?? null,
+            possMin: minutes("possessionTime")
           };
         }
         fs.writeFileSync(file, JSON.stringify(extracted));
@@ -673,6 +779,25 @@ function haversineKm(a, b) {
   const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLon / 2) ** 2;
   return 6371 * 2 * Math.asin(Math.sqrt(h));
 }
+
+// ---------------------------------------------------------------------------
+// Extra candidate factors (NFL deep round): computed in buildFeatures into
+// game.extra[key]; applied in brainProbability when a weight is set. Only
+// factors that survive one-at-a-time trials get promoted into brainScoring.
+// ---------------------------------------------------------------------------
+
+const EXTRA_BOUNDS = {
+  sackMatchup: { min: 0, max: 0.4, delta: 0.04 },      // line play: our rush + their protection, per game /2
+  sacksAllowedGap: { min: 0, max: 0.4, delta: 0.04 },  // protection quality alone (away sacked - home sacked)
+  penaltyDiscipline: { min: 0, max: 0.3, delta: 0.03 },// coaching discipline proxy: penalty yards gap /10
+  thirdDown: { min: 0, max: 1.0, delta: 0.1 },         // sustained-drive skill: off+def 3rd-down pct gaps
+  fourthAggression: { min: 0, max: 0.3, delta: 0.03 }, // coaching aggressiveness: 4th-down attempts gap
+  modeEdge: { min: 0, max: 0.5, delta: 0.05 },         // style interaction: pass-rate x opposing-unit weakness
+  possessionGap: { min: 0, max: 0.3, delta: 0.03 },    // ball-control identity: time of possession /5
+  firstDownsGap: { min: 0, max: 0.5, delta: 0.05 },    // drive-success margin /5
+  sackRateAllowed: { min: 0, max: 0.3, delta: 0.03 },  // protection RATE per dropback (literature: the predictive trench side), gap x10
+  anyaGap: { min: 0, max: 0.4, delta: 0.04 }           // ANY/A differential (off minus def-allowed), the best box-score composite
+};
 
 // ---------------------------------------------------------------------------
 // MOV Elo baseline
@@ -740,6 +865,13 @@ function gameInputs(sport, game, baselineLogit) {
 function brainProbability(sport, game, baseProbability, weights) {
   const baselineLogit = Math.log(baseProbability / (1 - baseProbability));
   const terms = factorTerms(gameInputs(sport, game, baselineLogit), weights).map((term) => ({ label: term.kind, detail: "", homeLogit: term.homeLogit }));
+  if (game.extra) {
+    for (const key of Object.keys(EXTRA_BOUNDS)) {
+      const weight = weights[sport]?.[key];
+      const gap = game.extra[key];
+      if (weight > 0 && gap !== undefined) terms.push({ label: key, detail: "", homeLogit: Math.max(-2, Math.min(2, gap)) * weight });
+    }
+  }
   const { logitDelta } = combineFactors(terms);
   return { probability: applyLogitDelta(baseProbability, logitDelta), terms };
 }
@@ -1001,6 +1133,9 @@ const PHASES = {
 
 function weightsWith(sport, activeKeys) {
   const weights = structuredClone(DEFAULT_BRAIN_WEIGHTS);
+  for (const key of activeKeys) {
+    if (!(key in weights[sport])) weights[sport][key] = 0;
+  }
   for (const key of Object.keys(weights[sport])) {
     if (key === "qbOut" || (key === "injuryGap" && sport === "nfl")) continue; // NFL priors stay
     if (!activeKeys.includes(key)) weights[sport][key] = 0;
@@ -1402,6 +1537,54 @@ for (const sport of sports) {
   }
 
   let kept;
+  if (sport === "nfl" && TUNE_ONE) {
+    const shippedActive = [...BASE_TUNABLES.nfl, ...Object.keys(DEFAULT_BRAIN_WEIGHTS.nfl).filter((key) => DEFAULT_BRAIN_WEIGHTS.nfl[key] > 0 && !BASE_TUNABLES.nfl.includes(key) && !["injuryGap", "qbOut"].includes(key))];
+    const bounds = EXTRA_BOUNDS[TUNE_ONE] ?? TUNABLE_BOUNDS.nfl[TUNE_ONE];
+    if (!bounds) throw new Error(`unknown factor ${TUNE_ONE}`);
+    const result = simulate({
+      sport,
+      batches: batchesFor(sport, games, PHASES[sport]),
+      initialWeights: weightsWith(sport, [...shippedActive, TUNE_ONE]),
+      tunable: { [TUNE_ONE]: bounds },
+      tuneIn: new Set(["train"]),
+      closeMargin: 3,
+      trailingWindow: 96,
+      elo: makeElo(K_OVERRIDE ?? 20, NFL_HFA)
+    });
+    const validation = phaseStats(result.record, "validation");
+    console.log(`[nfl] TUNE-ONE ${TUNE_ONE}: tuned weight ${result.finalWeights.nfl[TUNE_ONE]} | validation ${fmt(validation)}`);
+    continue;
+  }
+  if (sport === "nfl" && TRIAL) {
+    const [key, weightRaw] = TRIAL.split(":");
+    const weight = Number(weightRaw);
+    const shippedActive = [...BASE_TUNABLES.nfl, ...Object.keys(DEFAULT_BRAIN_WEIGHTS.nfl).filter((k) => DEFAULT_BRAIN_WEIGHTS.nfl[k] > 0 && !BASE_TUNABLES.nfl.includes(k) && !["injuryGap", "qbOut"].includes(k))];
+    const initialWeights = weightsWith(sport, [...shippedActive, key]);
+    initialWeights.nfl[key] = weight;
+    const result = simulate({
+      sport,
+      batches: batchesFor(sport, games, PHASES[sport]),
+      initialWeights,
+      tunable: {},
+      tuneIn: new Set(),
+      closeMargin: 3,
+      trailingWindow: 96,
+      elo: makeElo(K_OVERRIDE ?? 20, NFL_HFA)
+    });
+    const validation = phaseStats(result.record, "validation");
+    const holdout = phaseStats(result.record, "holdout");
+    const perSeason = new Map();
+    for (const batch of result.batchSummaries) {
+      const season = batch.label.slice(0, 4);
+      const entry = perSeason.get(season) ?? { wins: 0, games: 0 };
+      entry.wins += batch.brainWins;
+      entry.games += batch.games;
+      perSeason.set(season, entry);
+    }
+    console.log(`[nfl] TRIAL ${key}=${weight} | validation ${fmt(validation)} | HOLDOUT ${fmt(holdout)}`);
+    console.log(`[nfl] TRIAL per-season: ${[...perSeason.entries()].map(([season, entry]) => `${season} ${(100 * entry.wins / entry.games).toFixed(1)}%`).join(" | ")}`);
+    continue;
+  }
   if (EXPERIMENT) {
     const outcome = experiment(sport, games);
     kept = outcome.kept;
@@ -1416,6 +1599,17 @@ for (const sport of sports) {
   const validation = phaseStats(finalResult.record, "validation");
   console.log(`[${sport}] validation ${fmt(validation)}`);
   console.log(`[${sport}] HOLDOUT ${fmt(holdout)}`);
+  {
+    const perSeason = new Map();
+    for (const batch of finalResult.batchSummaries) {
+      const season = batch.label.slice(0, 4);
+      const entry = perSeason.get(season) ?? { wins: 0, games: 0 };
+      entry.wins += batch.brainWins;
+      entry.games += batch.games;
+      perSeason.set(season, entry);
+    }
+    console.log(`[${sport}] per-season: ${[...perSeason.entries()].map(([season, entry]) => `${season} ${(100 * entry.wins / entry.games).toFixed(1)}%`).join(" | ")}`);
+  }
   if (FROZEN) {
     const fitRows = finalResult.record.filter((row) => row.phase === "train");
     const valRows = finalResult.record.filter((row) => row.phase === "validation");

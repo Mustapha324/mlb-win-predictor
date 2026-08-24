@@ -228,6 +228,14 @@ durable content already inside pythag). Details in autopsy.md. Fifteen historica
 tested to date; the shipped core (pythag, division damp, QB value, late-season damp,
 calibration) is what the evidence supports — further gains come from the live-capture ledger.
 
+## Round 7 (2026-08-24): 14-agent deep-factor sweep
+
+Parallel research plus one-factor-at-a-time trials of ten line-play / coaching / efficiency /
+style factors, with an adversarial protocol reviewer that caught a stale-baseline flaw and
+forced a corrected second batch. All ten rejected (see backtests/deep-sweep.md). The reviewer
+upgrades are now standing rules: zero-weight in-config baselines, holdout non-degradation,
+batch-scaled validation bars.
+
 ## Faceoff vs the deployed GitHub models (2026-08-24)
 
 `npm run backtest -- all --faceoff` replays the deployed models faithfully (exact
