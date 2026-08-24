@@ -219,6 +219,15 @@ Rejected: turnover-margin factor — 38% of confident losses are turnover swings
 game-day luck, unpredictable from season data. MLB: ~48% of confident losses are irreducible
 variance; calibration is the correct treatment.
 
+## Round 6 (2026-08-24): roster/strategy candidates — all rejected honestly
+
+Starter handedness platoon splits (MLB), unit matchups, and rolling yardage margin (NFL) were
+built from real per-game data and lab-tested; none survived (platoon is noise, additive unit
+matchups collapse into the yardage margin, and yardage margin fails frozen per-season with its
+durable content already inside pythag). Details in autopsy.md. Fifteen historical candidates
+tested to date; the shipped core (pythag, division damp, QB value, late-season damp,
+calibration) is what the evidence supports — further gains come from the live-capture ledger.
+
 ## Faceoff vs the deployed GitHub models (2026-08-24)
 
 `npm run backtest -- all --faceoff` replays the deployed models faithfully (exact

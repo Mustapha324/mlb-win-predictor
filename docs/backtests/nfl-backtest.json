@@ -28,7 +28,10 @@
   "travel": 0,
   "shortWeek": 0,
   "toMargin": 0,
-  "lateSeasonDamp": 0.15
+  "lateSeasonDamp": 0.15,
+  "unitMatchup": 0,
+  "yardsMargin": 0,
+  "platoon": 0
  },
  "validation": {
   "games": 272,
@@ -37,7 +40,7 @@
   "baseWins": 181,
   "brainWins": 184,
   "baseLogLoss": 0.61626504793738,
-  "brainLogLoss": 0.6039890934684364
+  "brainLogLoss": 0.6038535923334886
  },
  "holdout": {
   "games": 271,
@@ -46,7 +49,7 @@
   "baseWins": 175,
   "brainWins": 173,
   "baseLogLoss": 0.6582286535203016,
-  "brainLogLoss": 0.6553681855503412
+  "brainLogLoss": 0.6552692556800089
  },
  "batches": [
   {
@@ -83,7 +86,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -121,7 +127,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -160,7 +169,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -172,12 +184,11 @@
    "causes": {
     "fluke": 0,
     "coin-flip": 2,
-    "signal-missed": 3,
-    "rating-gap": 0
+    "signal-missed": 2,
+    "rating-gap": 1
    },
    "missedBy": {
-    "qb-value": 4,
-    "weather": 1
+    "qb-value": 4
    },
    "weights": {
     "injuryGap": 0.4,
@@ -198,7 +209,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -236,7 +250,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -273,7 +290,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -312,7 +332,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -352,7 +375,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -392,7 +418,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -433,7 +462,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -472,7 +504,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -488,7 +523,7 @@
     "rating-gap": 2
    },
    "missedBy": {
-    "weather": 2,
+    "weather": 1,
     "qb-value": 3,
     "pythag": 2,
     "form": 2
@@ -512,7 +547,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -547,7 +585,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -587,7 +628,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -627,7 +671,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -665,7 +712,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -705,7 +755,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -746,7 +799,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -783,7 +839,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -821,7 +880,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -859,7 +921,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -898,7 +963,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -916,8 +984,7 @@
    "missedBy": {
     "division": 2,
     "form": 1,
-    "qb-value": 1,
-    "weather": 1
+    "qb-value": 1
    },
    "weights": {
     "injuryGap": 0.4,
@@ -938,7 +1005,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -977,7 +1047,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -993,8 +1066,8 @@
     "rating-gap": 2
    },
    "missedBy": {
-    "weather": 2,
     "division": 3,
+    "weather": 1,
     "qb-value": 1
    },
    "weights": {
@@ -1016,7 +1089,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1056,7 +1132,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1094,7 +1173,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1134,7 +1216,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1173,7 +1258,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1213,7 +1301,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1251,7 +1342,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1291,7 +1385,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1332,7 +1429,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1372,7 +1472,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1413,7 +1516,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1455,7 +1561,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1492,7 +1601,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1531,7 +1643,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1569,7 +1684,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1609,7 +1727,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1627,7 +1748,6 @@
    "missedBy": {
     "division": 2,
     "qb-value": 1,
-    "weather": 1,
     "form": 2
    },
    "weights": {
@@ -1649,7 +1769,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1689,7 +1812,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1727,7 +1853,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1767,7 +1896,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1807,7 +1939,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1845,7 +1980,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1885,7 +2023,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1926,7 +2067,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -1964,7 +2108,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2004,7 +2151,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2044,7 +2194,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2082,7 +2235,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2121,7 +2277,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2141,7 +2300,6 @@
     "qb-value": 3,
     "late-season": 8,
     "form": 4,
-    "weather": 1,
     "pythag": 2
    },
    "weights": {
@@ -2163,7 +2321,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2201,7 +2362,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2240,7 +2404,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2279,7 +2446,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2317,7 +2487,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2356,7 +2529,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2397,7 +2573,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2438,7 +2617,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2477,7 +2659,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2517,7 +2702,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2557,7 +2745,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2597,7 +2788,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2636,7 +2830,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2675,7 +2872,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2713,7 +2913,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2753,7 +2956,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2793,7 +2999,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2834,7 +3043,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   },
   {
@@ -2874,7 +3086,10 @@
     "travel": 0,
     "shortWeek": 0,
     "toMargin": 0,
-    "lateSeasonDamp": 0.15
+    "lateSeasonDamp": 0.15,
+    "unitMatchup": 0,
+    "yardsMargin": 0,
+    "platoon": 0
    }
   }
  ]

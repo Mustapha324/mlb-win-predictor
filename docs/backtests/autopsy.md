@@ -84,3 +84,11 @@ Confident losses: 215 · confident wins: 515 (win rate 70.5%)
 - `toMargin` (season turnover-margin gap): turnovers cause 38% of confident losses but season margin doesn't predict game-day swings (alignment 0.385 losses vs 0.399 wins; frozen test −1.9pp in 2022, worse log-loss). Turnover upsets are luck — do not re-chase.
 
 **Standing conclusions:** MLB confident losses are ~48% pure variance (one-run games, blanked bats) and 19% starter blowups that real FIP data cannot predict — temperature calibration is the correct treatment, and the remaining MLB/NFL headroom lives in pregame LIVE information (injuries, announced rest, lineups), which the live-capture ledger now accumulates.
+
+## Round 6 (2026-08-24): roster & strategy candidates — three tested, three rejected
+
+- **MLB platoon splits** (team record vs today's opposing starter hand, from starter handedness data): worst candidate ever tested (Δ validation logloss −0.0015). Team vs-hand records are noise at season sample sizes. Ninth consecutive MLB record-factor rejection.
+- **NFL unit matchups** (pass/rush offenses vs opposing defenses, rolling): the additive formulation is algebraically identical to the yardage-margin gap — it produced byte-identical results. Lesson recorded: only interaction/asymmetric unit forms could ever be a distinct signal.
+- **NFL rolling yardage margin** ("yards predict better than points"): passed greedy validation (+0.003) then failed the frozen per-season test — 2025 −1.8pp at full size, still −1.4pp at half size, with the 2022/23 gains evaporating under shrinkage. Its durable content is already inside Pythagorean expectation.
+
+Standing shipped core after fifteen candidates tested: **pythag + division damp + QB value + late-season damp + temperature calibration** (NFL), display-grade weights + calibration (MLB). The margin over the deployed model is unchanged and stable across reruns.

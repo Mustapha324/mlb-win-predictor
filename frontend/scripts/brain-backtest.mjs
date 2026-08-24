@@ -232,10 +232,12 @@ function teamState() {
 }
 
 function buildFeatures(games, options) {
-  const { sport, ilIntervals, churnEvents, starterLogs, qbByEvent, teamStatsByEvent, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
+  const { sport, ilIntervals, churnEvents, starterLogs, starterHands, qbByEvent, teamStatsByEvent, weatherFor, marginWindow, pythagExponent, minSplitGames, minPythagGames } = options;
   const teamStarter = new Map();
   const qbHistory = new Map();
   const toMargins = new Map(); // teamId -> {sum, games}, reset per season
+  const units = new Map(); // NFL: teamId -> rolling {offPass, offRush, offTot, defPass, defRush, defTot} arrays
+  const platoon = new Map(); // MLB: teamId -> {L:{w,g}, R:{w,g}}, reset per season
   const teams = new Map();
   const stateOf = (id) => teams.get(id) ?? teams.set(id, teamState()).get(id);
   const starters = new Map();
@@ -251,6 +253,7 @@ function buildFeatures(games, options) {
         Object.assign(state, { homeW: 0, homeG: 0, roadW: 0, roadG: 0, scored: 0, allowed: 0, games: 0 });
       }
       toMargins.clear();
+      platoon.clear();
       lastSeason = game.season;
     }
     const home = stateOf(game.homeId);
@@ -287,6 +290,22 @@ function buildFeatures(games, options) {
         const awayFip = starterFip(starterLogs, game.awayStarterId, game.date);
         game.starterFipGap = homeFip !== null && awayFip !== null ? Number((awayFip - homeFip).toFixed(3)) : undefined;
       }
+      if (starterHands) {
+        const edge = (teamId, opposingStarterId) => {
+          const hand = opposingStarterId ? starterHands.get(opposingStarterId) : null;
+          if (hand !== "L" && hand !== "R") return null;
+          const splits = platoon.get(teamId);
+          const bucket = splits?.[hand];
+          if (!bucket || bucket.g < 12) return null;
+          const overallW = (splits.L?.w ?? 0) + (splits.R?.w ?? 0);
+          const overallG = (splits.L?.g ?? 0) + (splits.R?.g ?? 0);
+          if (overallG < 20) return null;
+          return bucket.w / bucket.g - overallW / overallG;
+        };
+        const homeEdge = edge(game.homeId, game.awayStarterId);
+        const awayEdge = edge(game.awayId, game.homeStarterId);
+        game.platoonGap = homeEdge !== null && awayEdge !== null ? Number((homeEdge - awayEdge).toFixed(4)) : undefined;
+      }
     } else {
       game.homeBurden = 0;
       game.awayBurden = 0;
@@ -303,6 +322,30 @@ function buildFeatures(games, options) {
         const tally = toMargins.get(teamId);
         return tally && tally.games >= 3 ? tally.sum / tally.games : null;
       };
+      const unitAvg = (teamId, key) => {
+        const rolling = units.get(teamId)?.[key];
+        if (!rolling || rolling.length < 3) return null;
+        const window = rolling.slice(-6);
+        return window.reduce((sum, value) => sum + value, 0) / window.length;
+      };
+      const unitEdge = (offTeam, defTeam) => {
+        const offPass = unitAvg(offTeam, "offPass");
+        const offRush = unitAvg(offTeam, "offRush");
+        const defPass = unitAvg(defTeam, "defPass");
+        const defRush = unitAvg(defTeam, "defRush");
+        return offPass !== null && offRush !== null && defPass !== null && defRush !== null ? offPass + offRush + defPass + defRush : null;
+      };
+      const homeUnits = unitEdge(game.homeId, game.awayId);
+      const awayUnits = unitEdge(game.awayId, game.homeId);
+      game.unitMatchupGap = homeUnits !== null && awayUnits !== null ? Number(((homeUnits - awayUnits) / 100).toFixed(4)) : undefined;
+      const yardsMarginOf = (teamId) => {
+        const offTot = unitAvg(teamId, "offTot");
+        const defTot = unitAvg(teamId, "defTot");
+        return offTot !== null && defTot !== null ? offTot - defTot : null;
+      };
+      const homeYards = yardsMarginOf(game.homeId);
+      const awayYards = yardsMarginOf(game.awayId);
+      game.yardsMarginGap = homeYards !== null && awayYards !== null ? Number(((homeYards - awayYards) / 100).toFixed(4)) : undefined;
       const homeToMargin = marginOf(game.homeId);
       const awayToMargin = marginOf(game.awayId);
       game.toMarginGap = homeToMargin !== null && awayToMargin !== null ? Number((homeToMargin - awayToMargin).toFixed(3)) : undefined;
@@ -338,6 +381,18 @@ function buildFeatures(games, options) {
     home.games += 1;
     away.games += 1;
     if (sport === "mlb") {
+      if (starterHands) {
+        const bump = (teamId, opposingStarterId, won) => {
+          const hand = opposingStarterId ? starterHands.get(opposingStarterId) : null;
+          if (hand !== "L" && hand !== "R") return;
+          const splits = platoon.get(teamId) ?? { L: { w: 0, g: 0 }, R: { w: 0, g: 0 } };
+          splits[hand].g += 1;
+          splits[hand].w += won ? 1 : 0;
+          platoon.set(teamId, splits);
+        };
+        bump(game.homeId, game.awayStarterId, game.homeWon);
+        bump(game.awayId, game.homeStarterId, !game.homeWon);
+      }
       if (game.homeStarterId) starters.set(game.homeStarterId, [...(starters.get(game.homeStarterId) ?? []), game.awayScore].slice(-8));
       if (game.awayStarterId) starters.set(game.awayStarterId, [...(starters.get(game.awayStarterId) ?? []), game.homeScore].slice(-8));
     } else if (qbByEvent) {
@@ -349,6 +404,19 @@ function buildFeatures(games, options) {
         qbHistory.set(line.qbId, [...(qbHistory.get(line.qbId) ?? []), line.value].slice(-12));
       }
       const stats = teamStatsByEvent?.get(game.eventId);
+      const pushUnit = (teamId, own, opposing) => {
+        if (!own || !opposing) return;
+        const record = units.get(teamId) ?? { offPass: [], offRush: [], offTot: [], defPass: [], defRush: [], defTot: [] };
+        if (own.passYds != null) record.offPass = [...record.offPass, own.passYds].slice(-8);
+        if (own.rushYds != null) record.offRush = [...record.offRush, own.rushYds].slice(-8);
+        if (own.totalYds != null) record.offTot = [...record.offTot, own.totalYds].slice(-8);
+        if (opposing.passYds != null) record.defPass = [...record.defPass, opposing.passYds].slice(-8);
+        if (opposing.rushYds != null) record.defRush = [...record.defRush, opposing.rushYds].slice(-8);
+        if (opposing.totalYds != null) record.defTot = [...record.defTot, opposing.totalYds].slice(-8);
+        units.set(teamId, record);
+      };
+      pushUnit(game.homeId, stats?.[game.homeId], stats?.[game.awayId]);
+      pushUnit(game.awayId, stats?.[game.awayId], stats?.[game.homeId]);
       const homeTo = stats?.[game.homeId]?.turnovers;
       const awayTo = stats?.[game.awayId]?.turnovers;
       if (homeTo != null && awayTo != null) {
@@ -478,6 +546,35 @@ function starterFip(logs, pitcherId, date) {
   return (13 * hr + 3 * bb - 2 * k) / innings;
 }
 
+/** Throwing hand per MLB starter id (static attribute; batched, slim-cached). */
+async function mlbStarterHands(games) {
+  const ids = [...new Set(games.flatMap((game) => [game.homeStarterId, game.awayStarterId]).filter(Boolean))].toSorted((a, b) => a - b);
+  const hands = new Map();
+  for (let index = 0; index < ids.length; index += 100) {
+    const chunk = ids.slice(index, index + 100);
+    const key = `mlb-hand-${index}-${chunk.length}`;
+    const file = path.join(CACHE_DIR, `${key}.json`);
+    let extracted;
+    if (!REFRESH && fs.existsSync(file)) {
+      extracted = JSON.parse(fs.readFileSync(file, "utf8"));
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 120));
+      try {
+        const response = await fetch(`https://statsapi.mlb.com/api/v1/people?personIds=${chunk.join(",")}&fields=people,id,pitchHand,code`, { headers: { Accept: "application/json" } });
+        if (!response.ok) continue;
+        const payload = await response.json();
+        extracted = {};
+        for (const person of payload.people ?? []) extracted[person.id] = person.pitchHand?.code ?? null;
+        fs.writeFileSync(file, JSON.stringify(extracted));
+      } catch {
+        continue;
+      }
+    }
+    for (const [id, hand] of Object.entries(extracted)) hands.set(Number(id), hand);
+  }
+  return hands;
+}
+
 /** Per-game passer lines from ESPN summaries (slim-cached): eventId -> { [espnTeamId]: {qbId, value} }. */
 async function nflQbGames(games) {
   const byEvent = new Map();
@@ -534,7 +631,7 @@ async function nflQbGames(games) {
 async function nflTeamGameStats(games) {
   const byEvent = new Map();
   for (const game of games) {
-    const key = `nfl-ts-${game.eventId}`;
+    const key = `nfl-ts2-${game.eventId}`;
     const file = path.join(CACHE_DIR, `${key}.json`);
     let extracted;
     if (!REFRESH && fs.existsSync(file)) {
@@ -551,7 +648,13 @@ async function nflTeamGameStats(games) {
         for (const team of payload.boxscore?.teams ?? []) {
           if (!team.team?.id) continue;
           const stat = (name) => Number(team.statistics?.find((entry) => entry.name === name)?.displayValue ?? NaN);
-          extracted[team.team.id] = { turnovers: Number.isFinite(stat("turnovers")) ? stat("turnovers") : null };
+          const numberOrNull = (value) => (Number.isFinite(value) ? value : null);
+          extracted[team.team.id] = {
+            turnovers: numberOrNull(stat("turnovers")),
+            passYds: numberOrNull(stat("netPassingYards")),
+            rushYds: numberOrNull(stat("rushingYards")),
+            totalYds: numberOrNull(stat("totalYards"))
+          };
         }
         fs.writeFileSync(file, JSON.stringify(extracted));
       } catch {
@@ -622,6 +725,9 @@ function gameInputs(sport, game, baselineLogit) {
     travelMm: game.travelMm,
     toMarginGap: game.toMarginGap,
     lateSeason: game.lateSeason,
+    unitMatchupGap: game.unitMatchupGap,
+    yardsMarginGap: game.yardsMarginGap,
+    platoonGap: game.platoonGap,
     homeShortWeek: game.homeShortWeek,
     awayShortWeek: game.awayShortWeek,
     divisionGame: game.divisionGame,
@@ -776,7 +882,8 @@ const TUNABLE_BOUNDS = {
     density: { min: 0, max: 0.06, delta: 0.008 },
     pitcherForm: { min: 0, max: 0.12, delta: 0.012 },
     rosterChurn: { min: 0, max: 0.08, delta: 0.008 },
-    starterFip: { min: 0, max: 0.5, delta: 0.04 }
+    starterFip: { min: 0, max: 0.5, delta: 0.04 },
+    platoon: { min: 0, max: 1.2, delta: 0.1 }
   },
   nfl: {
     formWinRate: { min: 0, max: 0.35, delta: 0.03 },
@@ -790,6 +897,8 @@ const TUNABLE_BOUNDS = {
     qbValue: { min: 0, max: 0.2, delta: 0.02 },
     toMargin: { min: 0, max: 0.4, delta: 0.04 },
     lateSeasonDamp: { min: 0, max: 0.6, delta: 0.06 },
+    unitMatchup: { min: 0, max: 0.5, delta: 0.05 },
+    yardsMargin: { min: 0, max: 0.5, delta: 0.05 },
     travel: { min: 0, max: 0.1, delta: 0.01 },
     shortWeek: { min: 0, max: 0.3, delta: 0.03 }
   }
@@ -801,8 +910,8 @@ const BASE_TUNABLES = {
 };
 
 const CANDIDATES = {
-  mlb: ["starterFip", "scoringForm", "homeSplit", "pythag", "density", "rosterChurn"],
-  nfl: ["qbValue", "toMargin", "lateSeasonDamp", "travel", "shortWeek", "scoringForm", "homeSplit", "pythag", "divisionDamp", "bye"]
+  mlb: ["starterFip", "platoon", "scoringForm", "homeSplit", "pythag", "density", "rosterChurn"],
+  nfl: ["qbValue", "unitMatchup", "yardsMargin", "toMargin", "lateSeasonDamp", "travel", "shortWeek", "scoringForm", "homeSplit", "pythag", "divisionDamp", "bye"]
 };
 
 function batchesFor(sport, games, phaseOf) {
@@ -824,6 +933,7 @@ async function loadMlb() {
   for (const season of seasons) bySeason.set(season, await mlbSeasonGames(season, season === 2026 ? TODAY : undefined));
   const [venues, intervals, churnEvents] = await Promise.all([mlbVenueInfo(), mlbIlTimeline([2022, 2023, 2024, 2025, 2026]), mlbChurnEvents([2022, 2023, 2024, 2025, 2026])]);
   const starterLogs = await mlbStarterLogs([2022, 2023, 2024, 2025, 2026].flatMap((season) => bySeason.get(season)));
+  const starterHands = await mlbStarterHands(seasons.flatMap((season) => bySeason.get(season)));
   const evalGames = [2022, 2023, 2024, 2025, 2026].flatMap((season) => bySeason.get(season));
   const outdoorIds = [...new Set(evalGames.map((game) => game.venueId).filter(Boolean))].filter((id) => venues.get(id)?.open && venues.get(id)?.lat);
   const archives = new Map();
@@ -842,6 +952,7 @@ async function loadMlb() {
     ilIntervals: intervals,
     churnEvents,
     starterLogs,
+    starterHands,
     weatherFor: (game) => weatherAt(archives.get(`${game.venueId}-${game.season}`), game.timeUtc),
     marginWindow: 15,
     pythagExponent: 1.83,

@@ -111,6 +111,12 @@ export type SportWeightSet = {
   toMargin: number;
   /** NFL: shrink applied against the favorite in weeks 17-18 (seed-locked rest and motivation risk). */
   lateSeasonDamp: number;
+  /** NFL: logit per 100 yards of unit-matchup edge (our offenses vs their defenses, rolling). */
+  unitMatchup: number;
+  /** NFL: logit per 100 yards of rolling total-yardage margin gap (yards predict better than points). */
+  yardsMargin: number;
+  /** MLB: logit per unit of platoon edge (team record vs today's opposing starter hand, relative to overall). */
+  platoon: number;
 };
 
 export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
@@ -118,11 +124,11 @@ export type BrainWeights = Record<"mlb" | "nfl", SportWeightSet>;
 export const DEFAULT_BRAIN_WEIGHTS: BrainWeights = {
   mlb: {
     injuryGap: 0.05, qbOut: 0, formWinRate: 0.02, restDay: 0.005, weatherHome: 0.06,
-    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0, travel: 0, shortWeek: 0, toMargin: 0, lateSeasonDamp: 0
+    scoringForm: 0, homeSplit: 0, pythag: 0, density: 0, pitcherForm: 0, divisionDamp: 0, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0, travel: 0, shortWeek: 0, toMargin: 0, lateSeasonDamp: 0, unitMatchup: 0, yardsMargin: 0, platoon: 0
   },
   nfl: {
     injuryGap: 0.4, qbOut: 0.35, formWinRate: 0.085, restDay: 0.045, weatherHome: 0.055,
-    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0.05, travel: 0, shortWeek: 0, toMargin: 0, lateSeasonDamp: 0.15
+    scoringForm: 0, homeSplit: 0, pythag: 0.69, density: 0, pitcherForm: 0, divisionDamp: 0.27, bye: 0, rosterChurn: 0, starterFip: 0, qbValue: 0.05, travel: 0, shortWeek: 0, toMargin: 0, lateSeasonDamp: 0.15, unitMatchup: 0, yardsMargin: 0, platoon: 0
   }
 };
 
@@ -255,10 +261,16 @@ export type FactorInputs = {
   toMarginGap?: number;
   /** Regular-season week 17-18 (rest/motivation risk for locked teams). */
   lateSeason?: boolean;
+  /** Unit-matchup edge in hundreds of yards, home − away (offenses vs opposing defenses). */
+  unitMatchupGap?: number;
+  /** Rolling total-yardage margin gap in hundreds of yards, home − away. */
+  yardsMarginGap?: number;
+  /** Platoon edge vs today's opposing starter hand, home − away. */
+  platoonGap?: number;
 };
 
 export type FactorTerm = {
-  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye" | "roster-churn" | "starter-fip" | "qb-value" | "travel" | "short-week" | "to-margin" | "late-season";
+  kind: "injury" | "qb" | "form" | "weather" | "scoring-form" | "home-split" | "pythag" | "density" | "pitcher-form" | "division" | "bye" | "roster-churn" | "starter-fip" | "qb-value" | "travel" | "short-week" | "to-margin" | "late-season" | "unit-matchup" | "yards-margin" | "platoon";
   homeLogit: number;
 };
 
@@ -318,6 +330,15 @@ export function factorTerms(inputs: FactorInputs, weights: BrainWeights = DEFAUL
   }
   if (inputs.lateSeason && inputs.baselineLogit !== undefined && sportWeights.lateSeasonDamp > 0) {
     terms.push({ kind: "late-season", homeLogit: -Math.tanh(inputs.baselineLogit) * sportWeights.lateSeasonDamp });
+  }
+  if (inputs.unitMatchupGap !== undefined && sportWeights.unitMatchup > 0) {
+    terms.push({ kind: "unit-matchup", homeLogit: Math.max(-2, Math.min(2, inputs.unitMatchupGap)) * sportWeights.unitMatchup });
+  }
+  if (inputs.yardsMarginGap !== undefined && sportWeights.yardsMargin > 0) {
+    terms.push({ kind: "yards-margin", homeLogit: Math.max(-2, Math.min(2, inputs.yardsMarginGap)) * sportWeights.yardsMargin });
+  }
+  if (inputs.platoonGap !== undefined && sportWeights.platoon > 0) {
+    terms.push({ kind: "platoon", homeLogit: Math.max(-0.3, Math.min(0.3, inputs.platoonGap)) * sportWeights.platoon });
   }
   return terms;
 }
