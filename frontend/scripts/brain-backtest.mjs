@@ -31,6 +31,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   applyLogitDelta,
+  applyTemperature,
   combineFactors,
   computeTeamForm,
   DEFAULT_BRAIN_WEIGHTS,
@@ -51,6 +52,7 @@ const FACEOFF = process.argv.includes("--faceoff"); // deployed GitHub models vs
 const SPORT_ARG = process.argv.find((arg) => ["mlb", "nfl", "all"].includes(arg)) ?? "all";
 const TODAY = "2026-08-24";
 const NFL_HFA = Number((process.argv.find((arg) => arg.startsWith("--hfa=")) ?? "--hfa=28").slice(6)); // 28 Elo ~ modern-era home edge; swept on validation 2026-08-24
+const K_OVERRIDE = process.argv.find((arg) => arg.startsWith("--k=")) ? Number(process.argv.find((arg) => arg.startsWith("--k=")).slice(4)) : null;
 
 fs.mkdirSync(CACHE_DIR, { recursive: true });
 fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -656,7 +658,8 @@ function simulate({ sport, batches, initialWeights, tunable, tuneIn, closeMargin
         baseLogLoss: logLoss(baseProbability, game.homeWon),
         brainLogLoss: logLoss(probability, game.homeWon),
         cause: loss?.cause ?? null,
-        fluke: loss?.cause === "fluke"
+        fluke: loss?.cause === "fluke",
+        homeWon: game.homeWon
       });
       if (loss?.cause !== "fluke") tuningGames.push(game);
       elo.update(game);
@@ -836,7 +839,7 @@ function runConfig(sport, games, activeKeys, tuneIn) {
     tuneIn,
     closeMargin: sport === "mlb" ? 1 : 3,
     trailingWindow: sport === "mlb" ? 400 : 96,
-    elo: sport === "mlb" ? makeElo(4, 24) : makeElo(20, NFL_HFA)
+    elo: sport === "mlb" ? makeElo(K_OVERRIDE ?? 4, 24) : makeElo(K_OVERRIDE ?? 20, NFL_HFA)
   });
 }
 
@@ -1032,21 +1035,31 @@ function nflGithubReplayer() {
 
 function runFaceoff(sport, games) {
   const github = sport === "mlb" ? mlbGithubReplayer() : nflGithubReplayer();
-  const elo = sport === "mlb" ? makeElo(4, 24) : makeElo(20, NFL_HFA);
+  const elo = sport === "mlb" ? makeElo(K_OVERRIDE ?? 4, 24) : makeElo(K_OVERRIDE ?? 20, NFL_HFA);
   const rows = [];
   for (const game of games) {
     const phase = PHASES[sport](game);
     const githubProbability = github.probability(game);
     const baseProbability = elo.probability(game.homeId, game.awayId);
-    const { probability: newProbability } = brainProbability(sport, game, baseProbability, DEFAULT_BRAIN_WEIGHTS);
+    const { probability: rawNewProbability } = brainProbability(sport, game, baseProbability, DEFAULT_BRAIN_WEIGHTS);
+    const newProbability = applyTemperature(rawNewProbability, sport);
     if (phase !== "burnin") {
+      const logitBlend = (weight) => {
+        const g = Math.max(0.02, Math.min(0.98, githubProbability.display));
+        const n = Math.max(0.02, Math.min(0.98, newProbability));
+        const logit = weight * Math.log(n / (1 - n)) + (1 - weight) * Math.log(g / (1 - g));
+        return 1 / (1 + Math.exp(-logit));
+      };
+      const blend = logitBlend(0.5);
       rows.push({
         phase,
         season: game.season,
         githubCorrect: githubProbability.display >= 0.5 === game.homeWon,
         newCorrect: newProbability >= 0.5 === game.homeWon,
+        blendCorrect: blend >= 0.5 === game.homeWon,
         githubLogLoss: logLoss(githubProbability.display, game.homeWon),
-        newLogLoss: logLoss(newProbability, game.homeWon)
+        newLogLoss: logLoss(newProbability, game.homeWon),
+        blendLogLoss: logLoss(blend, game.homeWon)
       });
     }
     github.update(game, githubProbability.forUpdate);
@@ -1061,8 +1074,11 @@ function runFaceoff(sport, games) {
       newAccuracy: wins("newCorrect") / subset.length,
       githubWins: wins("githubCorrect"),
       newWins: wins("newCorrect"),
+      blendWins: wins("blendCorrect"),
+      blendAccuracy: wins("blendCorrect") / subset.length,
       githubLogLoss: mean("githubLogLoss"),
-      newLogLoss: mean("newLogLoss")
+      newLogLoss: mean("newLogLoss"),
+      blendLogLoss: mean("blendLogLoss")
     };
   };
   const bySeason = [...new Set(rows.map((row) => row.season))].toSorted().map((season) => ({ season, ...summarizeRows(rows.filter((row) => row.season === season)) }));
@@ -1195,6 +1211,7 @@ for (const sport of sports) {
     const pct = (value) => `${(value * 100).toFixed(1)}%`;
     console.log(`[${sport}] FACEOFF overall (${result.overall.games} games): GitHub ${pct(result.overall.githubAccuracy)} (ll ${result.overall.githubLogLoss.toFixed(4)}) vs NEW ${pct(result.overall.newAccuracy)} (ll ${result.overall.newLogLoss.toFixed(4)})`);
     console.log(`[${sport}] FACEOFF holdout (${result.holdout.games} games): GitHub ${pct(result.holdout.githubAccuracy)} (ll ${result.holdout.githubLogLoss.toFixed(4)}) vs NEW ${pct(result.holdout.newAccuracy)} (ll ${result.holdout.newLogLoss.toFixed(4)})`);
+    console.log(`[${sport}] FACEOFF 50/50 ensemble: overall ${pct(result.overall.blendAccuracy)} (ll ${result.overall.blendLogLoss.toFixed(4)}), holdout ${pct(result.holdout.blendAccuracy)} (ll ${result.holdout.blendLogLoss.toFixed(4)})`);
     continue;
   }
 
@@ -1213,6 +1230,24 @@ for (const sport of sports) {
   const validation = phaseStats(finalResult.record, "validation");
   console.log(`[${sport}] validation ${fmt(validation)}`);
   console.log(`[${sport}] HOLDOUT ${fmt(holdout)}`);
+  if (FROZEN) {
+    const fitRows = finalResult.record.filter((row) => row.phase === "train");
+    const valRows = finalResult.record.filter((row) => row.phase === "validation");
+    const holdRows = finalResult.record.filter((row) => row.phase === "holdout");
+    const tempLoss = (rows, tau) =>
+      rows.reduce((sum, row) => {
+        const clamped = Math.max(0.02, Math.min(0.98, row.brainProbability));
+        const scaled = 1 / (1 + Math.exp(-Math.log(clamped / (1 - clamped)) / tau));
+        return sum + logLoss(scaled, row.homeWon);
+      }, 0) / rows.length;
+    let bestTau = 1;
+    let bestLoss = tempLoss(fitRows, 1);
+    for (let tau = 0.8; tau <= 1.8001; tau += 0.05) {
+      const loss = tempLoss(fitRows, tau);
+      if (loss < bestLoss - 1e-6) { bestLoss = loss; bestTau = tau; }
+    }
+    console.log(`[${sport}] calibration (tau ${bestTau.toFixed(2)} fit on train): val ${tempLoss(valRows, 1).toFixed(5)} -> ${tempLoss(valRows, bestTau).toFixed(5)} | holdout ${tempLoss(holdRows, 1).toFixed(5)} -> ${tempLoss(holdRows, bestTau).toFixed(5)}`);
+  }
   console.log(`[${sport}] final weights:`, JSON.stringify(finalResult.finalWeights[sport]));
 
   const meta = {

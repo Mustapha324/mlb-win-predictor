@@ -106,3 +106,12 @@ test("news tagger classifies brain-relevant headlines", async () => {
   assert.ok(tagNewsText("Starter scratched from tonight's outing").includes("pitching"));
   assert.deepEqual(tagNewsText("Team unveils new alternate jerseys"), []);
 });
+
+test("temperature calibration shrinks probabilities without changing picks", async () => {
+  const { applyTemperature, MODEL_TEMPERATURE } = await import("../lib/server/brain/brainScoring.ts");
+  assert.ok(MODEL_TEMPERATURE.mlb > 1 && MODEL_TEMPERATURE.nfl > 1, "both engines run overconfident");
+  const shrunk = applyTemperature(0.7, "nfl");
+  assert.ok(shrunk > 0.5 && shrunk < 0.7, "confident picks shrink toward 50% but keep their side");
+  assert.ok(applyTemperature(0.3, "mlb") > 0.3 && applyTemperature(0.3, "mlb") < 0.5);
+  assert.equal(applyTemperature(0.5, "nfl"), 0.5, "coin flips stay coin flips");
+});

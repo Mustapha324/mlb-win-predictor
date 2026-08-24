@@ -186,6 +186,28 @@ documented league-wide home-edge decline:
   K/BB/HR logs add nothing over a margin-aware baseline), NFL travel distance, short-week
   flag, and (again) scoring form, splits, bye.
 
+## Round 4 (2026-08-24): live capture automation, calibration, ensemble
+
+- **Live pregame capture, fully automated, no accounts**: `.github/workflows/live-capture.yml`
+  runs `frontend/scripts/capture-live.mjs` every two hours across game windows (git-scraping
+  pattern). Each run snapshots the live information backtests can never see — posted probables
+  and lineups, current IL/injury reports, projected starting QBs with rolling value, game-hour
+  weather forecasts, tagged transactions — plus the brain's probabilities at capture time, and
+  commits JSON to the `live-snapshots` branch (never triggers deploys). Next morning it grades
+  the last pregame capture of every game against the final score into
+  `data/live-snapshots/ledger-{sport}.json` — the cumulative forward test. Verified end-to-end
+  on the 2026-08-24 slate (capture + grading against real finals). Local: `npm run capture`.
+  NOTE: the Action starts running once this lands on the default branch.
+- **Temperature calibration SHIPPED** (`MODEL_TEMPERATURE`: MLB 1.30, NFL 1.45, fit on train
+  seasons): both engines ran overconfident; dividing the final logit by τ improves log-loss
+  everywhere it was measured (NFL holdout 0.6564 → 0.6401, MLB 0.6887 → 0.6865) and cannot
+  change picks. Applied at serving time (harness outputs + live captures).
+- **K-factor sweeps: incumbents kept** (MLB 4, NFL 20) — validation split logloss vs accuracy
+  at noise level, and hyperparameters only move on clear evidence.
+- **50/50 logit ensemble (GitHub model + NEW)**: best NFL holdout of any configuration
+  (65.7%, logloss 0.6332) though NEW remains better on the 4-season average — documented in
+  faceoff.md as the recommended serving strategy once both engines run side by side.
+
 ## Faceoff vs the deployed GitHub models (2026-08-24)
 
 `npm run backtest -- all --faceoff` replays the deployed models faithfully (exact

@@ -340,6 +340,23 @@ export function combineFactors(factors: BrainFactor[]): { logitDelta: number; fa
   };
 }
 
+/**
+ * Serving-layer probability calibration, fit by the backtest harness on train
+ * seasons (2026-08-24): both sim engines run overconfident, so final
+ * probabilities are shrunk toward 50% by dividing the logit by a per-sport
+ * temperature. Picks are unaffected (monotone); log-loss improves materially
+ * (NFL holdout 0.6564 -> 0.6401; MLB 0.6887 -> 0.6865). K-factor sweeps were
+ * ambiguous on validation (logloss vs accuracy split), so incumbent k stays.
+ * Applied at output time only - factor tuning stays on raw probabilities.
+ */
+export const MODEL_TEMPERATURE: Record<"mlb" | "nfl", number> = { mlb: 1.3, nfl: 1.45 };
+
+export function applyTemperature(probability: number, sport: "mlb" | "nfl"): number {
+  const clamped = Math.max(0.02, Math.min(0.98, probability));
+  const logit = Math.log(clamped / (1 - clamped)) / MODEL_TEMPERATURE[sport];
+  return Number((1 / (1 + Math.exp(-logit))).toFixed(4));
+}
+
 export function applyLogitDelta(probability: number, logitDelta: number): number {
   const clamped = Math.max(0.02, Math.min(0.98, probability));
   const logit = Math.log(clamped / (1 - clamped)) + logitDelta;
