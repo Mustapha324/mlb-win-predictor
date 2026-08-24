@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "test": "node --experimental-strip-types --test tests/*.test.mjs"
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "backtest": "node --experimental-strip-types scripts/brain-backtest.mjs",
+    "capture": "node --experimental-strip-types scripts/capture-live.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
