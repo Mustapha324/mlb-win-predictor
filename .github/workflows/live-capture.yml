@@ -1,0 +1,63 @@
+# Live pregame capture (git-scraping pattern — no database, no external accounts).
+#
+# Every two hours across US game windows, runs frontend/scripts/capture-live.mjs:
+# it snapshots the live pregame picture for today's MLB + NFL slates (posted
+# probables/lineups, injury reports, projected QBs, weather forecasts, tagged
+# news) plus the brain's probabilities at capture time, grades yesterday's
+# games into a cumulative forward-test ledger, and commits the JSON to the
+# `live-snapshots` branch. Code always runs from the default branch; only data
+# lands on the data branch, so Vercel deploys are never triggered by captures.
+name: Live pregame capture
+
+on:
+  schedule:
+    - cron: "0 11,13,15,17,19,21,23,1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: live-capture
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Attach live-snapshots branch as data worktree
+        run: |
+          git fetch origin live-snapshots:refs/remotes/origin/live-snapshots || true
+          if git show-ref --quiet refs/remotes/origin/live-snapshots; then
+            git worktree add ../snapshots origin/live-snapshots
+            (cd ../snapshots && git switch -C live-snapshots)
+          else
+            git worktree add --orphan -b live-snapshots ../snapshots
+          fi
+          mkdir -p ../snapshots/data/live-snapshots
+          ln -sfn "$(realpath ../snapshots/data)" data
+
+      - name: Capture today's slates and grade yesterday
+        run: node --experimental-strip-types frontend/scripts/capture-live.mjs
+
+      - name: Commit snapshots
+        working-directory: ../snapshots
+        run: |
+          git config user.name "sport-iq-live-capture"
+          git config user.email "actions@users.noreply.github.com"
+          git add -f data/live-snapshots
+          if git diff --cached --quiet; then
+            echo "nothing new to commit"
+          else
+            git commit -m "live capture $(date -u '+%Y-%m-%dT%H:%MZ')"
+            git push origin live-snapshots
+          fi
