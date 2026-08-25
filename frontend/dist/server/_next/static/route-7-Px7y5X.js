@@ -1,0 +1,1 @@
+import{r as e}from"./mlbModel-CaUjcrOs.js";function t(){return Response.json(e(),{headers:{"Cache-Control":`public, max-age=3600`}})}export{t as GET};
