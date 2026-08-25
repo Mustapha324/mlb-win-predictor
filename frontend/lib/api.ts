@@ -139,6 +139,14 @@ export type PlayerPick = {
   explanation: string | null;
   modelVersion: string;
   modelEdge: number | null;
+  lineSource: "sportsbook_consensus" | "model_estimate";
+  americanOdds: number | null;
+  sportsbook: string | null;
+  overOdds: number | null;
+  underOdds: number | null;
+  marketBooks: number;
+  marketUpdatedAt: string | null;
+  expectedValue: number | null;
   sampleSize: number;
   status: "scheduled" | "live" | "final" | "postponed";
   statusLabel: string;

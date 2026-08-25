@@ -2,10 +2,11 @@ import "server-only";
 import { getMarketConsensus, type MarketConsensus } from "@/lib/server/marketOdds";
 import type { ModelMetricsResponse, PredictionHistoryItem, TeamIdentity, TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
 import { fetchEspnNflSeason } from "@/lib/server/espnNflFeed";
+import nflArtifact from "@/data/nfl-model-v2.json";
 
-const HOME_ADVANTAGE = 48;
 const K_FACTOR = 22;
-const SEASON_REGRESSION = 0.35;
+const HOME_ADVANTAGE = 48;
+const TEAM_ALIASES: Record<string, string> = { OAK: "LV", STL: "LA", LAR: "LA", SD: "LAC", WSH: "WAS" };
 
 type EspnTeam = {
   id?: string;
@@ -43,8 +44,20 @@ type EspnEvent = {
   }>;
 };
 
-type TeamState = { games: number; wins: number; pointDiff: number; recent: number[] };
-type ModelState = { ratings: Map<string, number>; teams: Map<string, TeamState> };
+type TeamState = { games: number; wins: number; pointDiff: number; recent: number[]; lastGameAt: string | null };
+type ModelState = { ratings: Map<string, number>; teams: Map<string, TeamState>; coefficients: number[] };
+type NflArtifact = {
+  modelVersion: string;
+  trainedAt: string;
+  trainingStart: number;
+  trainedThrough: number;
+  seasons: number[];
+  trainingGames: number;
+  holdoutSeason: number;
+  holdoutMetrics: { games: number; correct: number; accuracy: number; brierScore: number; logLoss: number; homeWinBaseline: number; liftOverBaseline: number };
+  checkpoints: Record<string, { coefficients: number[]; ratings: Record<string, number> }>;
+};
+const NFL_MODEL = nflArtifact as NflArtifact;
 type ParsedGame = {
   id: string;
   date: string;
@@ -56,6 +69,7 @@ type ParsedGame = {
   period: number;
   clock: string;
   venue: string | null;
+  neutralSite: boolean;
   home: EspnCompetitor & { id: string; team: EspnTeam & { displayName: string } };
   away: EspnCompetitor & { id: string; team: EspnTeam & { displayName: string } };
   homeScore: number | null;
@@ -131,6 +145,7 @@ function parseEvent(event: EspnEvent): ParsedGame | null {
     period: event.status?.period ?? 0,
     clock: event.status?.displayClock ?? "",
     venue: competition?.venue?.fullName ?? null,
+    neutralSite: competition?.neutralSite ?? false,
     home: home as ParsedGame["home"],
     away: away as ParsedGame["away"],
     homeScore: parseScore(home.score),
@@ -143,13 +158,14 @@ function parseEvents(events: EspnEvent[]): ParsedGame[] {
 }
 
 function createState(): TeamState {
-  return { games: 0, wins: 0, pointDiff: 0, recent: [] };
+  return { games: 0, wins: 0, pointDiff: 0, recent: [], lastGameAt: null };
 }
 
 function cloneModelState(source: ModelState): ModelState {
   return {
     ratings: new Map(source.ratings),
-    teams: new Map([...source.teams].map(([id, team]) => [id, { ...team, recent: [...team.recent] }]))
+    teams: new Map([...source.teams].map(([id, team]) => [id, { ...team, recent: [...team.recent] }])),
+    coefficients: [...source.coefficients]
   };
 }
 
@@ -157,45 +173,80 @@ function rate(numerator: number, denominator: number, fallback = 0.5): number {
   return denominator ? numerator / denominator : fallback;
 }
 
-function winProbability(state: ModelState, game: ParsedGame): number {
-  const homeRating = state.ratings.get(game.home.id) ?? 1500;
-  const awayRating = state.ratings.get(game.away.id) ?? 1500;
-  const home = state.teams.get(game.home.id) ?? createState();
-  const away = state.teams.get(game.away.id) ?? createState();
-  const elo = 1 / (1 + 10 ** (-(homeRating + HOME_ADVANTAGE - awayRating) / 400));
+function teamKey(competitor: ParsedGame["home"] | ParsedGame["away"]): string {
+  const abbreviation = competitor.team.abbreviation?.toUpperCase() ?? competitor.id;
+  return TEAM_ALIASES[abbreviation] ?? abbreviation;
+}
+
+function clamp(value: number, lower: number, upper: number): number {
+  return Math.max(lower, Math.min(upper, value));
+}
+
+function restDays(lastGameAt: string | null, gameAt: string): number {
+  if (!lastGameAt) return 7;
+  return clamp((new Date(gameAt).getTime() - new Date(lastGameAt).getTime()) / 86_400_000, 0, 21);
+}
+
+function gameFeatures(state: ModelState, game: ParsedGame): number[] {
+  const homeKey = teamKey(game.home);
+  const awayKey = teamKey(game.away);
+  const homeRating = state.ratings.get(homeKey) ?? 1500;
+  const awayRating = state.ratings.get(awayKey) ?? 1500;
+  const home = state.teams.get(homeKey) ?? createState();
+  const away = state.teams.get(awayKey) ?? createState();
   const recordEdge = rate(home.wins, home.games) - rate(away.wins, away.games);
   const recentEdge = rate(home.recent.reduce((sum, value) => sum + value, 0), home.recent.length) -
     rate(away.recent.reduce((sum, value) => sum + value, 0), away.recent.length);
   const pointEdge = rate(home.pointDiff, home.games, 0) - rate(away.pointDiff, away.games, 0);
-  const logit = Math.log(elo / (1 - elo)) + recordEdge * 0.7 + recentEdge * 0.45 + Math.max(-18, Math.min(18, pointEdge)) * 0.018;
-  return Math.max(0.18, Math.min(0.82, 1 / (1 + Math.exp(-logit))));
+  const restEdge = (restDays(home.lastGameAt, game.date) - restDays(away.lastGameAt, game.date)) / 7;
+  return [
+    1,
+    clamp((homeRating - awayRating) / 400, -2.5, 2.5),
+    game.neutralSite ? 0 : 1,
+    recordEdge,
+    recentEdge,
+    clamp(pointEdge, -28, 28) / 14,
+    clamp(restEdge, -2, 2)
+  ];
 }
 
-function updateState(state: ModelState, game: ParsedGame, probability: number): void {
+function winProbability(state: ModelState, game: ParsedGame): number {
+  const features = gameFeatures(state, game);
+  const logit = features.reduce((sum, value, index) => sum + value * (state.coefficients[index] ?? 0), 0);
+  return clamp(1 / (1 + Math.exp(-logit)), 0.12, 0.88);
+}
+
+function eloProbability(state: ModelState, game: ParsedGame): number {
+  const homeRating = state.ratings.get(teamKey(game.home)) ?? 1500;
+  const awayRating = state.ratings.get(teamKey(game.away)) ?? 1500;
+  const advantage = game.neutralSite ? 0 : HOME_ADVANTAGE;
+  return 1 / (1 + 10 ** (-(homeRating + advantage - awayRating) / 400));
+}
+
+function updateState(state: ModelState, game: ParsedGame): void {
   if (game.homeScore === null || game.awayScore === null || game.homeScore === game.awayScore) return;
+  const homeKey = teamKey(game.home);
+  const awayKey = teamKey(game.away);
   const homeWon = Number(game.homeScore > game.awayScore);
   const margin = Math.abs(game.homeScore - game.awayScore);
   const multiplier = Math.min(1.8, 1 + Math.log1p(margin) / 4.5);
-  const change = K_FACTOR * multiplier * (homeWon - probability);
-  state.ratings.set(game.home.id, (state.ratings.get(game.home.id) ?? 1500) + change);
-  state.ratings.set(game.away.id, (state.ratings.get(game.away.id) ?? 1500) - change);
-  const home = state.teams.get(game.home.id) ?? createState();
-  const away = state.teams.get(game.away.id) ?? createState();
+  const change = K_FACTOR * multiplier * (homeWon - eloProbability(state, game));
+  state.ratings.set(homeKey, (state.ratings.get(homeKey) ?? 1500) + change);
+  state.ratings.set(awayKey, (state.ratings.get(awayKey) ?? 1500) - change);
+  const home = state.teams.get(homeKey) ?? createState();
+  const away = state.teams.get(awayKey) ?? createState();
   home.games += 1;
   home.wins += homeWon;
   home.pointDiff += game.homeScore - game.awayScore;
   home.recent = [...home.recent.slice(-4), homeWon];
+  home.lastGameAt = game.date;
   away.games += 1;
   away.wins += 1 - homeWon;
   away.pointDiff += game.awayScore - game.homeScore;
   away.recent = [...away.recent.slice(-4), 1 - homeWon];
-  state.teams.set(game.home.id, home);
-  state.teams.set(game.away.id, away);
-}
-
-function regressRatings(state: ModelState): void {
-  for (const [id, rating] of state.ratings) state.ratings.set(id, 1500 + (rating - 1500) * (1 - SEASON_REGRESSION));
-  state.teams.clear();
+  away.lastGameAt = game.date;
+  state.teams.set(homeKey, home);
+  state.teams.set(awayKey, away);
 }
 
 function replay(games: ParsedGame[], state: ModelState, evaluate = false): Evaluation {
@@ -211,18 +262,17 @@ function replay(games: ParsedGame[], state: ModelState, evaluate = false): Evalu
       evaluation.brier += (probability - homeWon) ** 2;
       evaluation.logLoss += -(homeWon * Math.log(probability) + (1 - homeWon) * Math.log(1 - probability));
     }
-    updateState(state, game, probability);
+    updateState(state, game);
   }
   return evaluation;
 }
 
-function baseModelState(trainingGames: ParsedGame[], evaluationGames: ParsedGame[]): { state: ModelState; evaluation: Evaluation } {
-  const state: ModelState = { ratings: new Map(), teams: new Map() };
-  replay(trainingGames, state);
-  regressRatings(state);
-  const evaluation = replay(evaluationGames, state, true);
-  regressRatings(state);
-  return { state, evaluation };
+function baseModelState(season: number): ModelState {
+  const available = Object.keys(NFL_MODEL.checkpoints).map(Number).sort((a, b) => a - b);
+  const checkpointSeason = available.filter((value) => value <= season).at(-1);
+  if (checkpointSeason === undefined) throw new Error(`NFL predictions are available from the ${available[0]} season.`);
+  const checkpoint = NFL_MODEL.checkpoints[String(checkpointSeason)];
+  return { ratings: new Map(Object.entries(checkpoint.ratings)), teams: new Map(), coefficients: checkpoint.coefficients };
 }
 
 function recordFor(state: TeamState | undefined): string {
@@ -256,10 +306,10 @@ function liveProbability(game: ParsedGame, pregame: number): number | null {
 }
 
 function factorsFor(state: ModelState, game: ParsedGame): string[] {
-  const homeRating = state.ratings.get(game.home.id) ?? 1500;
-  const awayRating = state.ratings.get(game.away.id) ?? 1500;
-  const home = state.teams.get(game.home.id) ?? createState();
-  const away = state.teams.get(game.away.id) ?? createState();
+  const homeRating = state.ratings.get(teamKey(game.home)) ?? 1500;
+  const awayRating = state.ratings.get(teamKey(game.away)) ?? 1500;
+  const home = state.teams.get(teamKey(game.home)) ?? createState();
+  const away = state.teams.get(teamKey(game.away)) ?? createState();
   const factors = [
     `${homeRating + HOME_ADVANTAGE >= awayRating ? game.home.team.displayName : game.away.team.displayName} has the adjusted team-strength edge`,
     `${rate(home.wins, home.games) >= rate(away.wins, away.games) ? game.home.team.displayName : game.away.team.displayName} has the stronger season record`,
@@ -275,8 +325,8 @@ function predictionFor(game: ParsedGame, state: ModelState): TeamPrediction {
   const liveHome = liveProbability(game, probability);
   const liveHomeRounded = liveHome === null ? null : Number(liveHome.toFixed(4));
   const liveAwayRounded = liveHomeRounded === null ? null : Number((1 - liveHomeRounded).toFixed(4));
-  const homeIdentity = identity(game.home, state.teams.get(game.home.id));
-  const awayIdentity = identity(game.away, state.teams.get(game.away.id));
+  const homeIdentity = identity(game.home, state.teams.get(teamKey(game.home)));
+  const awayIdentity = identity(game.away, state.teams.get(teamKey(game.away)));
   const actualWinner = game.completed && game.homeScore !== null && game.awayScore !== null
     ? game.homeScore > game.awayScore ? game.home.team.displayName : game.away.team.displayName
     : null;
@@ -313,7 +363,7 @@ function predictionFor(game: ParsedGame, state: ModelState): TeamPrediction {
     live_market: null as MarketConsensus | null,
     actual_winner: actualWinner,
     is_final: game.completed,
-    prediction_source: "nfl-elo-form-v1",
+    prediction_source: NFL_MODEL.modelVersion,
     confidence: Math.max(probability, awayProbability) >= 0.65 ? "Strong" : Math.max(probability, awayProbability) >= 0.57 ? "Edge" : "Lean",
     factors: factorsFor(state, game),
     home_score: game.homeScore,
@@ -323,16 +373,8 @@ function predictionFor(game: ParsedGame, state: ModelState): TeamPrediction {
 
 async function seasonContext(dateValue: string) {
   const season = seasonForDate(dateValue);
-  const [trainingEvents, evaluationEvents, currentEvents] = await Promise.all([
-    fetchSeason(season - 2),
-    fetchSeason(season - 1),
-    fetchSeason(season)
-  ]);
-  const training = parseEvents(trainingEvents).filter((game) => game.season === season - 2);
-  const evaluationGames = parseEvents(evaluationEvents).filter((game) => game.season === season - 1);
-  const current = parseEvents(currentEvents).filter((game) => game.season === season);
-  const baseline = baseModelState(training, evaluationGames);
-  return { season, training, evaluationGames, current, baseline };
+  const current = parseEvents(await fetchSeason(season)).filter((game) => game.season === season);
+  return { season, current, baseline: { state: baseModelState(season) } };
 }
 
 export async function getNflPredictions(dateValue = easternToday()): Promise<TodayPredictionsResponse> {
@@ -357,8 +399,8 @@ export async function getNflPredictions(dateValue = easternToday()): Promise<Tod
     date: dateValue,
     slate_label: weeks.length === 1 ? `Week ${weeks[0]}` : `${start} – ${end}`,
     data_through: context.current.filter((game) => game.completed && game.date.slice(0, 10) < start).at(-1)?.date.slice(0, 10) ?? `${context.season}-season start`,
-    model_version: "nfl-elo-form-v1",
-    games_trained: context.training.filter((game) => game.completed).length + context.evaluationGames.filter((game) => game.completed).length,
+    model_version: NFL_MODEL.modelVersion,
+    games_trained: NFL_MODEL.trainingGames + context.current.filter((game) => game.completed && game.date < dateValue).length,
     updated_at: new Date().toISOString(),
     live_updates: predictions.some((prediction) => prediction.live_home_win_probability !== null || prediction.live_market !== null),
     predictions
@@ -387,42 +429,44 @@ export async function getNflHistory(limit = 80): Promise<PredictionHistoryItem[]
       awayScore: game.awayScore,
       homeScore: game.homeScore
     });
-    updateState(state, game, prediction.home_win_probability);
+    updateState(state, game);
   }
   return result.slice(-Math.max(1, Math.min(200, limit))).reverse();
 }
 
 export async function getNflMetrics(): Promise<ModelMetricsResponse> {
-  const context = await seasonContext(easternToday());
-  const evaluation = context.baseline.evaluation;
-  const games = Math.max(1, evaluation.games);
+  const evaluation = NFL_MODEL.holdoutMetrics;
   return {
     sport: "nfl",
-    available: evaluation.games > 0,
-    status: evaluation.games > 0 ? "ready" : "evaluation unavailable",
-    message: evaluation.games > 0 ? null : "Historical NFL results were unavailable from the schedule service.",
-    model_name: "NFL chronological Elo + form model",
-    version: "nfl-elo-form-v1",
+    available: true,
+    status: "ready",
+    message: null,
+    model_name: "NFL 15-season calibrated strength + form model",
+    version: NFL_MODEL.modelVersion,
     total_predictions_evaluated: evaluation.games,
     correct_predictions: evaluation.correct,
-    accuracy: evaluation.correct / games,
-    brier_score: evaluation.brier / games,
-    log_loss: evaluation.logLoss / games,
-    majority_baseline_accuracy: evaluation.homeWins / games,
-    lift_over_baseline: evaluation.correct / games - evaluation.homeWins / games,
-    last_trained_at: `${context.season - 1}-02-15T00:00:00Z`,
-    training_start: String(context.season - 2),
-    trained_through: String(context.season - 1),
-    total_training_examples: context.training.filter((game) => game.completed).length,
-    seasons: [context.season - 2, context.season - 1],
-    description: "A separate NFL model replays games chronologically. It combines regressed Elo strength, record, scoring margin, recent form, and a measured home-field adjustment without using future results.",
-    features: ["elo_strength", "home_field", "win_rate", "recent_form", "point_differential"]
+    accuracy: evaluation.accuracy,
+    brier_score: evaluation.brierScore,
+    log_loss: evaluation.logLoss,
+    majority_baseline_accuracy: evaluation.homeWinBaseline,
+    lift_over_baseline: evaluation.liftOverBaseline,
+    last_trained_at: NFL_MODEL.trainedAt,
+    training_start: String(NFL_MODEL.trainingStart),
+    trained_through: String(NFL_MODEL.trainedThrough),
+    total_training_examples: NFL_MODEL.trainingGames - evaluation.games,
+    seasons: NFL_MODEL.seasons,
+    description: "A separate NFL model trains chronologically on 15 complete seasons. It learns calibrated weights for franchise strength, home field, record, recent form, scoring margin, and rest, with each feature captured before kickoff.",
+    features: ["elo_strength", "home_field", "win_rate", "recent_form", "point_differential", "rest_days"]
   };
 }
 
 export async function getNflGamePrediction(gameId: string): Promise<TeamPrediction | null> {
-  const context = await seasonContext(easternToday());
-  const game = context.current.find((item) => item.id === gameId) ?? context.evaluationGames.find((item) => item.id === gameId);
+  let context = await seasonContext(easternToday());
+  let game = context.current.find((item) => item.id === gameId);
+  if (!game && context.season > NFL_MODEL.holdoutSeason) {
+    context = await seasonContext(`${NFL_MODEL.holdoutSeason}-09-01`);
+    game = context.current.find((item) => item.id === gameId);
+  }
   if (!game) return null;
   const state = cloneModelState(context.baseline.state);
   replay(context.current.filter((prior) => prior.completed && prior.date < game.date), state);

@@ -49,7 +49,15 @@ python -c "from datetime import date; from app.services.training_pipeline import
 NFL is kept separate from MLB under `app/services/nfl/`. The dataset builder creates shifted, pregame-only rolling features for team form, scoring, passing/rushing, turnovers, sacks, third-down/red-zone rates, rest, strength of schedule, home/away performance, QB EPA, and head-to-head history. Player features include recent and career-vs-opponent passing, rushing, receiving, touchdown, interception, completion, target, and reception history.
 
 ```bash
-python scripts/build_nfl_dataset.py --team-games path/to/team_games.csv --player-games path/to/player_games.csv --start-season 2006 --end-season 2025
+python scripts/build_nfl_dataset.py --team-games path/to/team_games.csv --player-games path/to/player_games.csv --start-season 2011 --end-season 2025
 ```
 
-All 20 complete seasons from 2006–2025 are required; the builder stops if either source is missing a season. The newest season is reserved as a chronological holdout. Game outputs include calibrated accuracy, Brier score, and log loss; player projection outputs include per-market MAE.
+At least 15 complete seasons are required; the builder stops if either source is missing a season. The newest season is reserved as a chronological holdout. Game outputs include calibrated accuracy, Brier score, and log loss; player projection outputs include per-market MAE.
+
+The production Next.js model uses a compact, versioned artifact generated from the public nflverse schedule/results file. Regenerate it after each completed season with:
+
+```bash
+python scripts/train_nfl_history.py --end-season 2025 --seasons 15
+```
+
+The artifact stores only learned coefficients, season-entry franchise ratings, training metadata, and holdout metrics—never raw provider credentials.

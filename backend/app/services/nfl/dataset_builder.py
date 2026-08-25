@@ -177,9 +177,9 @@ def _filter_and_validate_seasons(frame: pd.DataFrame, start_season: int, end_sea
     return frame
 
 
-def build_nfl_datasets(paths: NflDatasetPaths, start_season: int = 2006, end_season: int = 2025) -> tuple[pd.DataFrame, pd.DataFrame]:
-    if end_season - start_season + 1 < 20:
-        raise ValueError("NFL training requires at least 20 complete seasons.")
+def build_nfl_datasets(paths: NflDatasetPaths, start_season: int = 2011, end_season: int = 2025) -> tuple[pd.DataFrame, pd.DataFrame]:
+    if end_season - start_season + 1 < 15:
+        raise ValueError("NFL training requires at least 15 complete seasons.")
     team_games = pd.read_csv(paths.team_games)
     player_games = pd.read_csv(paths.player_games)
     team_games = _filter_and_validate_seasons(team_games, start_season, end_season, "team_games")

@@ -1,8 +1,10 @@
 import "server-only";
 import type { PlayerPick, PlayerPicksResponse, TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
+import { americanToDecimal, playerPropKey, type PlayerPropQuote } from "@/lib/playerPropOdds";
 import type { AccessState } from "@/lib/server/access";
 import { getPredictions } from "@/lib/server/mlbModel";
 import { getNflPredictions } from "@/lib/server/nflModel";
+import { getPlayerPropMarkets } from "@/lib/server/marketOdds";
 import { ESPN_NFL_BASE, ESPN_NFL_HEADERS, fetchEspnNflSeason } from "@/lib/server/espnNflFeed";
 import {
   applyPlayerPickAccess,
@@ -166,6 +168,14 @@ function pendingFields(modelVersion: string, sampleSize: number) {
   return {
     modelVersion,
     sampleSize,
+    lineSource: "model_estimate" as const,
+    americanOdds: null,
+    sportsbook: null,
+    overOdds: null,
+    underOdds: null,
+    marketBooks: 0,
+    marketUpdatedAt: null,
+    expectedValue: null,
     status: "scheduled" as const,
     statusLabel: "Scheduled",
     actualValue: null,
@@ -259,7 +269,11 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
 }
 
 function diversify(candidates: Candidate[]): Candidate[] {
-  const ordered = candidates.toSorted((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0) || Math.abs(b.modelEdge ?? 0) - Math.abs(a.modelEdge ?? 0));
+  const ordered = candidates.toSorted((a, b) =>
+    (b.confidence ?? 0) - (a.confidence ?? 0) ||
+    (b.expectedValue ?? Number.NEGATIVE_INFINITY) - (a.expectedValue ?? Number.NEGATIVE_INFINITY) ||
+    Math.abs(b.modelEdge ?? 0) - Math.abs(a.modelEdge ?? 0)
+  );
   const selected: Candidate[] = [];
   const selectedIds = new Set<string>();
   const playerCounts = new Map<string, number>();
@@ -292,6 +306,54 @@ function diversify(candidates: Candidate[]): Candidate[] {
   return selected.slice(0, MAX_PLAYER_PICK_COUNT);
 }
 
+function propScale(market: string): number {
+  if (market === "Passing yards") return 70;
+  if (market === "Rushing yards" || market === "Receiving yards") return 32;
+  if (market === "Receptions") return 2.5;
+  if (market === "Passing touchdowns") return 1.25;
+  if (market === "Strikeouts") return 2.5;
+  return 1;
+}
+
+function applyMarketQuotes(candidates: Candidate[], quotes: Map<string, PlayerPropQuote>): Candidate[] {
+  return candidates.map((candidate) => {
+    const quote = quotes.get(playerPropKey(candidate.gameId, candidate.playerName, candidate.market));
+    if (!quote || candidate.projection === null) return candidate;
+    const edge = candidate.projection - quote.line;
+    const selection = edge >= 0 ? "Over" as const : "Under" as const;
+    const modelSideProbability = confidenceFromEdge(edge, candidate.sampleSize, propScale(candidate.market));
+    const marketSideProbability = selection === "Over" ? quote.fairOverProbability : 1 - quote.fairOverProbability;
+    const confidence = Number(Math.max(0.51, Math.min(0.84, modelSideProbability * 0.75 + marketSideProbability * 0.25)).toFixed(4));
+    const americanOdds = selection === "Over" ? quote.overAmericanOdds : quote.underAmericanOdds;
+    const sportsbook = selection === "Over" ? quote.overBook : quote.underBook;
+    const expectedValue = americanOdds === null ? null : Number((confidence * americanToDecimal(americanOdds) - 1).toFixed(4));
+    const priceLabel = americanOdds === null ? "price unavailable" : `${americanOdds > 0 ? "+" : ""}${americanOdds}${sportsbook ? ` at ${sportsbook}` : ""}`;
+    return {
+      ...candidate,
+      selection,
+      line: quote.line,
+      confidence,
+      modelEdge: Number(edge.toFixed(candidate.sport === "mlb" ? 2 : 1)),
+      lineSource: "sportsbook_consensus" as const,
+      americanOdds,
+      sportsbook,
+      overOdds: quote.overAmericanOdds,
+      underOdds: quote.underAmericanOdds,
+      marketBooks: quote.books,
+      marketUpdatedAt: quote.updatedAt,
+      expectedValue,
+      modelVersion: `${candidate.modelVersion}+market-v1`,
+      supportingStats: [
+        ...candidate.supportingStats.filter((item) => !item.includes("model edge vs line")),
+        `${edge >= 0 ? "+" : ""}${edge.toFixed(candidate.sport === "mlb" ? 2 : 1)} model edge vs consensus line`,
+        `${quote.books} sportsbook${quote.books === 1 ? "" : "s"} at the selected line`,
+        `Best captured ${selection.toLowerCase()} price: ${priceLabel}`
+      ],
+      explanation: `${selection} ${quote.line} uses the most widely posted line across ${quote.books} sportsbook${quote.books === 1 ? "" : "s"}. Confidence blends the pregame projection with the no-vig market consensus; ${priceLabel} was the best captured price for this side.`
+    };
+  });
+}
+
 async function fetchNflSeason(year: number): Promise<EspnEvent[]> {
   try {
     return await fetchEspnNflSeason<EspnEvent>(year);
@@ -302,7 +364,7 @@ async function fetchNflSeason(year: number): Promise<EspnEvent[]> {
 
 async function fetchNflSummary(gameId: string): Promise<EspnSummary | null> {
   try {
-    const response = await fetch(`${ESPN_NFL_BASE}/summary?event=${encodeURIComponent(gameId)}`, { next: { revalidate: 300 }, headers: ESPN_NFL_HEADERS });
+    const response = await fetch(`${ESPN_NFL_BASE}/summary?event=${encodeURIComponent(gameId)}`, { next: { revalidate: 300 }, headers: ESPN_NFL_HEADERS, signal: AbortSignal.timeout(10_000) });
     return response.ok ? await response.json() as EspnSummary : null;
   } catch {
     return null;
@@ -367,7 +429,7 @@ async function teamForms(teamId: string, gameTime: string, events: EspnEvent[], 
   const priorEvents = events
     .filter((event) => event.id && event.date && event.date < gameTime && (event.status?.type?.completed || event.status?.type?.state === "post") && eventHasTeam(event, teamId))
     .toSorted((a, b) => (a.date ?? "").localeCompare(b.date ?? ""))
-    .slice(-3);
+    .slice(-8);
   const forms = new Map<string, NflPlayerForm>();
   for (const event of priorEvents) {
     if (!event.id) continue;
@@ -398,7 +460,7 @@ async function getNflPlayerPicks(date: string, slateOverride?: TodayPredictionsR
       events
         .filter((event) => event.id && event.date && event.date < (game.game_time_utc ?? "") && (event.status?.type?.completed || event.status?.type?.state === "post") && eventHasTeam(event, teamId))
         .toSorted((a, b) => (b.date ?? "").localeCompare(a.date ?? ""))
-        .slice(0, 3)
+        .slice(0, 8)
         .forEach((event) => { if (event.id) priorEventIds.add(event.id); });
     }
   }
@@ -414,25 +476,31 @@ async function getNflPlayerPicks(date: string, slateOverride?: TodayPredictionsR
       for (const form of forms.values()) {
         for (const [market, values] of form.values) {
           if (values.length === 0) continue;
-          const recentAverage = values.reduce((sum, value) => sum + value, 0) / values.length;
-          if (recentAverage <= 0 && market !== "Anytime touchdown") continue;
-          const projection = recentAverage * (0.94 + side.probability * 0.12);
-          const { line, scale } = nflLine(market, recentAverage);
+          const eightGameAverage = values.reduce((sum, value) => sum + value, 0) / values.length;
+          const lastThree = values.slice(-3);
+          const threeGameAverage = lastThree.reduce((sum, value) => sum + value, 0) / lastThree.length;
+          const formAverage = threeGameAverage * 0.62 + eightGameAverage * 0.38;
+          if (formAverage <= 0 && market !== "Anytime touchdown") continue;
+          const projection = formAverage * (0.94 + side.probability * 0.12);
+          const { line, scale } = nflLine(market, formAverage);
           const edge = projection - line;
           const selection = edge >= 0 ? "Over" : "Under";
+          const variance = values.reduce((sum, value) => sum + (value - eightGameAverage) ** 2, 0) / values.length;
           candidates.push({
             id: `nfl-${game.gameId}-${form.playerId}-${market.toLowerCase().replace(/\s/g, "-")}`,
             sport: "nfl", gameId: game.gameId, playerId: form.playerId, playerName: form.playerName, headshotUrl: form.headshotUrl,
             position: form.position, team: side.team, opponent: side.opponent, gameTime: game.game_time_utc, market, selection, line,
             projection: Number(projection.toFixed(1)), confidence: confidenceFromEdge(edge, values.length, scale), modelEdge: Number(edge.toFixed(1)),
             supportingStats: [
-              `${recentAverage.toFixed(1)} average over ${values.length} recent game${values.length === 1 ? "" : "s"}`,
+              `${threeGameAverage.toFixed(1)} average over the last ${lastThree.length}`,
+              `${eightGameAverage.toFixed(1)} average over ${values.length} available game${values.length === 1 ? "" : "s"}`,
+              `${Math.sqrt(variance).toFixed(1)} game-to-game volatility`,
               `${values.at(-1)?.toFixed(1) ?? "0.0"} in the latest game`,
               `${edge >= 0 ? "+" : ""}${edge.toFixed(1)} model edge vs line`,
               `${Math.round(side.probability * 100)}% team win chance`, `${side.record} team record`
             ],
-            explanation: `${selection} ${line} is the calibrated side after weighting the player’s last three available games, role continuity, team strength, and the ${side.opponent} matchup. Small samples are deliberately confidence-capped.`,
-            ...pendingFields("nfl-player-form-v2", values.length)
+            explanation: `${selection} ${line} is the calibrated side after weighting short-term form against up to eight games, role continuity, volatility, 15-season team strength, and the ${side.opponent} matchup. Small samples are deliberately confidence-capped.`,
+            ...pendingFields("nfl-player-form-v3", values.length)
           });
         }
       }
@@ -514,8 +582,13 @@ export async function getPlayerPicks(sport: Sport, date: string, access: AccessS
   const slate = slateOverride ?? (sport === "nfl" ? await getNflPredictions(date) : await getPredictions(date));
   let picks = await loadPlayerPickSnapshots(sport, date);
   if (!picks?.length) {
-    const candidates = sport === "nfl" ? await getNflPlayerPicks(date, slate) : await getMlbPlayerPicks(date, slate);
-    picks = await storeInitialPlayerPicks(date, rankCandidates(candidates));
+    let candidates = sport === "nfl" ? await getNflPlayerPicks(date, slate) : await getMlbPlayerPicks(date, slate);
+    const candidateGameIds = new Set(candidates.map((candidate) => candidate.gameId));
+    const quotes = await getPlayerPropMarkets(sport, slate.predictions
+      .filter((game) => candidateGameIds.has(game.gameId))
+      .map((game) => ({ gameId: game.gameId, homeTeam: game.home_team, awayTeam: game.away_team })));
+    candidates = applyMarketQuotes(candidates, quotes);
+    picks = await storeInitialPlayerPicks(date, rankCandidates(diversify(candidates)));
   }
   picks = await enrichLiveResults(picks, slate);
   if (picks.some((pick) => pick.status !== "scheduled")) await updatePlayerPickResults(date, picks);

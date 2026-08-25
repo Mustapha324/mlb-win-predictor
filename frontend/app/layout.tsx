@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Image from "next/image";
+import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
+import { PreferenceSync } from "@/components/PreferenceSync";
 import { APP_NAME } from "@/lib/sports";
 import "./globals.css";
 
@@ -32,11 +34,21 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className="min-h-screen bg-black text-neutral-100 antialiased">
+        <a href="#main-content" className="skip-link">Skip to main content</a>
+        <PreferenceSync />
         <Navbar />
-        <div className="mx-auto max-w-[1480px] px-4 py-8 sm:px-7 sm:py-10">{children}</div>
-        <footer className="mx-auto flex max-w-[1480px] items-center gap-4 border-t border-white/[0.07] px-4 py-8 text-xs leading-6 text-neutral-600 sm:px-7">
-          <Image src="/sport-iq-logo.png" alt="Sport IQ" width={76} height={76} className="h-16 w-16 shrink-0 rounded-xl object-cover" />
-          <p>Sport IQ is an independent analytics platform. Pregame predictions are locked separately from live updates and final results. Informational only—not betting advice.</p>
+        <div id="main-content" tabIndex={-1} className="mx-auto max-w-[1480px] px-3 py-6 outline-none sm:px-7 sm:py-10">{children}</div>
+        <footer className="mx-auto flex max-w-[1480px] flex-col gap-5 border-t border-white/[0.07] px-4 py-8 text-xs leading-6 text-neutral-400 sm:px-7 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex max-w-3xl items-center gap-4">
+            <Image src="/sport-iq-logo.png" alt="Sport IQ" width={76} height={76} className="h-14 w-14 shrink-0 rounded-xl object-cover" />
+            <p>Sport IQ is an independent analytics platform. Pregame predictions are locked separately from live updates and final results. Informational only—not betting advice.</p>
+          </div>
+          <nav aria-label="Footer" className="flex flex-wrap gap-x-4 gap-y-2 font-bold">
+            <Link href="/settings" className="grid min-h-11 items-center">Settings</Link>
+            <Link href="/terms" className="grid min-h-11 items-center">Terms</Link>
+            <Link href="/privacy" className="grid min-h-11 items-center">Privacy</Link>
+            <a href="https://discord.gg/zJnduXrDv" target="_blank" rel="noopener noreferrer" className="grid min-h-11 items-center">Discord ↗</a>
+          </nav>
         </footer>
       </body>
     </html>

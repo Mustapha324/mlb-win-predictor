@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { getErrorMessage, getPlayerPicks, type PlayerPick, type PlayerPicksResponse } from "@/lib/api";
 import type { Sport } from "@/lib/sports";
+import { useUiPreferences } from "@/lib/uiPreferences";
 
 type View = "board" | "results" | "model";
 type StatusFilter = "all" | PlayerPick["status"];
@@ -47,6 +48,14 @@ function ConfidenceRing({ value, sport }: { value: number | null; sport: Sport }
   );
 }
 
+function PickPrice({ pick }: { pick: PlayerPick }) {
+  if (pick.lineSource !== "sportsbook_consensus" || pick.americanOdds === null) {
+    return <span className="mt-1 inline-flex rounded-md border border-white/[0.08] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.08em] text-neutral-500">Model line</span>;
+  }
+  const price = `${pick.americanOdds > 0 ? "+" : ""}${pick.americanOdds}`;
+  return <span className="mt-1 inline-flex rounded-md border border-emerald-300/20 bg-emerald-300/[0.07] px-2 py-1 text-[8px] font-black uppercase tracking-[0.08em] text-emerald-200" aria-label={`${price} best captured price${pick.sportsbook ? ` at ${pick.sportsbook}` : ""}`}>{price}{pick.sportsbook ? ` · ${pick.sportsbook}` : ""}</span>;
+}
+
 function TopPickCard({ pick, sport, priority }: { pick: PlayerPick; sport: Sport; priority: boolean }) {
   const accent = sport === "nfl" ? "text-lime-300" : "text-cyan-300";
   return (
@@ -58,7 +67,7 @@ function TopPickCard({ pick, sport, priority }: { pick: PlayerPick; sport: Sport
           <p className="truncate text-sm font-black text-white">{pick.playerName}</p>
           <p className="mt-1 truncate text-[9px] font-bold uppercase tracking-[0.11em] text-neutral-600">{pick.team} vs {pick.opponent}</p>
           <div className="mt-4 flex items-center justify-between gap-2">
-            <div><p className={`text-base font-black ${accent}`}>{pick.selection} {pick.line}</p><p className="text-[10px] text-neutral-500">{pick.market}</p></div>
+            <div><p className={`text-base font-black ${accent}`}>{pick.selection} {pick.line}</p><p className="text-[10px] text-neutral-400">{pick.market}</p><PickPrice pick={pick} /></div>
             <ConfidenceRing value={pick.confidence} sport={sport} />
           </div>
           <div className="mt-4 flex items-center justify-between border-t border-white/[0.07] pt-3">
@@ -82,6 +91,7 @@ function LockedTopCard({ rank, sport }: { rank: number; sport: Sport }) {
 }
 
 export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string }) {
+  const preferences = useUiPreferences();
   const [data, setData] = useState<PlayerPicksResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<View>("board");
@@ -113,10 +123,10 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
   }, [load]);
 
   useEffect(() => {
-    if (!data?.hasLiveGames) return;
+    if (!preferences.liveRefresh || !data?.hasLiveGames) return;
     const interval = window.setInterval(() => void load(true), 30_000);
     return () => window.clearInterval(interval);
-  }, [data?.hasLiveGames, load]);
+  }, [data?.hasLiveGames, load, preferences.liveRefresh]);
 
   const loading = !error && (!data || data.date !== date || data.sport !== sport);
   const topPicks = data?.isPro ? data.picks.filter((pick) => pick.isTopFive).slice(0, 5) ?? [] : [];
@@ -139,21 +149,23 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
         <div>
           <div className="flex flex-wrap items-center gap-2"><p className={`text-[10px] font-black uppercase tracking-[0.2em] ${accent}`}>{sport.toUpperCase()} player model</p><span className="rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-amber-200">Pro</span>{data?.hasLiveGames ? <span className="rounded-full border border-rose-300/20 bg-rose-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-rose-200">● Live</span> : null}</div>
           <h2 id={`${sport}-player-picks-heading`} className="mt-2 text-3xl font-black tracking-[-0.045em] text-white sm:text-5xl">Player Picks</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-500">Pregame player calls with confidence, model edge, live stat progress, and a permanent final result. Picks refresh daily; live games refresh every 30 seconds.</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-400">Pregame player calls with confidence, model edge, sportsbook consensus when available, live stat progress, and a permanent final result. Picks refresh daily; live games refresh every 30 seconds when enabled.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-xl border border-white/[0.09] bg-white/[0.025] p-1" aria-label="Choose sport">
-            <Link href="/#player-picks" className={`rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${sport === "mlb" ? "bg-cyan-300 text-black" : "text-neutral-500 hover:text-white"}`}>MLB</Link>
-            <Link href="/nfl#player-picks" className={`rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${sport === "nfl" ? "bg-lime-300 text-black" : "text-neutral-500 hover:text-white"}`}>NFL</Link>
+            <Link href="/#player-picks" aria-current={sport === "mlb" ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${sport === "mlb" ? "bg-cyan-300 text-black" : "text-neutral-400 hover:text-white"}`}>MLB</Link>
+            <Link href="/nfl#player-picks" aria-current={sport === "nfl" ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${sport === "nfl" ? "bg-lime-300 text-black" : "text-neutral-400 hover:text-white"}`}>NFL</Link>
           </div>
           {data?.isPro ? <span className="rounded-xl border border-lime-300/20 bg-lime-300/[0.07] px-4 py-3 text-[10px] font-black uppercase tracking-[0.12em] text-lime-200">{data.tier === "friends_family" ? "Family Pro" : "All picks unlocked"}</span> : <Link href="/pro" className="primary-button">Unlock today&apos;s top 5</Link>}
         </div>
       </header>
 
-      <div className="mt-6 flex items-center gap-1 border-b border-white/[0.08]" role="tablist" aria-label="Player pick views">
-        {(["board", "results", "model"] as View[]).map((item) => <button key={item} type="button" role="tab" aria-selected={view === item} onClick={() => setView(item)} className={`border-b-2 px-4 py-3 text-[10px] font-black uppercase tracking-[0.14em] transition ${view === item ? `${accent} border-current` : "border-transparent text-neutral-600 hover:text-white"}`}>{item === "board" ? "Today’s picks" : item}</button>)}
-        <button type="button" onClick={() => void load(true)} disabled={refreshing} className="ml-auto px-3 py-3 text-[9px] font-black uppercase tracking-[0.12em] text-neutral-600 hover:text-white disabled:opacity-50">{refreshing ? "Updating…" : "Refresh"}</button>
+      <div className="mt-6 flex items-center gap-1 overflow-x-auto border-b border-white/[0.08]" role="tablist" aria-label="Player pick views">
+        {(["board", "results", "model"] as View[]).map((item) => <button key={item} type="button" role="tab" aria-selected={view === item} onClick={() => setView(item)} className={`min-h-12 shrink-0 border-b-2 px-4 py-3 text-[10px] font-black uppercase tracking-[0.14em] transition ${view === item ? `${accent} border-current` : "border-transparent text-neutral-400 hover:text-white"}`}>{item === "board" ? "Today’s picks" : item}</button>)}
+        <button type="button" onClick={() => void load(true)} disabled={refreshing} className="ml-auto min-h-12 shrink-0 px-3 py-3 text-[9px] font-black uppercase tracking-[0.12em] text-neutral-400 hover:text-white disabled:opacity-50">{refreshing ? "Updating…" : "Refresh"}</button>
       </div>
+
+      <p className="sr-only" aria-live="polite">{refreshing ? "Refreshing player picks" : error ? error : data ? `${data.totalPicks} player picks loaded` : "Loading player picks"}</p>
 
       {loading ? <div className="mt-6 h-[430px] animate-pulse rounded-[24px] border border-white/[0.07] bg-white/[0.025]" /> : null}
       {error && !loading ? <div className="mt-6 rounded-2xl border border-amber-300/15 bg-amber-300/[0.05] p-5 text-sm text-amber-100">{error}<button type="button" onClick={() => void load()} className="ml-3 font-black underline">Try again</button></div> : null}
@@ -170,7 +182,7 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
           <div className="mt-7 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
             <div><p className="eyebrow">Full board</p><h3 className="mt-1 text-lg font-black text-white">{data.isPro ? `${Math.max(0, data.totalPicks - data.topFiveCount)} more player picks` : "Your five free player picks"}</h3></div>
             <div className="grid gap-2 sm:grid-cols-3">
-              <input value={query} onChange={(event) => setQuery(event.target.value)} className="min-h-11 rounded-xl border border-white/[0.09] bg-white/[0.025] px-3 text-xs text-white outline-none placeholder:text-neutral-700 focus:border-white/20" placeholder="Search player or team" aria-label="Search player picks" />
+              <input value={query} onChange={(event) => setQuery(event.target.value)} className="min-h-11 rounded-xl border border-white/[0.09] bg-white/[0.025] px-3 text-xs text-white outline-none placeholder:text-neutral-500 focus:border-white/20" placeholder="Search player or team" aria-label="Search player picks" />
               <select value={market} onChange={(event) => setMarket(event.target.value)} className="min-h-11 rounded-xl border border-white/[0.09] bg-[#090909] px-3 text-xs text-neutral-300" aria-label="Filter by market"><option value="all">All markets</option>{markets.map((item) => <option key={item} value={item}>{item}</option>)}</select>
               <select value={status} onChange={(event) => setStatus(event.target.value as StatusFilter)} className="min-h-11 rounded-xl border border-white/[0.09] bg-[#090909] px-3 text-xs text-neutral-300" aria-label="Filter by status"><option value="all">All statuses</option><option value="scheduled">Scheduled</option><option value="live">Live</option><option value="final">Final</option><option value="postponed">Postponed</option></select>
             </div>
@@ -181,11 +193,11 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
             <div className="hidden grid-cols-[48px_1.1fr_.8fr_.62fr_.62fr_.72fr_1.1fr] gap-4 border-b border-white/[0.08] px-5 py-3 text-[9px] font-black uppercase tracking-[0.14em] text-neutral-600 lg:grid"><span>#</span><span>Player</span><span>Pick</span><span>Projection</span><span>Confidence</span><span>Live / Final</span><span>Model detail</span></div>
             <div className="divide-y divide-white/[0.055]">
               {boardPicks.map((pick) => <article key={pick.id} className="grid gap-3 px-5 py-4 transition hover:bg-white/[0.02] lg:grid-cols-[48px_1.1fr_.8fr_.62fr_.62fr_.72fr_1.1fr] lg:items-center lg:gap-4">
-                <span className={`font-mono text-sm font-black ${accent}`}>{String(pick.rank).padStart(2, "0")}</span>
+                <span className={`font-mono text-sm font-black ${accent}`}><span className="mr-2 text-[9px] uppercase text-neutral-500 lg:hidden">Rank</span>{String(pick.rank).padStart(2, "0")}</span>
                 <div className="flex items-center gap-3"><div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-white/[0.05]">{pick.headshotUrl ? <Image src={pick.headshotUrl} alt="" fill sizes="44px" className="object-contain object-bottom" /> : null}</div><div className="min-w-0"><p className="truncate text-sm font-black text-white">{pick.playerName}</p><p className="mt-1 truncate text-[9px] font-bold uppercase tracking-[0.1em] text-neutral-600">{pick.position ? `${pick.position} · ` : ""}{pick.team} vs {pick.opponent}</p></div></div>
-                <div><p className="text-sm font-black text-white">{pick.selection} {pick.line}</p><p className="mt-1 text-[10px] text-neutral-500">{pick.market}</p></div>
-                <p className="font-mono text-sm font-bold text-neutral-300">{pick.projection ?? "—"}</p>
-                <p className={`font-mono text-sm font-black ${accent}`}>{percent(pick.confidence)}</p>
+                <div><p className="eyebrow lg:hidden">Pick & captured price</p><p className="mt-1 text-sm font-black text-white">{pick.selection} {pick.line}</p><p className="mt-1 text-[10px] text-neutral-400">{pick.market}</p><PickPrice pick={pick} /></div>
+                <p className="font-mono text-sm font-bold text-neutral-300"><span className="mr-2 font-sans text-[9px] font-black uppercase tracking-[0.12em] text-neutral-500 lg:hidden">Projection</span>{pick.projection ?? "—"}</p>
+                <p className={`font-mono text-sm font-black ${accent}`}><span className="mr-2 font-sans text-[9px] font-black uppercase tracking-[0.12em] text-neutral-500 lg:hidden">Confidence</span>{percent(pick.confidence)}</p>
                 <div><span className={`inline-flex rounded-full border px-2 py-1 text-[8px] font-black uppercase tracking-[0.09em] ${resultTone(pick.result)}`}>{statusLabel(pick)}</span>{pick.actualValue !== null ? <p className="mt-1 text-[10px] text-neutral-500">Current: <span className="font-mono text-white">{pick.actualValue}</span></p> : null}</div>
                 <div><p className="text-xs leading-5 text-neutral-400">{pick.explanation}</p><div className="mt-2 flex flex-wrap gap-1">{pick.supportingStats.slice(0, 3).map((stat) => <span key={stat} className="rounded-md bg-white/[0.04] px-2 py-1 text-[8px] text-neutral-500">{stat}</span>)}</div></div>
               </article>)}
@@ -213,13 +225,14 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
       ) : null}
 
       {!loading && !error && data && view === "model" ? (
-        <div className="mt-6 grid gap-5 lg:grid-cols-3">
+        <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {[
             ["01", "Pregame-only inputs", sport === "mlb" ? "Season rates, last-10 form, probable starters, opponent history, and the team model are captured before first pitch." : "Only games completed before kickoff feed the rolling three-game player form, role, team strength, and matchup context."],
             ["02", "Calibrated confidence", "Confidence is capped for small samples and volatile markets. It describes model separation from the line—not certainty or a guarantee."],
-            ["03", "Live accountability", "The saved pick never changes. Official box scores update the current value, then grade correct, missed, push, or void only when the game is final."]
-          ].map(([number, title, copy]) => <article key={number} className="rounded-[24px] border border-white/[0.08] bg-[#090909] p-6"><span className={`font-mono text-xs font-black ${accent}`}>{number}</span><h3 className="mt-4 text-lg font-black text-white">{title}</h3><p className="mt-3 text-sm leading-6 text-neutral-500">{copy}</p></article>)}
-          <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-6 lg:col-span-3"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow">Current release</p><p className="mt-2 font-mono text-sm font-black text-white">{sport === "mlb" ? "mlb-player-blend-v2" : "nfl-player-form-v2"}</p><p className="mt-2 text-xs text-neutral-600">Daily snapshot · 30-second live polling during active games · official final grading</p></div><span className={`w-fit rounded-full border px-3 py-2 text-[9px] font-black uppercase tracking-[0.12em] ${accentButton}`}>Audit trail active</span></div></div>
+            ["03", "Market-aware value", "When bookmaker props are available, Sport IQ uses the most widely posted line, removes the vig for consensus, and records the best captured price for the selected side."],
+            ["04", "Live accountability", "The saved pick never changes. Official box scores update the current value, then grade correct, missed, push, or void only when the game is final."]
+          ].map(([number, title, copy]) => <article key={number} className="rounded-[24px] border border-white/[0.08] bg-[#090909] p-6"><span className={`font-mono text-xs font-black ${accent}`}>{number}</span><h3 className="mt-4 text-lg font-black text-white">{title}</h3><p className="mt-3 text-sm leading-6 text-neutral-400">{copy}</p></article>)}
+          <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-6 md:col-span-2 xl:col-span-4"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow">Current release</p><p className="mt-2 font-mono text-sm font-black text-white">{sport === "mlb" ? "mlb-player-blend-v2+market-v1" : "nfl-player-form-v3+market-v1"}</p><p className="mt-2 text-xs text-neutral-400">Daily locked snapshot · optional 30-second live polling · official final grading</p></div><span className={`w-fit rounded-full border px-3 py-2 text-[9px] font-black uppercase tracking-[0.12em] ${accentButton}`}>Audit trail active</span></div></div>
         </div>
       ) : null}
     </section>
