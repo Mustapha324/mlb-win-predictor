@@ -1,10 +1,18 @@
 import type { Sport } from "@/lib/sports";
+import {
+  compilePlayerPropQuotes,
+  decimalToAmerican,
+  PLAYER_PROP_MARKETS,
+  type PlayerPropQuote,
+  type RawPropBookmaker
+} from "@/lib/playerPropOdds";
 
 type OddsOutcome = { name?: string; price?: number };
 type OddsMarket = { key?: string; outcomes?: OddsOutcome[] };
 type OddsBookmaker = { key?: string; title?: string; last_update?: string; markets?: OddsMarket[] };
 type OddsEvent = {
   id?: string;
+  commence_time?: string;
   home_team?: string;
   away_team?: string;
   bookmakers?: OddsBookmaker[];
@@ -30,14 +38,77 @@ function normalizeTeam(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
-function decimalToAmerican(price: number): number {
-  if (price >= 2) return Math.round((price - 1) * 100);
-  return Math.round(-100 / (price - 1));
-}
-
 function findOutcome(outcomes: OddsOutcome[], team: string): OddsOutcome | undefined {
   const normalized = normalizeTeam(team);
   return outcomes.find((outcome) => outcome.name && normalizeTeam(outcome.name) === normalized);
+}
+
+type PropCacheEntry = { expiresAt: number; quotes: Map<string, PlayerPropQuote> };
+const globalOddsCache = globalThis as typeof globalThis & { __sportIqPlayerPropCache?: Map<string, PropCacheEntry> };
+const playerPropCache = globalOddsCache.__sportIqPlayerPropCache ?? new Map<string, PropCacheEntry>();
+globalOddsCache.__sportIqPlayerPropCache = playerPropCache;
+
+/**
+ * Loads player-prop lines one event at a time, as required by The Odds API.
+ * Quotes are server-only, no-vig consensus lines with the best available price
+ * retained for each side. Any provider or quota failure is a safe empty result.
+ */
+export async function getPlayerPropMarkets(
+  sport: Sport,
+  games: Array<{ gameId: string; homeTeam: string; awayTeam: string }>
+): Promise<Map<string, PlayerPropQuote>> {
+  const apiKey = process.env.THE_ODDS_API_KEY;
+  if (!apiKey || games.length === 0) return new Map();
+  const cacheKey = `${sport}:${games.map((game) => game.gameId).toSorted().join(",")}`;
+  const cached = playerPropCache.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) return new Map(cached.quotes);
+
+  const baseUrl = process.env.THE_ODDS_API_BASE_URL ?? "https://api.the-odds-api.com/v4";
+  const commonQuery = new URLSearchParams({ apiKey, dateFormat: "iso" });
+  try {
+    const eventsResponse = await fetch(`${baseUrl}/sports/${SPORT_KEYS[sport]}/events?${commonQuery}`, {
+      cache: "no-store",
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(10_000)
+    });
+    if (!eventsResponse.ok) return new Map();
+    const events = (await eventsResponse.json()) as OddsEvent[];
+    const matched = games.flatMap((game) => {
+      const event = events.find((item) =>
+        item.id && item.home_team && item.away_team &&
+        normalizeTeam(item.home_team) === normalizeTeam(game.homeTeam) &&
+        normalizeTeam(item.away_team) === normalizeTeam(game.awayTeam)
+      );
+      return event?.id ? [{ game, eventId: event.id }] : [];
+    });
+    const marketKeys = Object.keys(PLAYER_PROP_MARKETS[sport]).join(",");
+    const settled = await Promise.allSettled(matched.map(async ({ game, eventId }) => {
+      const query = new URLSearchParams({
+        apiKey,
+        regions: process.env.ODDS_REGIONS ?? "us",
+        markets: marketKeys,
+        oddsFormat: "decimal",
+        dateFormat: "iso"
+      });
+      const response = await fetch(`${baseUrl}/sports/${SPORT_KEYS[sport]}/events/${encodeURIComponent(eventId)}/odds?${query}`, {
+        cache: "no-store",
+        headers: { Accept: "application/json" },
+        signal: AbortSignal.timeout(10_000)
+      });
+      if (!response.ok) return new Map<string, PlayerPropQuote>();
+      const event = (await response.json()) as { bookmakers?: RawPropBookmaker[] };
+      return compilePlayerPropQuotes(sport, game.gameId, event.bookmakers ?? []);
+    }));
+    const quotes = new Map<string, PlayerPropQuote>();
+    for (const item of settled) {
+      if (item.status !== "fulfilled") continue;
+      for (const [key, quote] of item.value) quotes.set(key, quote);
+    }
+    playerPropCache.set(cacheKey, { quotes, expiresAt: Date.now() + 60_000 });
+    return quotes;
+  } catch {
+    return cached ? new Map(cached.quotes) : new Map();
+  }
 }
 
 function consensusFor(event: OddsEvent, homeTeam: string, awayTeam: string): MarketConsensus | null {

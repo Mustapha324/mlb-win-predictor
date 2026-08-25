@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { applyPlayerPickAccess } from "../lib/server/playerPickAccess.ts";
 import { calculatePerformance, gradePlayerPick, isValidPickDate, pickStatus } from "../lib/server/playerPickScoring.ts";
+import { compilePlayerPropQuotes, normalizePlayerName, playerPropKey } from "../lib/playerPropOdds.ts";
 
 function pick(rank) {
   return {
@@ -82,4 +83,51 @@ test("performance keeps overall and premium top-five accuracy separate", () => {
   assert.equal(performance.topFiveCorrect, 1);
   assert.equal(performance.pushes, 1);
   assert.equal(performance.voids, 1);
+});
+
+test("sportsbook prop consensus uses the widely posted line and best captured payout", () => {
+  const quotes = compilePlayerPropQuotes("nfl", "game-1", [
+    {
+      key: "book-a",
+      title: "Book A",
+      markets: [{
+        key: "player_pass_yds",
+        last_update: "2026-08-24T18:00:00Z",
+        outcomes: [
+          { name: "Over", description: "Patrick Mahomes II", point: 250.5, price: 1.91 },
+          { name: "Under", description: "Patrick Mahomes II", point: 250.5, price: 1.91 }
+        ]
+      }]
+    },
+    {
+      key: "book-b",
+      title: "Book B",
+      markets: [{
+        key: "player_pass_yds",
+        last_update: "2026-08-24T18:01:00Z",
+        outcomes: [
+          { name: "Over", description: "Patrick Mahomes", point: 250.5, price: 2.05 },
+          { name: "Under", description: "Patrick Mahomes", point: 250.5, price: 1.8 }
+        ]
+      }]
+    },
+    {
+      key: "book-c",
+      title: "Book C",
+      markets: [{
+        key: "player_pass_yds",
+        outcomes: [
+          { name: "Over", description: "Patrick Mahomes", point: 249.5, price: 2.2 },
+          { name: "Under", description: "Patrick Mahomes", point: 249.5, price: 1.7 }
+        ]
+      }]
+    }
+  ]);
+  const quote = quotes.get(playerPropKey("game-1", "Patrick Mahomes", "Passing yards"));
+  assert.equal(normalizePlayerName("Patrick Mahomes II"), normalizePlayerName("Patrick Mahomes"));
+  assert.equal(quote?.line, 250.5);
+  assert.equal(quote?.books, 2);
+  assert.equal(quote?.overAmericanOdds, 105);
+  assert.equal(quote?.overBook, "Book B");
+  assert.equal(quote?.updatedAt, "2026-08-24T18:01:00Z");
 });

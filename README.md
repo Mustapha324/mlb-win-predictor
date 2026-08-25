@@ -8,13 +8,13 @@ Sport IQ is a black/dark multi-sport prediction platform for MLB and NFL. It kee
 - Separate chronological MLB and NFL models, metrics, history, teams, game detail, and final results
 - Immutable pregame prediction snapshots in Supabase; live updates cannot overwrite the original call
 - Live score-based win probabilities for Pro and optional live moneyline consensus through The Odds API
-- Top 20 MLB/NFL Player Picks ranked by confidence
+- Up to 40 MLB/NFL Player Picks ranked by calibrated confidence and captured value, with a premium Top 5
   - MLB: hits, total bases, home runs, RBIs, and pitcher strikeouts
   - NFL: passing/rushing/receiving yards, receptions, and touchdowns when official leader feeds expose them
 - Secure Supabase email/password accounts and profiles
 - Stripe Checkout subscription prepared at $3.99/month, verified webhooks, and customer billing portal
 - Five one-time Friends & Family codes stored only as SHA-256 hashes and redeemed atomically in Postgres
-- Responsive, true-black UI with cyan MLB and lime NFL accents
+- Responsive, accessible true-black UI with mobile navigation, saved display preferences, legal pages, and Discord community access
 
 ## Free and Pro
 
@@ -24,11 +24,11 @@ Sport IQ is a black/dark multi-sport prediction platform for MLB and NFL. It kee
 | Pregame call | Visible on preview games | Visible on every game |
 | Live win probability | Not returned by the API | 30-second updates during live games |
 | Live market consensus | Not returned by the API | Available when `THE_ODDS_API_KEY` is configured |
-| Player Picks | Top 5 | Top 20 with confidence, supporting stats, and explanation |
+| Player Picks | Five samples from ranks 6–10 (never the premium Top 5) | Up to 40 with the Top 5, captured odds, confidence, supporting stats, and explanation |
 | History and final winners | Included | Included |
 | Billing management | N/A | Stripe customer portal |
 
-Entitlements are applied in server routes. Anonymous/free responses have live fields removed, locked predictions redacted, and Player Picks 6–20 redacted before JSON reaches the browser.
+Entitlements are applied in server routes. Anonymous/free responses have live fields removed, locked team predictions redacted, and receive only Player Picks 6–10 before JSON reaches the browser.
 
 ## Architecture
 
@@ -37,16 +37,17 @@ frontend/
   app/                         Next.js App Router pages and server routes
   components/                  Shared sport-neutral dashboard and cards
   lib/server/mlbModel.ts       MLB chronological replay/model
-  lib/server/nflModel.ts       Separate NFL Elo + form replay/model
+  lib/server/nflModel.ts       Production 15-season NFL model + current replay
   lib/server/playerPicks.ts    MLB/NFL Player Picks ranking
-  lib/server/marketOdds.ts     Optional live moneyline consensus
+  lib/server/marketOdds.ts     Optional team and player-prop market consensus
   lib/server/predictionSnapshots.ts  Immutable Supabase pregame writes
   lib/server/entitlements.ts   Free/Pro server-side redaction
   lib/supabase/                Cookie-aware and service-role clients
 backend/
   app/services/                Existing MLB research pipeline
   app/services/nfl/            Leakage-safe NFL team/player pipelines
-  scripts/build_nfl_dataset.py NFL dataset and training entrypoint
+  scripts/build_nfl_dataset.py NFL research dataset and training entrypoint
+  scripts/train_nfl_history.py Production 15-season artifact trainer
 supabase/migrations/           Database, RLS, invite redemption, initial hashes
 ```
 
@@ -94,14 +95,14 @@ Copy `frontend/.env.example` to `frontend/.env.local`. Never commit the populate
 
 ## Daily model and picks refresh
 
-`frontend/vercel.json` schedules `/api/cron/daily-refresh` every day at 09:05 UTC. The secured job replays completed results, refreshes current MLB/NFL state and player features, produces the latest Top 20 Player Picks, preserves immutable pregame snapshots, and records its status in `model_refresh_runs`. Set `CRON_SECRET` in Vercel so only the scheduler can invoke the route.
+`frontend/vercel.json` schedules `/api/cron/daily-refresh` every day at 09:05 UTC. The secured job replays completed results, refreshes current MLB/NFL state and player features, produces up to 40 Player Picks, preserves immutable pregame snapshots, and records its status in `model_refresh_runs`. Set `CRON_SECRET` in Vercel so only the scheduler can invoke the route.
 
 Sport IQ retrains the larger offline research models when a new validated historical dataset is published; the deployed inference state and current-player features update daily without mixing future results into earlier predictions.
 
 ## Supabase setup
 
 1. Create a Supabase project.
-2. Open the SQL Editor and run `supabase/migrations/202608160001_sport_iq_accounts_pro.sql`.
+2. Open the SQL Editor and run the files in `supabase/migrations/` in timestamp order, including the player-pick snapshot and market-odds migrations.
 3. Copy the project URL, anon key, and service role key into local/Vercel environment variables.
 4. In Authentication → URL Configuration, set the Site URL to the deployed URL and add `https://YOUR_DOMAIN/auth/callback` as a redirect URL.
 5. Keep email confirmation enabled for production.
@@ -120,11 +121,20 @@ Subscribe it to `checkout.session.completed`, `customer.subscription.updated`, a
 
 ## Live odds
 
-Set `THE_ODDS_API_KEY` to enable de-vigged consensus from available US moneyline books. The market layer is displayed separately from Sport IQ's model. Without a key, Pro still receives the clearly labeled score/clock/inning-based live win probability.
+Set `THE_ODDS_API_KEY` to enable de-vigged consensus from available US moneyline books and event-level player-prop markets. For props, Sport IQ selects the most widely posted line, blends the no-vig market probability into confidence, and saves the best captured payout for the selected side. Without a key, the clearly labeled conservative model line remains available.
 
 ## NFL training pipeline
 
-The runtime NFL model is a separate lightweight chronological Elo/form model. The full offline pipeline requires **20 complete seasons (2006–2025)** and reserves 2025 as the untouched chronological holdout. Normalize source data into:
+The production runtime uses `frontend/data/nfl-model-v2.json`, trained chronologically on **15 complete seasons (2011–2025)**. It learns calibrated weights for franchise strength, home field, record, recent form, scoring margin, and rest. The 2025 season is held out for the published evaluation, then included when creating the 2026 season-entry checkpoint.
+
+Regenerate the compact production artifact from the public nflverse schedule/results source after a completed season:
+
+```bash
+cd backend
+python scripts/train_nfl_history.py --end-season 2025 --seasons 15
+```
+
+The richer research pipeline accepts normalized team and player game files:
 
 - Team-game CSV: `game_id, season, week, gameday, team, opponent, home, won, points_for, points_against`; optional pass/rush yards, turnovers, sacks, third-down rate, red-zone rate, QB EPA, injuries, and weather columns are supported.
 - Player-game CSV: `game_id, season, week, gameday, player_id, player_name, position, team, opponent`; include passing/rushing/receiving yards, touchdowns, interceptions, completions, attempts, targets, and receptions.
@@ -137,11 +147,11 @@ pip install -r requirements.txt
 python scripts/build_nfl_dataset.py \
   --team-games path/to/team_games.csv \
   --player-games path/to/player_games.csv \
-  --start-season 2006 \
+  --start-season 2011 \
   --end-season 2025
 ```
 
-The builder refuses to train when any of the 20 seasons is missing. It uses shifted rolling windows for recent form and season performance, shifted player-vs-opponent history, strength of schedule, rest, home/away splits, point differential, and head-to-head records. The latest season is held out chronologically. It writes calibrated win probabilities plus accuracy, Brier score, log loss, player-projection MAE, artifacts, and feature lists under `backend/models/nfl/`.
+The builder refuses to train when any of the 15 seasons is missing. It uses shifted rolling windows for recent form and season performance, shifted player-vs-opponent history, strength of schedule, rest, home/away splits, point differential, and head-to-head records. The latest season is held out chronologically. It writes calibrated win probabilities plus accuracy, Brier score, log loss, player-projection MAE, artifacts, and feature lists under `backend/models/nfl/`.
 
 ## MLB data refresh
 
@@ -153,4 +163,4 @@ python backend/scripts/build_recent_results_dataset.py --start-season 2006 --end
 
 ## Data and trademarks
 
-Schedules, scores, player statistics, team information, and probable pitchers come from public MLB and ESPN endpoints. Sports data and trademarks remain the property of their respective owners. Sport IQ is independent and uses original text-and-color identifiers. Predictions and player picks are informational—not betting advice.
+Schedules, scores, player statistics, team information, and probable pitchers come from public MLB and ESPN endpoints. Historical NFL model training uses the nflverse `nfldata` schedules/results dataset under its CC BY 4.0 license; the source URL is recorded in the generated artifact. Sports data and trademarks remain the property of their respective owners. Sport IQ is independent and uses original text-and-color identifiers. Predictions and player picks are informational—not betting advice.

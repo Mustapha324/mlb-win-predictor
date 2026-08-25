@@ -17,7 +17,7 @@ def main() -> None:
     parser.add_argument("--player-games", type=Path, required=True, help="Normalized one-row-per-player-game CSV")
     parser.add_argument("--output-dir", type=Path, default=BACKEND_ROOT / "data" / "processed")
     parser.add_argument("--model-dir", type=Path, default=BACKEND_ROOT / "models" / "nfl")
-    parser.add_argument("--start-season", type=int, default=2006, help="First complete training season (default: 2006)")
+    parser.add_argument("--start-season", type=int, default=2011, help="First complete training season (default: 2011)")
     parser.add_argument("--end-season", type=int, default=2025, help="Latest complete season and chronological holdout (default: 2025)")
     args = parser.parse_args()
     game_path = args.output_dir / "nfl_games.csv"

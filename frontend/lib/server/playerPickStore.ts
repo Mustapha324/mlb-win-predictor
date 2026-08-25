@@ -25,6 +25,14 @@ type PlayerPickRow = {
   explanation: string | null;
   model_version: string;
   model_edge: number | null;
+  line_source: PlayerPick["lineSource"] | null;
+  american_odds: number | null;
+  sportsbook: string | null;
+  over_odds: number | null;
+  under_odds: number | null;
+  market_books: number | null;
+  market_updated_at: string | null;
+  expected_value: number | null;
   sample_size: number;
   status: PlayerPick["status"];
   status_label: string;
@@ -32,6 +40,8 @@ type PlayerPickRow = {
   result: PlayerPick["result"];
   result_updated_at: string | null;
 };
+
+const PLAYER_PICK_SELECT = "pick_key,sport,slate_date,game_id,rank,player_id,player_name,headshot_url,position,team,opponent,game_time,market,selection,line,projection,confidence,supporting_stats,explanation,model_version,model_edge,line_source,american_odds,sportsbook,over_odds,under_odds,market_books,market_updated_at,expected_value,sample_size,status,status_label,actual_value,result,result_updated_at";
 
 function isConfigured(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
@@ -59,6 +69,14 @@ function fromRow(row: PlayerPickRow): PlayerPick {
     explanation: row.explanation,
     modelVersion: row.model_version,
     modelEdge: row.model_edge,
+    lineSource: row.line_source ?? "model_estimate",
+    americanOdds: row.american_odds,
+    sportsbook: row.sportsbook,
+    overOdds: row.over_odds,
+    underOdds: row.under_odds,
+    marketBooks: row.market_books ?? 0,
+    marketUpdatedAt: row.market_updated_at,
+    expectedValue: row.expected_value,
     sampleSize: row.sample_size,
     status: row.status,
     statusLabel: row.status_label,
@@ -93,6 +111,14 @@ function toRow(pick: PlayerPick, slateDate: string): PlayerPickRow {
     explanation: pick.explanation,
     model_version: pick.modelVersion,
     model_edge: pick.modelEdge,
+    line_source: pick.lineSource,
+    american_odds: pick.americanOdds,
+    sportsbook: pick.sportsbook,
+    over_odds: pick.overOdds,
+    under_odds: pick.underOdds,
+    market_books: pick.marketBooks,
+    market_updated_at: pick.marketUpdatedAt,
+    expected_value: pick.expectedValue,
     sample_size: pick.sampleSize,
     status: pick.status,
     status_label: pick.statusLabel,
@@ -107,7 +133,7 @@ export async function loadPlayerPickSnapshots(sport: Sport, date: string): Promi
   try {
     const { data, error } = await createSupabaseAdminClient()
       .from("player_pick_snapshots")
-      .select("pick_key,sport,slate_date,game_id,rank,player_id,player_name,headshot_url,position,team,opponent,game_time,market,selection,line,projection,confidence,supporting_stats,explanation,model_version,model_edge,sample_size,status,status_label,actual_value,result,result_updated_at")
+      .select(PLAYER_PICK_SELECT)
       .eq("sport", sport)
       .eq("slate_date", date)
       .order("rank", { ascending: true });
@@ -149,7 +175,7 @@ export async function loadRecentPlayerPickResults(sport: Sport, limit = 250): Pr
   try {
     const { data, error } = await createSupabaseAdminClient()
       .from("player_pick_snapshots")
-      .select("pick_key,sport,slate_date,game_id,rank,player_id,player_name,headshot_url,position,team,opponent,game_time,market,selection,line,projection,confidence,supporting_stats,explanation,model_version,model_edge,sample_size,status,status_label,actual_value,result,result_updated_at")
+      .select(PLAYER_PICK_SELECT)
       .eq("sport", sport)
       .in("result", ["correct", "incorrect", "push", "void"])
       .order("result_updated_at", { ascending: false })
