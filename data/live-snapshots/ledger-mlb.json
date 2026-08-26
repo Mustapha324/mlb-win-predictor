@@ -1,0 +1,16 @@
+{
+ "games": 15,
+ "baseWins": 5,
+ "brainWins": 6,
+ "days": [
+  {
+   "date": "2026-08-25",
+   "games": 15,
+   "baseWins": 5,
+   "brainWins": 6,
+   "challengerWins": 5
+  }
+ ],
+ "challengerWins": 5,
+ "challengerGames": 15
+}
