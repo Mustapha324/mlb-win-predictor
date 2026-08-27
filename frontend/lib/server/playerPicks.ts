@@ -5,7 +5,7 @@ import type { AccessState } from "@/lib/server/access";
 import { getPredictions } from "@/lib/server/mlbModel";
 import { getNflPredictions } from "@/lib/server/nflModel";
 import { getPlayerPropMarkets } from "@/lib/server/marketOdds";
-import { ESPN_NFL_BASE, ESPN_NFL_HEADERS, fetchEspnNflSeason } from "@/lib/server/espnNflFeed";
+import { fetchEspnNflSeason, fetchEspnNflSummary } from "@/lib/server/espnNflFeed";
 import {
   applyPlayerPickAccess,
   applyResultAccess,
@@ -13,7 +13,7 @@ import {
   MAX_PLAYER_PICK_COUNT,
   TOP_PLAYER_PICK_COUNT
 } from "@/lib/server/playerPickAccess";
-import { calculatePerformance, confidenceFromEdge, gradePlayerPick, pickStatus } from "@/lib/server/playerPickScoring";
+import { calculatePerformance, confidenceFromEdge, gradePlayerPick, mergePlayerPickResults, pickStatus } from "@/lib/server/playerPickScoring";
 import { getDfsBoard, normalizePlayerName, type DfsBoardProp } from "@/lib/server/dfsBoards";
 import {
   diversifyBoard,
@@ -31,13 +31,24 @@ import {
 } from "@/lib/server/propBoardCatalog";
 import {
   loadPlayerPickSnapshots,
+  loadPendingPlayerPickDates,
   loadRecentPlayerPickResults,
   storeInitialPlayerPicks,
   updatePlayerPickResults
 } from "@/lib/server/playerPickStore";
+import { hasSupabaseAdminCredentials } from "@/lib/supabase/admin";
 import type { Sport } from "@/lib/sports";
 
 const MLB_API = "https://statsapi.mlb.com/api/v1";
+
+function easternToday(): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).format(new Date());
+}
 
 type MlbStat = Record<string, number | string | undefined>;
 type MlbSplit = {
@@ -437,12 +448,7 @@ async function fetchNflSeason(year: number): Promise<EspnEvent[]> {
 }
 
 async function fetchNflSummary(gameId: string): Promise<EspnSummary | null> {
-  try {
-    const response = await fetch(`${ESPN_NFL_BASE}/summary?event=${encodeURIComponent(gameId)}`, { next: { revalidate: 300 }, headers: ESPN_NFL_HEADERS, signal: AbortSignal.timeout(10_000) });
-    return response.ok ? await response.json() as EspnSummary : null;
-  } catch {
-    return null;
-  }
+  return fetchEspnNflSummary<EspnSummary>(gameId);
 }
 
 function numericStat(value: string | undefined): number {
@@ -686,6 +692,32 @@ async function enrichLiveResults(picks: PlayerPick[], slate: TodayPredictionsRes
   });
 }
 
+export async function refreshRecentPlayerPickResults(
+  sport: Sport,
+  beforeDate = easternToday(),
+  maxDates = 1
+): Promise<number> {
+  const pendingDates = await loadPendingPlayerPickDates(sport, beforeDate, maxDates);
+  let graded = 0;
+  for (const pendingDate of pendingDates) {
+    try {
+      const snapshots = await loadPlayerPickSnapshots(sport, pendingDate);
+      if (!snapshots?.length) continue;
+      const slate = sport === "nfl" ? await getNflPredictions(pendingDate) : await getPredictions(pendingDate);
+      const enriched = await enrichLiveResults(snapshots, slate);
+      await updatePlayerPickResults(pendingDate, enriched);
+      graded += enriched.filter((pick) => pick.result !== "pending").length;
+    } catch (error) {
+      console.warn("[playerPicks] recent result refresh failed", {
+        sport,
+        date: pendingDate,
+        message: (error instanceof Error ? error.message : "Unknown refresh error").slice(0, 240)
+      });
+    }
+  }
+  return graded;
+}
+
 export async function getPlayerPicks(sport: Sport, date: string, access: AccessState, slateOverride?: TodayPredictionsResponse): Promise<PlayerPicksResponse> {
   const slate = slateOverride ?? (sport === "nfl" ? await getNflPredictions(date) : await getPredictions(date));
   let picks = await loadPlayerPickSnapshots(sport, date);
@@ -700,12 +732,13 @@ export async function getPlayerPicks(sport: Sport, date: string, access: AccessS
   }
   picks = await enrichLiveResults(picks, slate);
   if (picks.some((pick) => pick.status !== "scheduled")) await updatePlayerPickResults(date, picks);
+  await refreshRecentPlayerPickResults(sport);
   const storedResults = await loadRecentPlayerPickResults(sport);
-  const performanceSource = storedResults ?? picks.filter((pick) => pick.result !== "pending");
+  const performanceSource = mergePlayerPickResults(storedResults ?? [], picks);
   return {
     sport, date, updatedAt: new Date().toISOString(), isPro: access.isPro, tier: access.tier,
     totalPicks: picks.length, topFiveCount: Math.min(TOP_PLAYER_PICK_COUNT, picks.length), freePreviewCount: FREE_PLAYER_PICK_COUNT,
-    hasLiveGames: picks.some((pick) => pick.status === "live"), performance: calculatePerformance(performanceSource),
+    hasLiveGames: picks.some((pick) => pick.status === "live"), trackingAvailable: hasSupabaseAdminCredentials(), performance: calculatePerformance(performanceSource),
     recentResults: applyResultAccess(performanceSource, access.isPro, 24), picks: applyPlayerPickAccess(picks, access.isPro)
   };
 }

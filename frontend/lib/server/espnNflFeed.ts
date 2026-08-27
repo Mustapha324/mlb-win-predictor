@@ -10,9 +10,15 @@ export const ESPN_NFL_HEADERS = {
 };
 
 type SeasonCacheEntry = { expiresAt: number; events: unknown[] };
-const globalFeedCache = globalThis as typeof globalThis & { __sportIqNflSeasonCache?: Map<number, SeasonCacheEntry> };
+type SummaryCacheEntry = { expiresAt: number; summary: unknown };
+const globalFeedCache = globalThis as typeof globalThis & {
+  __sportIqNflSeasonCache?: Map<number, SeasonCacheEntry>;
+  __sportIqNflSummaryCache?: Map<string, SummaryCacheEntry>;
+};
 const seasonCache = globalFeedCache.__sportIqNflSeasonCache ?? new Map<number, SeasonCacheEntry>();
+const summaryCache = globalFeedCache.__sportIqNflSummaryCache ?? new Map<string, SummaryCacheEntry>();
 globalFeedCache.__sportIqNflSeasonCache = seasonCache;
+globalFeedCache.__sportIqNflSummaryCache = summaryCache;
 
 export async function fetchEspnNflSeason<T>(year: number): Promise<T[]> {
   const cached = seasonCache.get(year);
@@ -39,4 +45,25 @@ export async function fetchEspnNflSeason<T>(year: number): Promise<T[]> {
   }
   if (cached?.events.length) return cached.events as T[];
   throw new Error(`NFL schedule service is temporarily unavailable (${lastStatus}).`);
+}
+
+export async function fetchEspnNflSummary<T>(gameId: string): Promise<T | null> {
+  const cached = summaryCache.get(gameId);
+  if (cached && cached.expiresAt > Date.now()) return cached.summary as T;
+  for (const baseUrl of [ESPN_NFL_BASE, ESPN_NFL_FALLBACK_BASE]) {
+    try {
+      const response = await fetch(`${baseUrl}/summary?event=${encodeURIComponent(gameId)}`, {
+        cache: "no-store",
+        headers: ESPN_NFL_HEADERS,
+        signal: AbortSignal.timeout(10_000)
+      });
+      if (!response.ok) continue;
+      const summary = await response.json() as T;
+      summaryCache.set(gameId, { summary, expiresAt: Date.now() + 2 * 60 * 1000 });
+      return summary;
+    } catch {
+      // Try the alternate host, then return stale data when a prior response exists.
+    }
+  }
+  return (cached?.summary as T | undefined) ?? null;
 }
