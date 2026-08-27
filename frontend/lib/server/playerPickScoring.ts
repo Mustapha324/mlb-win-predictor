@@ -39,6 +39,22 @@ export function confidenceFromEdge(edge: number, sampleSize: number, scale: numb
   return Number(Math.max(0.51, Math.min(0.84, Math.max(calibrated, 1 - calibrated))).toFixed(4));
 }
 
+export function mergePlayerPickResults<T extends { id: string; result: PlayerPickResult; resultUpdatedAt: string | null }>(
+  stored: T[],
+  current: T[]
+): T[] {
+  const merged = new Map<string, T>();
+  for (const pick of stored) {
+    if (pick.result !== "pending") merged.set(pick.id, pick);
+  }
+  for (const pick of current) {
+    if (pick.result !== "pending") merged.set(pick.id, pick);
+  }
+  return [...merged.values()].toSorted((left, right) =>
+    (right.resultUpdatedAt ?? "").localeCompare(left.resultUpdatedAt ?? "")
+  );
+}
+
 export function calculatePerformance<T extends { result: PlayerPickResult; rank: number; market: string }>(picks: T[]) {
   const gradedPicks = picks.filter((pick) => pick.result === "correct" || pick.result === "incorrect");
   const correct = gradedPicks.filter((pick) => pick.result === "correct").length;

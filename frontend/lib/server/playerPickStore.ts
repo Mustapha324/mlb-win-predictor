@@ -1,6 +1,6 @@
 import "server-only";
 import type { PlayerPick } from "@/lib/api";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseAdminClient, hasSupabaseAdminCredentials } from "@/lib/supabase/admin";
 import type { Sport } from "@/lib/sports";
 
 type PlayerPickRow = {
@@ -25,14 +25,14 @@ type PlayerPickRow = {
   explanation: string | null;
   model_version: string;
   model_edge: number | null;
-  line_source: PlayerPick["lineSource"] | null;
-  american_odds: number | null;
-  sportsbook: string | null;
-  over_odds: number | null;
-  under_odds: number | null;
-  market_books: number | null;
-  market_updated_at: string | null;
-  expected_value: number | null;
+  line_source?: PlayerPick["lineSource"] | null;
+  american_odds?: number | null;
+  sportsbook?: string | null;
+  over_odds?: number | null;
+  under_odds?: number | null;
+  market_books?: number | null;
+  market_updated_at?: string | null;
+  expected_value?: number | null;
   sample_size: number;
   status: PlayerPick["status"];
   status_label: string;
@@ -41,10 +41,43 @@ type PlayerPickRow = {
   result_updated_at: string | null;
 };
 
-const PLAYER_PICK_SELECT = "pick_key,sport,slate_date,game_id,rank,player_id,player_name,headshot_url,position,team,opponent,game_time,market,selection,line,projection,confidence,supporting_stats,explanation,model_version,model_edge,line_source,american_odds,sportsbook,over_odds,under_odds,market_books,market_updated_at,expected_value,sample_size,status,status_label,actual_value,result,result_updated_at";
+type LegacyPlayerPickRow = Omit<PlayerPickRow, "line_source" | "american_odds" | "sportsbook" | "over_odds" | "under_odds" | "market_books" | "market_updated_at" | "expected_value">;
+type StoreError = { code?: string; message?: string };
+
+const LEGACY_PLAYER_PICK_SELECT = "pick_key,sport,slate_date,game_id,rank,player_id,player_name,headshot_url,position,team,opponent,game_time,market,selection,line,projection,confidence,supporting_stats,explanation,model_version,model_edge,sample_size,status,status_label,actual_value,result,result_updated_at";
+const PLAYER_PICK_SELECT = `${LEGACY_PLAYER_PICK_SELECT},line_source,american_odds,sportsbook,over_odds,under_odds,market_books,market_updated_at,expected_value`;
+const MARKET_COLUMN_PATTERN = /\b(line_source|american_odds|sportsbook|over_odds|under_odds|market_books|market_updated_at|expected_value)\b/i;
+const reportedStoreIssues = new Set<string>();
 
 function isConfigured(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return hasSupabaseAdminCredentials();
+}
+
+function storeError(error: unknown): StoreError {
+  if (!error || typeof error !== "object") return { message: error instanceof Error ? error.message : "Unknown storage error" };
+  const value = error as Record<string, unknown>;
+  return {
+    code: typeof value.code === "string" ? value.code : undefined,
+    message: typeof value.message === "string" ? value.message : "Unknown storage error"
+  };
+}
+
+function hasMissingMarketColumns(error: StoreError | null): boolean {
+  return Boolean(
+    (error?.code === "42703" || error?.code === "PGRST204") &&
+    MARKET_COLUMN_PATTERN.test(error.message ?? "")
+  );
+}
+
+function reportStoreIssue(operation: string, error: unknown): void {
+  const normalized = storeError(error);
+  const key = `${operation}:${normalized.code ?? "unknown"}:${normalized.message ?? ""}`;
+  if (reportedStoreIssues.has(key)) return;
+  reportedStoreIssues.add(key);
+  console.warn(`[playerPickStore] ${operation}`, {
+    code: normalized.code ?? "unknown",
+    message: (normalized.message ?? "Unknown storage error").slice(0, 240)
+  });
 }
 
 function fromRow(row: PlayerPickRow): PlayerPick {
@@ -70,13 +103,13 @@ function fromRow(row: PlayerPickRow): PlayerPick {
     modelVersion: row.model_version,
     modelEdge: row.model_edge,
     lineSource: row.line_source ?? "model_estimate",
-    americanOdds: row.american_odds,
-    sportsbook: row.sportsbook,
-    overOdds: row.over_odds,
-    underOdds: row.under_odds,
+    americanOdds: row.american_odds ?? null,
+    sportsbook: row.sportsbook ?? null,
+    overOdds: row.over_odds ?? null,
+    underOdds: row.under_odds ?? null,
     marketBooks: row.market_books ?? 0,
-    marketUpdatedAt: row.market_updated_at,
-    expectedValue: row.expected_value,
+    marketUpdatedAt: row.market_updated_at ?? null,
+    expectedValue: row.expected_value ?? null,
     sampleSize: row.sample_size,
     status: row.status,
     statusLabel: row.status_label,
@@ -88,7 +121,7 @@ function fromRow(row: PlayerPickRow): PlayerPick {
   };
 }
 
-function toRow(pick: PlayerPick, slateDate: string): PlayerPickRow {
+function toLegacyRow(pick: PlayerPick, slateDate: string): LegacyPlayerPickRow {
   return {
     pick_key: pick.id,
     sport: pick.sport,
@@ -111,14 +144,6 @@ function toRow(pick: PlayerPick, slateDate: string): PlayerPickRow {
     explanation: pick.explanation,
     model_version: pick.modelVersion,
     model_edge: pick.modelEdge,
-    line_source: pick.lineSource,
-    american_odds: pick.americanOdds,
-    sportsbook: pick.sportsbook,
-    over_odds: pick.overOdds,
-    under_odds: pick.underOdds,
-    market_books: pick.marketBooks,
-    market_updated_at: pick.marketUpdatedAt,
-    expected_value: pick.expectedValue,
     sample_size: pick.sampleSize,
     status: pick.status,
     status_label: pick.statusLabel,
@@ -128,18 +153,50 @@ function toRow(pick: PlayerPick, slateDate: string): PlayerPickRow {
   };
 }
 
+function toRow(pick: PlayerPick, slateDate: string): PlayerPickRow {
+  return {
+    ...toLegacyRow(pick, slateDate),
+    line_source: pick.lineSource,
+    american_odds: pick.americanOdds,
+    sportsbook: pick.sportsbook,
+    over_odds: pick.overOdds,
+    under_odds: pick.underOdds,
+    market_books: pick.marketBooks,
+    market_updated_at: pick.marketUpdatedAt,
+    expected_value: pick.expectedValue
+  };
+}
+
 export async function loadPlayerPickSnapshots(sport: Sport, date: string): Promise<PlayerPick[] | null> {
   if (!isConfigured()) return null;
   try {
-    const { data, error } = await createSupabaseAdminClient()
+    const supabase = createSupabaseAdminClient();
+    const primary = await supabase
       .from("player_pick_snapshots")
       .select(PLAYER_PICK_SELECT)
       .eq("sport", sport)
       .eq("slate_date", date)
       .order("rank", { ascending: true });
-    if (error) return null;
-    return ((data ?? []) as PlayerPickRow[]).map(fromRow);
-  } catch {
+    if (!primary.error) return ((primary.data ?? []) as PlayerPickRow[]).map(fromRow);
+    const normalized = storeError(primary.error);
+    if (!hasMissingMarketColumns(normalized)) {
+      reportStoreIssue("snapshot read failed", primary.error);
+      return null;
+    }
+    reportStoreIssue("market columns unavailable; using the legacy snapshot schema", primary.error);
+    const fallback = await supabase
+      .from("player_pick_snapshots")
+      .select(LEGACY_PLAYER_PICK_SELECT)
+      .eq("sport", sport)
+      .eq("slate_date", date)
+      .order("rank", { ascending: true });
+    if (fallback.error) {
+      reportStoreIssue("legacy snapshot read failed", fallback.error);
+      return null;
+    }
+    return ((fallback.data ?? []) as PlayerPickRow[]).map(fromRow);
+  } catch (error) {
+    reportStoreIssue("snapshot read threw", error);
     return null;
   }
 }
@@ -148,12 +205,29 @@ export async function storeInitialPlayerPicks(date: string, picks: PlayerPick[])
   if (!isConfigured() || picks.length === 0) return picks;
   try {
     const supabase = createSupabaseAdminClient();
-    await supabase.from("player_pick_snapshots").upsert(picks.map((pick) => toRow(pick, date)), {
+    const primary = await supabase.from("player_pick_snapshots").upsert(picks.map((pick) => toRow(pick, date)), {
       onConflict: "sport,slate_date,pick_key",
       ignoreDuplicates: true
     });
+    if (primary.error) {
+      const normalized = storeError(primary.error);
+      if (!hasMissingMarketColumns(normalized)) {
+        reportStoreIssue("initial snapshot write failed", primary.error);
+        return picks;
+      }
+      reportStoreIssue("market columns unavailable; storing the legacy snapshot shape", primary.error);
+      const fallback = await supabase.from("player_pick_snapshots").upsert(picks.map((pick) => toLegacyRow(pick, date)), {
+        onConflict: "sport,slate_date,pick_key",
+        ignoreDuplicates: true
+      });
+      if (fallback.error) {
+        reportStoreIssue("legacy initial snapshot write failed", fallback.error);
+        return picks;
+      }
+    }
     return (await loadPlayerPickSnapshots(picks[0].sport, date)) ?? picks;
-  } catch {
+  } catch (error) {
+    reportStoreIssue("initial snapshot write threw", error);
     return picks;
   }
 }
@@ -161,28 +235,84 @@ export async function storeInitialPlayerPicks(date: string, picks: PlayerPick[])
 export async function updatePlayerPickResults(date: string, picks: PlayerPick[]): Promise<void> {
   if (!isConfigured() || picks.length === 0) return;
   try {
-    await createSupabaseAdminClient().from("player_pick_snapshots").upsert(
-      picks.map((pick) => toRow(pick, date)),
-      { onConflict: "sport,slate_date,pick_key" }
-    );
-  } catch {
-    // A data-provider outage must not make the read path fail.
+    const supabase = createSupabaseAdminClient();
+    const updates = picks.filter((pick) => pick.status !== "scheduled" || pick.result !== "pending");
+    for (let offset = 0; offset < updates.length; offset += 8) {
+      const responses = await Promise.all(updates.slice(offset, offset + 8).map((pick) => supabase
+        .from("player_pick_snapshots")
+        .update({
+          status: pick.status,
+          status_label: pick.statusLabel,
+          actual_value: pick.actualValue,
+          result: pick.result,
+          result_updated_at: pick.resultUpdatedAt
+        })
+        .eq("sport", pick.sport)
+        .eq("slate_date", date)
+        .eq("pick_key", pick.id)));
+      for (const response of responses) {
+        if (response.error) reportStoreIssue("result-only snapshot update failed", response.error);
+      }
+    }
+  } catch (error) {
+    reportStoreIssue("result-only snapshot update threw", error);
   }
 }
 
 export async function loadRecentPlayerPickResults(sport: Sport, limit = 250): Promise<PlayerPick[] | null> {
   if (!isConfigured()) return null;
   try {
-    const { data, error } = await createSupabaseAdminClient()
+    const supabase = createSupabaseAdminClient();
+    const primary = await supabase
       .from("player_pick_snapshots")
       .select(PLAYER_PICK_SELECT)
       .eq("sport", sport)
       .in("result", ["correct", "incorrect", "push", "void"])
       .order("result_updated_at", { ascending: false })
       .limit(Math.max(1, Math.min(500, limit)));
-    if (error) return null;
-    return ((data ?? []) as PlayerPickRow[]).map(fromRow);
-  } catch {
+    if (!primary.error) return ((primary.data ?? []) as PlayerPickRow[]).map(fromRow);
+    const normalized = storeError(primary.error);
+    if (!hasMissingMarketColumns(normalized)) {
+      reportStoreIssue("recent result read failed", primary.error);
+      return null;
+    }
+    reportStoreIssue("market columns unavailable; reading legacy results", primary.error);
+    const fallback = await supabase
+      .from("player_pick_snapshots")
+      .select(LEGACY_PLAYER_PICK_SELECT)
+      .eq("sport", sport)
+      .in("result", ["correct", "incorrect", "push", "void"])
+      .order("result_updated_at", { ascending: false })
+      .limit(Math.max(1, Math.min(500, limit)));
+    if (fallback.error) {
+      reportStoreIssue("legacy recent result read failed", fallback.error);
+      return null;
+    }
+    return ((fallback.data ?? []) as PlayerPickRow[]).map(fromRow);
+  } catch (error) {
+    reportStoreIssue("recent result read threw", error);
     return null;
+  }
+}
+
+export async function loadPendingPlayerPickDates(sport: Sport, beforeDate: string, limit = 3): Promise<string[]> {
+  if (!isConfigured()) return [];
+  try {
+    const { data, error } = await createSupabaseAdminClient()
+      .from("player_pick_snapshots")
+      .select("slate_date")
+      .eq("sport", sport)
+      .eq("result", "pending")
+      .lt("slate_date", beforeDate)
+      .order("slate_date", { ascending: false })
+      .limit(500);
+    if (error) {
+      reportStoreIssue("pending result date read failed", error);
+      return [];
+    }
+    return [...new Set((data ?? []).map((row) => String(row.slate_date)))].slice(0, Math.max(1, Math.min(14, limit)));
+  } catch (error) {
+    reportStoreIssue("pending result date read threw", error);
+    return [];
   }
 }

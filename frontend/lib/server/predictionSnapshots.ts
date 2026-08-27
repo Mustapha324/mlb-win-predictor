@@ -1,6 +1,6 @@
 import "server-only";
 import type { TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseAdminClient, hasSupabaseAdminCredentials } from "@/lib/supabase/admin";
 
 type SnapshotRow = {
   game_id: string;
@@ -12,7 +12,7 @@ type SnapshotRow = {
 };
 
 function hasAdminConfig(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return hasSupabaseAdminCredentials();
 }
 
 function applySnapshot(prediction: TeamPrediction, snapshot: SnapshotRow): TeamPrediction {

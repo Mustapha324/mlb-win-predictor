@@ -1,5 +1,5 @@
 import "server-only";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseAdminClient, hasSupabaseAdminCredentials } from "@/lib/supabase/admin";
 import type { Sport } from "@/lib/sports";
 
 export type ModelRefreshStatus = {
@@ -20,7 +20,7 @@ export async function getModelRefreshStatus(sport: Sport): Promise<ModelRefreshS
     gamesRefreshed: null,
     playerPicksRefreshed: null
   };
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return fallback;
+  if (!hasSupabaseAdminCredentials()) return fallback;
   try {
     const { data } = await createSupabaseAdminClient()
       .from("model_refresh_runs")
@@ -42,7 +42,7 @@ export async function getModelRefreshStatus(sport: Sport): Promise<ModelRefreshS
 }
 
 export async function recordModelRefresh(sport: Sport, values: { status: string; games: number; playerPicks: number; error?: string }): Promise<void> {
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) return;
+  if (!hasSupabaseAdminCredentials()) return;
   await createSupabaseAdminClient().from("model_refresh_runs").insert({
     sport,
     status: values.status,

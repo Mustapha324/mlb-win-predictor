@@ -180,6 +180,7 @@ export type PlayerPicksResponse = {
   topFiveCount: number;
   freePreviewCount: number;
   hasLiveGames: boolean;
+  trackingAvailable: boolean;
   performance: PlayerPickPerformance;
   recentResults: PlayerPick[];
   picks: PlayerPick[];

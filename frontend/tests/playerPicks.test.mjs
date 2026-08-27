@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { applyPlayerPickAccess } from "../lib/server/playerPickAccess.ts";
-import { calculatePerformance, gradePlayerPick, isValidPickDate, pickStatus } from "../lib/server/playerPickScoring.ts";
+import { calculatePerformance, gradePlayerPick, isValidPickDate, mergePlayerPickResults, pickStatus } from "../lib/server/playerPickScoring.ts";
 import { compilePlayerPropQuotes, normalizePlayerName, playerPropKey } from "../lib/playerPropOdds.ts";
 
 function pick(rank) {
@@ -83,6 +83,15 @@ test("performance keeps overall and premium top-five accuracy separate", () => {
   assert.equal(performance.topFiveCorrect, 1);
   assert.equal(performance.pushes, 1);
   assert.equal(performance.voids, 1);
+});
+
+test("current final picks appear in results and replace an older stored copy", () => {
+  const older = { ...pick(6), result: "incorrect", resultUpdatedAt: "2026-08-26T03:00:00Z" };
+  const current = { ...pick(6), result: "correct", resultUpdatedAt: "2026-08-27T03:00:00Z" };
+  const another = { ...pick(7), result: "push", resultUpdatedAt: "2026-08-27T02:00:00Z" };
+  const pending = { ...pick(8), result: "pending", resultUpdatedAt: null };
+  const merged = mergePlayerPickResults([older], [current, another, pending]);
+  assert.deepEqual(merged.map((item) => [item.rank, item.result]), [[6, "correct"], [7, "push"]]);
 });
 
 test("sportsbook prop consensus uses the widely posted line and best captured payout", () => {

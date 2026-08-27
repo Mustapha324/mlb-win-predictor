@@ -85,7 +85,7 @@ Copy `frontend/.env.example` to `frontend/.env.local`. Never commit the populate
 | `CRON_SECRET` | Authorizes the daily model/picks refresh | Server secret |
 | `NEXT_PUBLIC_SUPABASE_URL` | Accounts and database | Public |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser/server user session | Public |
-| `SUPABASE_SERVICE_ROLE_KEY` | Webhooks and immutable snapshot writes | Server secret |
+| `SUPABASE_SERVICE_ROLE_KEY` | Webhooks and immutable snapshot writes; use an `sb_secret_` key or legacy `service_role` JWT, never a publishable key | Server secret |
 | `STRIPE_SECRET_KEY` | Checkout and customer portal | Server secret |
 | `STRIPE_WEBHOOK_SECRET` | Signature verification | Server secret |
 | `STRIPE_PRO_PRICE_ID` | $3.99/month recurring price | Server config |
