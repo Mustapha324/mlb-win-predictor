@@ -1,0 +1,475 @@
+{
+ "sport": "mlb",
+ "date": "2026-08-27",
+ "capturedAt": "2026-08-27T20:53:44.464Z",
+ "games": [
+  {
+   "gameId": "823503",
+   "gameTimeUtc": "2026-08-27T23:05:00Z",
+   "home": "New York Yankees",
+   "away": "Houston Astros",
+   "probables": {
+    "home": "Gerrit Cole",
+    "away": "Hayden Wesneski"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5836,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.375,
+     "count": 4
+    }
+   },
+   "weather": {
+    "tempF": 72.6,
+    "windMph": 7.2,
+    "gustMph": 11,
+    "precipProbability": 0.37,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees transferred DH Giancarlo Stanton from the 10-day injured list to the 60-day injured list. Right calf strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "New York Yankees selected the contract of RHP Justin Topa from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Signed as Free Agent",
+      "detail": "New York Yankees signed free agent RHP Michael Fulmer.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees placed RHP Fernando Cruz on the 15-day injured list. Right elbow discomfort.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees transferred RHP Kervin Castro from the 15-day injured list to the 60-day injured list. Right elbow neuritis.",
+      "tags": [
+       "injury"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Houston Astros signed free agent LF Nelson Velázquez.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.010430000000000002
+    }
+   ],
+   "baseProbability": 0.5864,
+   "brainProbability": 0.5844,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.4537,
+    "inputs": {
+     "injuryGap": -0.2086,
+     "formWinRate": 0.39999999999999997
+    }
+   }
+  },
+  {
+   "gameId": "822771",
+   "gameTimeUtc": "2026-08-27T23:07:00Z",
+   "home": "Toronto Blue Jays",
+   "away": "Kansas City Royals",
+   "probables": {
+    "home": "Spencer Arrighetti",
+    "away": "Noah Cameron"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.8037,
+     "count": 15
+    },
+    "away": {
+     "burden": 0.7464,
+     "count": 13
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 9,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Toronto Blue Jays placed RHP Shane Bieber on the 15-day injured list retroactive to August 21, 2026. Right teres major inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Toronto Blue Jays recalled RHP Chad Dallas from Buffalo Bisons.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Kansas City Royals placed 2B Michael Massey on the 7-day injured list retroactive to August 26, 2026. Concussion.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Kansas City Royals selected the contract of LHP Anthony Gose from Omaha Storm Chasers.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Kansas City Royals recalled 3B Josh Rojas from Omaha Storm Chasers.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0028650000000000012
+    }
+   ],
+   "baseProbability": 0.5551,
+   "brainProbability": 0.5551,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.2876,
+    "inputs": {
+     "injuryGap": -0.05730000000000002,
+     "formWinRate": -0.4
+    }
+   }
+  },
+  {
+   "gameId": "823581",
+   "gameTimeUtc": "2026-08-27T23:10:00Z",
+   "home": "New York Mets",
+   "away": "Milwaukee Brewers",
+   "probables": {
+    "home": "Sean Manaea",
+    "away": "Jacob Misiorowski"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.576,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.537,
+     "count": 8
+    }
+   },
+   "weather": {
+    "tempF": 73.4,
+    "windMph": 2.4,
+    "gustMph": 11.2,
+    "precipProbability": 0.33,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "New York Mets recalled RHP Xzavion Curry from Syracuse Mets.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Milwaukee Brewers activated RF Sal Frelick from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Milwaukee Brewers designated SS Jonathan Ornelas for assignment.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0019499999999999962
+    }
+   ],
+   "baseProbability": 0.4412,
+   "brainProbability": 0.4412,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.3071,
+    "inputs": {
+     "injuryGap": -0.038999999999999924,
+     "formWinRate": -0.09999999999999998
+    }
+   }
+  },
+  {
+   "gameId": "824879",
+   "gameTimeUtc": "2026-08-27T23:15:00Z",
+   "home": "Atlanta Braves",
+   "away": "Los Angeles Dodgers",
+   "probables": {
+    "home": "Chris Sale",
+    "away": "Yoshinobu Yamamoto"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4401,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.7439,
+     "count": 13
+    }
+   },
+   "weather": {
+    "tempF": 79.2,
+    "windMph": 1.4,
+    "gustMph": 3.4,
+    "precipProbability": 0.14,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Atlanta Braves recalled RF Brewer Hicklen from Gwinnett Stripers.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "Atlanta Braves claimed RHP Ricky Vanasco off waivers from Detroit Tigers.",
+      "tags": [
+       "trade"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated RHP Tyler Glasnow from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.015190000000000002
+    }
+   ],
+   "baseProbability": 0.5041,
+   "brainProbability": 0.507,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0214,
+    "inputs": {
+     "injuryGap": 0.3038,
+     "formWinRate": -0.09999999999999998
+    }
+   }
+  },
+  {
+   "gameId": "823179",
+   "gameTimeUtc": "2026-08-28T01:45:00Z",
+   "home": "San Francisco Giants",
+   "away": "Arizona Diamondbacks",
+   "probables": {
+    "home": "Landen Roupp",
+    "away": "Jose Cabrera"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.88,
+     "count": 19
+    },
+    "away": {
+     "burden": 0.7158,
+     "count": 12
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed RHP JT Brubaker on the 10-day injured list. Bruised ribs.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed DH Bryce Eldridge on the bereavement list.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed LF Victor Bericoto on the 10-day injured list. Right knee bone bruise.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed SS Willy Adames on the 10-day injured list. Left elbow sprain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Francisco Giants recalled CF Grant McCray from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled RHP Juan Burgos from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Released",
+      "detail": "Arizona Diamondbacks released RHP Zack Littell.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.00821
+    }
+   ],
+   "baseProbability": 0.4771,
+   "brainProbability": 0.4755,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.1194,
+    "inputs": {
+     "injuryGap": -0.1642,
+     "formWinRate": -0.2
+    }
+   }
+  }
+ ]
+}
