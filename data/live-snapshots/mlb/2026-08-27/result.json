@@ -1,0 +1,96 @@
+{
+ "date": "2026-08-27",
+ "graded": [
+  {
+   "challengerProbability": 0.5792,
+   "challengerCorrect": true,
+   "gameId": "822694",
+   "matchup": "Colorado Rockies @ Washington Nationals",
+   "capturedAt": "2026-08-27T04:12:41.322Z",
+   "baseProbability": 0.5795,
+   "brainProbability": 0.5795,
+   "homeWon": true,
+   "score": "1-7",
+   "baseCorrect": true,
+   "brainCorrect": true
+  },
+  {
+   "challengerProbability": 0.5152,
+   "challengerCorrect": true,
+   "gameId": "823014",
+   "matchup": "Baltimore Orioles @ St. Louis Cardinals",
+   "capturedAt": "2026-08-27T04:12:41.322Z",
+   "baseProbability": 0.5136,
+   "brainProbability": 0.5158,
+   "homeWon": true,
+   "score": "5-7",
+   "baseCorrect": true,
+   "brainCorrect": true
+  },
+  {
+   "challengerProbability": 0.5856,
+   "challengerCorrect": false,
+   "gameId": "823503",
+   "matchup": "Houston Astros @ New York Yankees",
+   "capturedAt": "2026-08-27T20:53:44.464Z",
+   "baseProbability": 0.5864,
+   "brainProbability": 0.5844,
+   "homeWon": false,
+   "score": "5-1",
+   "baseCorrect": false,
+   "brainCorrect": false
+  },
+  {
+   "challengerProbability": 0.5533,
+   "challengerCorrect": false,
+   "gameId": "822771",
+   "matchup": "Kansas City Royals @ Toronto Blue Jays",
+   "capturedAt": "2026-08-27T20:53:44.464Z",
+   "baseProbability": 0.5551,
+   "brainProbability": 0.5551,
+   "homeWon": false,
+   "score": "13-2",
+   "baseCorrect": false,
+   "brainCorrect": false
+  },
+  {
+   "challengerProbability": 0.4405,
+   "challengerCorrect": true,
+   "gameId": "823581",
+   "matchup": "Milwaukee Brewers @ New York Mets",
+   "capturedAt": "2026-08-27T20:53:44.464Z",
+   "baseProbability": 0.4412,
+   "brainProbability": 0.4412,
+   "homeWon": false,
+   "score": "8-2",
+   "baseCorrect": true,
+   "brainCorrect": true
+  },
+  {
+   "challengerProbability": 0.5069,
+   "challengerCorrect": true,
+   "gameId": "824879",
+   "matchup": "Los Angeles Dodgers @ Atlanta Braves",
+   "capturedAt": "2026-08-27T20:53:44.464Z",
+   "baseProbability": 0.5041,
+   "brainProbability": 0.507,
+   "homeWon": true,
+   "score": "0-1",
+   "baseCorrect": true,
+   "brainCorrect": true
+  },
+  {
+   "challengerProbability": 0.4747,
+   "challengerCorrect": false,
+   "gameId": "823179",
+   "matchup": "Arizona Diamondbacks @ San Francisco Giants",
+   "capturedAt": "2026-08-27T20:53:44.464Z",
+   "baseProbability": 0.4771,
+   "brainProbability": 0.4755,
+   "homeWon": true,
+   "score": "1-6",
+   "baseCorrect": false,
+   "brainCorrect": false
+  }
+ ]
+}
