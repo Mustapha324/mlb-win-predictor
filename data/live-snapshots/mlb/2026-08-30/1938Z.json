@@ -1,0 +1,286 @@
+{
+ "sport": "mlb",
+ "date": "2026-08-30",
+ "capturedAt": "2026-08-30T19:38:23.022Z",
+ "games": [
+  {
+   "gameId": "824959",
+   "gameTimeUtc": "2026-08-30T20:05:00Z",
+   "home": "Athletics",
+   "away": "Baltimore Orioles",
+   "probables": {
+    "home": "Jeffrey Springs",
+    "away": "Chris Bassitt"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7626,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.5959,
+     "count": 8
+    }
+   },
+   "weather": {
+    "tempF": 82,
+    "windMph": 3.9,
+    "gustMph": 4.7,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Athletics activated LHP José Suarez from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Baltimore Orioles signed free agent RHP Albert Suárez to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated 3B Blaze Alexander from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.008334999999999999
+    }
+   ],
+   "baseProbability": 0.4394,
+   "brainProbability": 0.4378,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.3168,
+    "inputs": {
+     "injuryGap": -0.16669999999999996,
+     "formWinRate": -0.19999999999999996
+    }
+   }
+  },
+  {
+   "gameId": "823987",
+   "gameTimeUtc": "2026-08-30T20:07:00Z",
+   "home": "Los Angeles Angels",
+   "away": "Philadelphia Phillies",
+   "probables": {
+    "home": "Yusei Kikuchi",
+    "away": "Zack Wheeler"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6329,
+     "count": 9
+    },
+    "away": {
+     "burden": 0.5666,
+     "count": 7
+    }
+   },
+   "weather": {
+    "tempF": 88.7,
+    "windMph": 9.1,
+    "gustMph": 10.7,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 10,
+     "streak": -6,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels activated LF Wade Meckler from the 7-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels reassigned C Sebastián Rivero to the minor leagues.",
+      "tags": []
+     },
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Los Angeles Angels signed free agent OF Cade Marlowe to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Los Angeles Angels designated RHP Shaun Anderson for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels placed RHP George Klassen on the 15-day injured list retroactive to August 27, 2026. Left low back inflammation.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Assigned",
+      "detail": "SS Ilan Fernandez assigned to Philadelphia Phillies.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0033150000000000015
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.012000000000000002
+    }
+   ],
+   "baseProbability": 0.4247,
+   "brainProbability": 0.4224,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.3947,
+    "inputs": {
+     "injuryGap": -0.06630000000000003,
+     "formWinRate": -0.6000000000000001
+    }
+   }
+  },
+  {
+   "gameId": "824636",
+   "gameTimeUtc": "2026-08-30T23:20:00Z",
+   "home": "Chicago Cubs",
+   "away": "Cincinnati Reds",
+   "probables": {
+    "home": "Shota Imanaga",
+    "away": "Chase Burns"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7123,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.5587,
+     "count": 7
+    }
+   },
+   "weather": {
+    "tempF": 75.9,
+    "windMph": 6.2,
+    "gustMph": 11.4,
+    "precipProbability": 0.14,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago Cubs activated RF Matt Shaw from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Chicago Cubs designated LHP Hoby Milner for assignment.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Cincinnati Reds placed 3B Ke'Bryan Hayes on the 10-day injured list retroactive to August 27, 2026. Left groin strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Cincinnati Reds recalled 2B Edwin Arroyo from Louisville Bats.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.007680000000000004
+    }
+   ],
+   "baseProbability": 0.6207,
+   "brainProbability": 0.6193,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.6402,
+    "inputs": {
+     "injuryGap": -0.15360000000000007
+    }
+   }
+  }
+ ]
+}
