@@ -1,0 +1,102 @@
+{
+ "sport": "mlb",
+ "date": "2026-08-30",
+ "capturedAt": "2026-08-30T23:08:39.208Z",
+ "games": [
+  {
+   "gameId": "824636",
+   "gameTimeUtc": "2026-08-30T23:20:00Z",
+   "home": "Chicago Cubs",
+   "away": "Cincinnati Reds",
+   "probables": {
+    "home": "Shota Imanaga",
+    "away": "Chase Burns"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7123,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.5587,
+     "count": 7
+    }
+   },
+   "weather": {
+    "tempF": 75,
+    "windMph": 9.9,
+    "gustMph": 19.9,
+    "precipProbability": 0.18,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago Cubs activated RF Matt Shaw from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Chicago Cubs designated LHP Hoby Milner for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Released",
+      "detail": "Chicago Cubs released LHP Hoby Milner.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Cincinnati Reds placed 3B Ke'Bryan Hayes on the 10-day injured list retroactive to August 27, 2026. Left groin strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Cincinnati Reds recalled 2B Edwin Arroyo from Louisville Bats.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.007680000000000004
+    }
+   ],
+   "baseProbability": 0.6207,
+   "brainProbability": 0.6193,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.6402,
+    "inputs": {
+     "injuryGap": -0.15360000000000007
+    }
+   }
+  }
+ ]
+}
