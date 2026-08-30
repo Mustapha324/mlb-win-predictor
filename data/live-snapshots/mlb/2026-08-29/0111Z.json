@@ -1,0 +1,332 @@
+{
+ "sport": "mlb",
+ "date": "2026-08-29",
+ "capturedAt": "2026-08-30T01:11:39.828Z",
+ "games": [
+  {
+   "gameId": "823176",
+   "gameTimeUtc": "2026-08-30T02:05:00Z",
+   "home": "San Francisco Giants",
+   "away": "Arizona Diamondbacks",
+   "probables": {
+    "home": "Yunior Marte",
+    "away": "Mitch Bratt"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.8816,
+     "count": 19
+    },
+    "away": {
+     "burden": 0.7158,
+     "count": 12
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed RHP Adrian Houser on the 15-day injured list. Right forearm strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants transferred LHP Carson Whisenhunt from the 15-day injured list to the 60-day injured list. Left elbow sprain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "San Francisco Giants selected the contract of RHP Braxton Roxby from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "San Francisco Giants designated 3B Buddy Kennedy for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants activated DH Bryce Eldridge from the bereavement list.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Released",
+      "detail": "Arizona Diamondbacks released RHP Zack Littell.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled RHP Jose Cabrera from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled LHP Kohl Drake from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Arizona Diamondbacks selected the contract of RHP Derek Law from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled LHP Mitch Bratt from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.008290000000000004
+    }
+   ],
+   "baseProbability": 0.4707,
+   "brainProbability": 0.4691,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.1526,
+    "inputs": {
+     "injuryGap": -0.16580000000000006,
+     "formWinRate": -0.19999999999999996
+    }
+   }
+  },
+  {
+   "gameId": "824961",
+   "gameTimeUtc": "2026-08-30T02:05:00Z",
+   "home": "Athletics",
+   "away": "Baltimore Orioles",
+   "probables": {
+    "home": "Jack Perkins",
+    "away": "Shane Baz"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7626,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.5959,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Athletics activated RHP Chris Roycroft.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Athletics activated LHP José Suarez from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles placed RF Tyler O'Neill on the 10-day injured list retroactive to August 23, 2026. Right shoulder inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Baltimore Orioles selected the contract of SS Luis Vázquez from Norfolk Tides.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Baltimore Orioles signed free agent RHP Albert Suárez to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated 3B Blaze Alexander from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.008334999999999999
+    }
+   ],
+   "baseProbability": 0.4434,
+   "brainProbability": 0.4418,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.2957,
+    "inputs": {
+     "injuryGap": -0.16669999999999996,
+     "formWinRate": -0.09999999999999998
+    }
+   }
+  },
+  {
+   "gameId": "823986",
+   "gameTimeUtc": "2026-08-30T02:07:00Z",
+   "home": "Los Angeles Angels",
+   "away": "Philadelphia Phillies",
+   "probables": {
+    "home": "Ryan Johnson",
+    "away": "Cristopher Sánchez"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5983,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.5666,
+     "count": 7
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -5,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels placed OF Gustavo Campero on the 10-day injured list. Right hamstring strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Angels recalled LF Bryce Teodosio from Salt Lake Bees.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Angels recalled RHP Trevor Martin from Salt Lake Bees.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels activated LF Wade Meckler from the 7-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels reassigned C Sebastián Rivero to the minor leagues.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Assigned",
+      "detail": "SS Ilan Fernandez assigned to Philadelphia Phillies.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.001585000000000003
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.01
+    }
+   ],
+   "baseProbability": 0.4284,
+   "brainProbability": 0.4266,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.3747,
+    "inputs": {
+     "injuryGap": -0.03170000000000006,
+     "formWinRate": -0.5
+    }
+   }
+  }
+ ]
+}
