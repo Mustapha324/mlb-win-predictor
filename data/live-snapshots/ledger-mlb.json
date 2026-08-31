@@ -1,7 +1,7 @@
 {
- "games": 66,
- "baseWins": 36,
- "brainWins": 37,
+ "games": 80,
+ "baseWins": 44,
+ "brainWins": 45,
  "days": [
   {
    "date": "2026-08-25",
@@ -37,8 +37,15 @@
    "baseWins": 11,
    "brainWins": 11,
    "challengerWins": 11
+  },
+  {
+   "date": "2026-08-30",
+   "games": 14,
+   "baseWins": 8,
+   "brainWins": 8,
+   "challengerWins": 8
   }
  ],
- "challengerWins": 36,
- "challengerGames": 66
+ "challengerWins": 44,
+ "challengerGames": 80
 }
