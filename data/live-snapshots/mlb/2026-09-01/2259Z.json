@@ -1,0 +1,1075 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-01",
+ "capturedAt": "2026-09-01T22:59:28.687Z",
+ "games": [
+  {
+   "gameId": "823661",
+   "gameTimeUtc": "2026-09-01T23:40:00Z",
+   "home": "Minnesota Twins",
+   "away": "Detroit Tigers",
+   "probables": {
+    "home": "Andrew Morris",
+    "away": "Troy Melton"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6102,
+     "count": 9
+    },
+    "away": {
+     "burden": 0.7439,
+     "count": 12
+    }
+   },
+   "weather": {
+    "tempF": 86.1,
+    "windMph": 6.4,
+    "gustMph": 8.7,
+    "precipProbability": 0.02,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Minnesota Twins placed CF Byron Buxton on the 10-day injured list retroactive to August 27, 2026. Right hip impingement.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Minnesota Twins recalled RF Gabriel Gonzalez from St. Paul Saints.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Released",
+      "detail": "Minnesota Twins released LF Kyler Fedko.",
+      "tags": []
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Minnesota Twins designated LF Kyler Fedko for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Minnesota Twins recalled RHP Garrett Acton from St. Paul Saints.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Detroit Tigers designated RHP Tanner Rainey for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Detroit Tigers selected the contract of SS John Peck from Toledo Mud Hens.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Detroit Tigers recalled RHP Yilber Díaz from Toledo Mud Hens.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Detroit Tigers activated LF Riley Greene from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Detroit Tigers recalled RHP Beau Brieske from Toledo Mud Hens.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.006685000000000003
+    }
+   ],
+   "baseProbability": 0.4976,
+   "brainProbability": 0.4989,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0122,
+    "inputs": {
+     "injuryGap": 0.13370000000000004,
+     "formWinRate": 0.09999999999999998
+    }
+   }
+  },
+  {
+   "gameId": "824070",
+   "gameTimeUtc": "2026-09-01T23:40:00Z",
+   "home": "Kansas City Royals",
+   "away": "Miami Marlins",
+   "probables": {
+    "home": "Randy Dobnak",
+    "away": "Tyler Phillips"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7464,
+     "count": 13
+    },
+    "away": {
+     "burden": 0.5918,
+     "count": 9
+    }
+   },
+   "weather": {
+    "tempF": 98.6,
+    "windMph": 10.5,
+    "gustMph": 15.2,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Kansas City Royals recalled RHP Easton McGee from Omaha Storm Chasers.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Kansas City Royals selected the contract of LF Drew Waters from Omaha Storm Chasers.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Kansas City Royals recalled RHP Nolan Hoffman from Omaha Storm Chasers.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Recalled",
+      "detail": "Miami Marlins recalled RHP Wikelman González from Jacksonville Jumbo Shrimp.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Miami Marlins placed 2B Xavier Edwards on the 10-day injured list. Left thumb sprain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Miami Marlins recalled LHP Cade Gibson from Jacksonville Jumbo Shrimp.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Miami Marlins recalled SS Jared Serna from Jacksonville Jumbo Shrimp.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Miami Marlins recalled 3B Graham Pauley from Jacksonville Jumbo Shrimp.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.007729999999999998
+    },
+    {
+     "kind": "form",
+     "homeLogit": 0.011000000000000001
+    }
+   ],
+   "baseProbability": 0.5096,
+   "brainProbability": 0.5102,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.05,
+    "inputs": {
+     "injuryGap": -0.15459999999999996,
+     "formWinRate": 0.30000000000000004,
+     "restDay": 1
+    }
+   }
+  },
+  {
+   "gameId": "824633",
+   "gameTimeUtc": "2026-09-01T23:40:00Z",
+   "home": "Chicago Cubs",
+   "away": "Milwaukee Brewers",
+   "probables": {
+    "home": "Matthew Boyd",
+    "away": "Robert Gasser"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7123,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.4934,
+     "count": 7
+    }
+   },
+   "weather": {
+    "tempF": 83.6,
+    "windMph": 4.7,
+    "gustMph": 6.7,
+    "precipProbability": 0.01,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Chicago Cubs designated LHP Hoby Milner for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Released",
+      "detail": "Chicago Cubs released LHP Hoby Milner.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago Cubs recalled RHP Tyler Ferguson from Iowa Cubs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Chicago Cubs selected the contract of 3B BJ Murray Jr. from Iowa Cubs.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Milwaukee Brewers placed RHP Bryse Wilson on the 15-day injured list. Low back strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Milwaukee Brewers activated RHP Abner Uribe from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Milwaukee Brewers signed free agent SS Jonathan Ornelas to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Milwaukee Brewers activated LHP JoJo Romero from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Milwaukee Brewers recalled C Bo Naylor from Nashville Sounds.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.010945000000000003
+    }
+   ],
+   "baseProbability": 0.5106,
+   "brainProbability": 0.5085,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0553,
+    "inputs": {
+     "injuryGap": -0.21890000000000004,
+     "formWinRate": -0.19999999999999996
+    }
+   }
+  },
+  {
+   "gameId": "822854",
+   "gameTimeUtc": "2026-09-02T00:05:00Z",
+   "home": "Texas Rangers",
+   "away": "Athletics",
+   "probables": {
+    "home": "MacKenzie Gore",
+    "away": "Brady Basso"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6871,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.7307,
+     "count": 11
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -4,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Texas Rangers placed RHP Peyton Gray on the 15-day injured list retroactive to August 30, 2026. Right elbow inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Texas Rangers signed free agent LHP John King to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Texas Rangers placed RHP Cole Winn on the 15-day injured list retroactive to August 28, 2026. Right rotator cuff strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Texas Rangers recalled RHP Ben Peoples from Round Rock Express.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Texas Rangers recalled LHP Robby Ahlstrom from Round Rock Express.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Athletics transferred 3B Joshua Kuroda-Grauer from the 10-day injured list to the 60-day injured list. Ruptured testicle surgery.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Athletics activated CF Denzel Clarke from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Athletics recalled RHP Yunior Tur from Las Vegas Aviators.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0021799999999999988
+    }
+   ],
+   "baseProbability": 0.598,
+   "brainProbability": 0.598,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.5164,
+    "inputs": {
+     "injuryGap": 0.04359999999999997,
+     "formWinRate": 0.09999999999999998
+    }
+   }
+  },
+  {
+   "gameId": "824148",
+   "gameTimeUtc": "2026-09-02T00:10:00Z",
+   "home": "Houston Astros",
+   "away": "Chicago White Sox",
+   "probables": {
+    "home": "Ronel Blanco",
+    "away": "Sean Burke"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.375,
+     "count": 4
+    },
+    "away": {
+     "burden": 0.728,
+     "count": 12
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Houston Astros recalled RHP Ronel Blanco from Sugar Land Space Cowboys.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Houston Astros recalled CF Jake Meyers from Sugar Land Space Cowboys.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated LHP Tyler Schweitzer from the paternity list.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Trade",
+      "detail": "Tampa Bay Rays traded RF Jake Cave to Chicago White Sox for cash.",
+      "tags": [
+       "trade"
+      ]
+     },
+     {
+      "type": "Trade",
+      "detail": "Philadelphia Phillies traded LF Tommy Pham to Chicago White Sox for cash.",
+      "tags": [
+       "trade"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Chicago White Sox designated LHP Tyler Gilbert for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago White Sox recalled RHP Tanner McDougal from Charlotte Knights.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.01765
+    }
+   ],
+   "baseProbability": 0.5131,
+   "brainProbability": 0.5165,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0681,
+    "inputs": {
+     "injuryGap": 0.353
+    }
+   }
+  },
+  {
+   "gameId": "824313",
+   "gameTimeUtc": "2026-09-02T00:40:00Z",
+   "home": "Colorado Rockies",
+   "away": "Baltimore Orioles",
+   "probables": {
+    "home": "Gabriel Hughes",
+    "away": "Kyle Bradish"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6117,
+     "count": 9
+    },
+    "away": {
+     "burden": 0.6437,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 10,
+     "streak": -5,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 4,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Colorado Rockies recalled 2B Adael Amador from Albuquerque Isotopes.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Colorado Rockies recalled RHP Blas Castaño from Albuquerque Isotopes.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated LHP Cade Povich.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Baltimore Orioles designated SS Luis Vázquez for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "CF Luis Robert Jr. roster status changed by Baltimore Orioles.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Baltimore Orioles recalled LHP Cade Povich from Norfolk Tides.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "Baltimore Orioles claimed CF Luis Robert Jr. off waivers from New York Mets.",
+      "tags": [
+       "trade"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0016000000000000016
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.012000000000000002
+    }
+   ],
+   "baseProbability": 0.4266,
+   "brainProbability": 0.4243,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.3845,
+    "inputs": {
+     "injuryGap": 0.03200000000000003,
+     "formWinRate": -0.6000000000000001
+    }
+   }
+  },
+  {
+   "gameId": "823984",
+   "gameTimeUtc": "2026-09-02T01:38:00Z",
+   "home": "Los Angeles Angels",
+   "away": "New York Yankees",
+   "probables": {
+    "home": "Grayson Rodriguez",
+    "away": "Gerrit Cole"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5983,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.4831,
+     "count": 6
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Los Angeles Angels signed free agent OF Cade Marlowe to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Los Angeles Angels designated RHP Shaun Anderson for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels reassigned C Sebastián Rivero to the minor leagues.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels placed RHP George Klassen on the 15-day injured list retroactive to August 27, 2026. Left low back inflammation.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Angels recalled LHP Blake Weiman from Salt Lake Bees.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "New York Yankees designated RHP Justin Topa for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees activated LHP Max Fried from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "New York Yankees recalled RHP Brendan Beck from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "New York Yankees recalled RHP Luis Gil from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "injury",
+       "call-up"
+      ]
+     },
+     {
+      "type": "Declared Free Agency",
+      "detail": "RHP Justin Topa elected free agency.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.005760000000000005
+    }
+   ],
+   "baseProbability": 0.423,
+   "brainProbability": 0.4219,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.4035,
+    "inputs": {
+     "injuryGap": -0.11520000000000008,
+     "formWinRate": -0.3
+    }
+   }
+  },
+  {
+   "gameId": "825038",
+   "gameTimeUtc": "2026-09-02T01:40:00Z",
+   "home": "Arizona Diamondbacks",
+   "away": "Philadelphia Phillies",
+   "probables": {
+    "home": "Eduardo Rodriguez",
+    "away": "Jesús Luzardo"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5999,
+     "count": 9
+    },
+    "away": {
+     "burden": 0.5084,
+     "count": 6
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 5,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Selected",
+      "detail": "Arizona Diamondbacks selected the contract of RHP Derek Law from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled LHP Mitch Bratt from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks activated 2B Ketel Marte from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks activated LHP Blake Walston from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks activated LF Lourdes Gurriel Jr. from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Trade",
+      "detail": "Philadelphia Phillies traded LF Tommy Pham to Chicago White Sox for cash.",
+      "tags": [
+       "trade"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Philadelphia Phillies activated C Rafael Marchán from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Philadelphia Phillies signed free agent RHP Sam Carlson to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled RHP Grant Holman from Lehigh Valley IronPigs.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.004575000000000002
+    }
+   ],
+   "baseProbability": 0.4921,
+   "brainProbability": 0.4922,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0409,
+    "inputs": {
+     "injuryGap": -0.09150000000000003,
+     "formWinRate": -0.30000000000000004
+    }
+   }
+  },
+  {
+   "gameId": "823908",
+   "gameTimeUtc": "2026-09-02T02:10:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "St. Louis Cardinals",
+   "probables": {
+    "home": "Eric Lauer",
+    "away": "Michael McGreevy"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6658,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.5827,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 1
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Sebastian Rodriguez roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated LHP Justin Wrobleski from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Los Angeles Dodgers designated C Ben Rortvedt for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated C Will Smith from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated C Dalton Rushing from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "St. Louis Cardinals designated LHP Caleb Ferguson for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "St. Louis Cardinals recalled LHP Brycen Mautz from Memphis Redbirds.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Released",
+      "detail": "St. Louis Cardinals released LHP Caleb Ferguson.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "St. Louis Cardinals placed 2B JJ Wetherholt on the 10-day injured list. Right wrist tendinitis.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "St. Louis Cardinals recalled 3B César Prieto from Memphis Redbirds.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.004154999999999998
+    }
+   ],
+   "baseProbability": 0.5966,
+   "brainProbability": 0.5966,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.5086,
+    "inputs": {
+     "injuryGap": -0.08309999999999995,
+     "formWinRate": 0.3
+    }
+   }
+  }
+ ]
+}
