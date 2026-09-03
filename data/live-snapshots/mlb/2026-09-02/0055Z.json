@@ -1,0 +1,259 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-02",
+ "capturedAt": "2026-09-03T00:55:48.950Z",
+ "games": [
+  {
+   "gameId": "823983",
+   "gameTimeUtc": "2026-09-03T01:38:00Z",
+   "home": "Los Angeles Angels",
+   "away": "New York Yankees",
+   "probables": {
+    "home": "Reid Detmers",
+    "away": "Cam Schlittler"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5983,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.4831,
+     "count": 6
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels placed RHP George Klassen on the 15-day injured list retroactive to August 27, 2026. Left low back inflammation.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Angels recalled LHP Blake Weiman from Salt Lake Bees.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Angels recalled LHP Mitch Farris from Salt Lake Bees.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels activated LHP Samy Natera Jr. from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Angels recalled 2B Kyren Paris from Salt Lake Bees.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Recalled",
+      "detail": "New York Yankees recalled RHP Luis Gil from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "injury",
+       "call-up"
+      ]
+     },
+     {
+      "type": "Declared Free Agency",
+      "detail": "RHP Justin Topa elected free agency.",
+      "tags": []
+     },
+     {
+      "type": "Signed as Free Agent",
+      "detail": "New York Yankees signed free agent RHP Justin Topa to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "New York Yankees claimed RHP John Schreiber off waivers from Kansas City Royals.",
+      "tags": [
+       "trade"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees activated RHP John Schreiber.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.005760000000000005
+    }
+   ],
+   "baseProbability": 0.4176,
+   "brainProbability": 0.4165,
+   "tier": "A",
+   "learn": {
+    "baseLogit": -0.4322,
+    "inputs": {
+     "injuryGap": -0.11520000000000008,
+     "formWinRate": -0.39999999999999997
+    }
+   }
+  },
+  {
+   "gameId": "823906",
+   "gameTimeUtc": "2026-09-03T02:10:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "St. Louis Cardinals",
+   "probables": {
+    "home": "Yoshinobu Yamamoto",
+    "away": "Brycen Mautz"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6658,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.5827,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated LHP Justin Wrobleski from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Los Angeles Dodgers designated C Ben Rortvedt for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated C Will Smith from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated C Dalton Rushing from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Sebastian Rodriguez roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "St. Louis Cardinals placed 2B JJ Wetherholt on the 10-day injured list. Right wrist tendinitis.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Released",
+      "detail": "St. Louis Cardinals released LHP Caleb Ferguson.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "St. Louis Cardinals recalled 3B César Prieto from Memphis Redbirds.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "St. Louis Cardinals recalled C Leo Bernal from Memphis Redbirds.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "St. Louis Cardinals selected the contract of RHP Hancel Rincon from Memphis Redbirds.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.004154999999999998
+    }
+   ],
+   "baseProbability": 0.5866,
+   "brainProbability": 0.5866,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.455,
+    "inputs": {
+     "injuryGap": -0.08309999999999995,
+     "formWinRate": 0.2
+    }
+   }
+  }
+ ]
+}
