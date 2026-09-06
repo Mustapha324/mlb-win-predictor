@@ -1,0 +1,252 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-05",
+ "capturedAt": "2026-09-06T00:32:51.241Z",
+ "games": [
+  {
+   "gameId": "823904",
+   "gameTimeUtc": "2026-09-06T01:10:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "Washington Nationals",
+   "probables": {
+    "home": "Tyler Glasnow",
+    "away": "Cade Cavalli"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6306,
+     "count": 10
+    },
+    "away": {
+     "burden": 0.5683,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers placed LHP Eric Lauer on the 15-day injured list. Left elbow inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers transferred RHP Will Klein from the 15-day injured list to the 60-day injured list. Right elbow discomfort.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated RHP Blake Treinen from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated RHP Bobby Miller from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Los Angeles Dodgers designated CF Alek Thomas for assignment.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Washington Nationals signed free agent 3B Buddy Kennedy to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Washington Nationals activated RF James Wood from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Washington Nationals designated LHP Tom Cosgrove for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Washington Nationals recalled RHP Riley Cornelio from Rochester Red Wings.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Washington Nationals designated RHP Max Kranick for assignment.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0031150000000000014
+    }
+   ],
+   "baseProbability": 0.6055,
+   "brainProbability": 0.6055,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.5569,
+    "inputs": {
+     "injuryGap": -0.06230000000000002,
+     "formWinRate": -0.09999999999999998
+    }
+   }
+  },
+  {
+   "gameId": "823094",
+   "gameTimeUtc": "2026-09-06T01:40:00Z",
+   "home": "Seattle Mariners",
+   "away": "Athletics",
+   "probables": {
+    "home": "George Kirby",
+    "away": "Jeffrey Springs"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6853,
+     "count": 10
+    },
+    "away": {
+     "burden": 0.7539,
+     "count": 12
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Seattle Mariners signed free agent RHP Simeon Woods Richardson to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RF Victor Robles roster status changed by Seattle Mariners.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Seattle Mariners placed CF Brennen Davis on the 60-day injured list. Left hamstring strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Seattle Mariners recalled CF Brennen Davis from Tacoma Rainiers.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Seattle Mariners selected the contract of CF Stuart Fairchild from Tacoma Rainiers.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Athletics designated LHP José Suarez for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Athletics selected the contract of RHP Geoff Hartlieb from Las Vegas Aviators.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Athletics recalled RHP Joey Estes from Las Vegas Aviators.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Athletics placed RHP J.T. Ginn on the 15-day injured list. Right elbow impingement.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Athletics recalled RHP Jack Perkins from Las Vegas Aviators.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.00343
+    }
+   ],
+   "baseProbability": 0.5855,
+   "brainProbability": 0.5855,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.4489,
+    "inputs": {
+     "injuryGap": 0.0686,
+     "formWinRate": -0.2
+    }
+   }
+  }
+ ]
+}
