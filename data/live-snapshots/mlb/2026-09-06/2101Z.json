@@ -1,0 +1,174 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-06",
+ "capturedAt": "2026-09-06T21:01:43.169Z",
+ "games": [
+  {
+   "gameId": "824552",
+   "gameTimeUtc": "2026-09-06T22:20:00Z",
+   "home": "Chicago White Sox",
+   "away": "Minnesota Twins",
+   "probables": {
+    "home": "Bryan Hudson",
+    "away": "Bailey Ober"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7024,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.6102,
+     "count": 9
+    }
+   },
+   "weather": {
+    "tempF": 73.8,
+    "windMph": 12.5,
+    "gustMph": 16.1,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated C Kyle Teel from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox placed LF Tommy Pham on the 10-day injured list retroactive to September 3, 2026. Left calif strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago White Sox recalled C Edgar Quero from Charlotte Knights.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.004610000000000003
+    }
+   ],
+   "baseProbability": 0.5596,
+   "brainProbability": 0.5596,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3113,
+    "inputs": {
+     "injuryGap": -0.09220000000000006,
+     "formWinRate": 0.09999999999999998
+    }
+   }
+  },
+  {
+   "gameId": "823903",
+   "gameTimeUtc": "2026-09-07T02:10:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "Washington Nationals",
+   "probables": {
+    "home": "Justin Wrobleski",
+    "away": "Andrew Alvarez"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.6306,
+     "count": 10
+    },
+    "away": {
+     "burden": 0.5683,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated RHP Bobby Miller from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Los Angeles Dodgers designated CF Alek Thomas for assignment.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Washington Nationals designated RHP Max Kranick for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Washington Nationals selected the contract of RHP Jack Sinclair from Rochester Red Wings.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0031150000000000014
+    }
+   ],
+   "baseProbability": 0.6075,
+   "brainProbability": 0.6075,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.568,
+    "inputs": {
+     "injuryGap": -0.06230000000000002
+    }
+   }
+  }
+ ]
+}
