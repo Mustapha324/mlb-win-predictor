@@ -1,0 +1,103 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-06",
+ "capturedAt": "2026-09-07T00:40:10.181Z",
+ "games": [
+  {
+   "gameId": "823903",
+   "gameTimeUtc": "2026-09-07T02:10:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "Washington Nationals",
+   "probables": {
+    "home": "Justin Wrobleski",
+    "away": "Andrew Alvarez"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6744,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.5683,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated RHP Bobby Miller from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Los Angeles Dodgers designated CF Alek Thomas for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers placed C Dalton Rushing on the 10-day injured list retroactive to September 5, 2026. Right elbow discomfort.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Dodgers recalled C Eliezer Alfonzo from Oklahoma City Comets.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Washington Nationals designated RHP Max Kranick for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Washington Nationals selected the contract of RHP Jack Sinclair from Rochester Red Wings.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.005304999999999999
+    }
+   ],
+   "baseProbability": 0.6075,
+   "brainProbability": 0.6066,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.568,
+    "inputs": {
+     "injuryGap": -0.10609999999999997
+    }
+   }
+  }
+ ]
+}
