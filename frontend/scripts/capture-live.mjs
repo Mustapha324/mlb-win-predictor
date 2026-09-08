@@ -44,6 +44,7 @@ import {
   weatherSeverity
 } from "../lib/server/brain/brainScoring.ts";
 import { NFL_DIVISIONS, NFL_STADIUMS } from "../lib/server/brain/nflStadiums.ts";
+import { anchorToMarket, MARKET_ANCHOR_MODEL_WEIGHT, normalizeTeamName, parseEspnMoneyline } from "../lib/marketMath.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const OUT_ROOT = path.join(here, "..", "..", "data", "live-snapshots");
@@ -56,6 +57,45 @@ const easternYesterday = () => {
   const now = new Date(Date.now() - 24 * 3600 * 1000);
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
 };
+
+/**
+ * Pregame DraftKings moneylines from an ESPN scoreboard payload, keyed by
+ * event id and by "away|home" normalized names (MLB captures use StatsAPI
+ * ids). Archived with every capture so the forward ledger can grade the
+ * market pick and the served 25/75 anchor beside the brain.
+ */
+function marketMapFrom(payload) {
+  const map = new Map();
+  for (const event of payload?.events ?? []) {
+    if (event.status?.type?.state !== "pre") continue;
+    const competition = event.competitions?.[0];
+    const home = competition?.competitors?.find((team) => team.homeAway === "home");
+    const away = competition?.competitors?.find((team) => team.homeAway === "away");
+    const quote = parseEspnMoneyline(competition?.odds?.[0], home?.team?.displayName ?? "home", away?.team?.displayName ?? "away", new Date().toISOString(), event.id);
+    if (!quote) continue;
+    const record = {
+      homeWinProbability: quote.homeWinProbability,
+      awayWinProbability: quote.awayWinProbability,
+      homeAmericanOdds: quote.homeAmericanOdds,
+      awayAmericanOdds: quote.awayAmericanOdds,
+      source: quote.source,
+      dkEventId: quote.dkEventId ?? null
+    };
+    map.set(String(event.id), record);
+    const matchupKey = `${normalizeTeamName(away?.team?.displayName ?? "")}|${normalizeTeamName(home?.team?.displayName ?? "")}`;
+    if (!map.has(matchupKey)) map.set(matchupKey, record);
+  }
+  return map;
+}
+
+function withMarket(sport, snapshot, market) {
+  if (!market) return { ...snapshot, market: null, anchoredProbability: null };
+  return {
+    ...snapshot,
+    market,
+    anchoredProbability: anchorToMarket(snapshot.brainProbability, market.homeWinProbability, MARKET_ANCHOR_MODEL_WEIGHT[sport])
+  };
+}
 
 async function getJson(url, headers = {}) {
   try {
@@ -103,6 +143,7 @@ async function captureMlb(date) {
   ]);
   const games = (slate?.dates?.[0]?.games ?? []).filter((game) => game.status?.abstractGameState === "Preview");
   if (!games.length) return null;
+  const marketMap = marketMapFrom(await getJson(`https://site.web.api.espn.com/apis/site/v2/sports/baseball/mlb/scoreboard?dates=${date.replaceAll("-", "")}&limit=100`));
 
   const elo = movElo(4, 24);
   const results = new Map();
@@ -184,7 +225,7 @@ async function captureMlb(date) {
     };
     const terms = factorTerms(factorInputs, DEFAULT_BRAIN_WEIGHTS);
     const { logitDelta } = combineFactors(terms.map((term) => ({ label: term.kind, detail: "", homeLogit: term.homeLogit })));
-    snapshots.push({
+    snapshots.push(withMarket("mlb", {
       gameId: String(game.gamePk),
       gameTimeUtc: game.gameDate ?? null,
       home: home.team.name,
@@ -203,7 +244,7 @@ async function captureMlb(date) {
       brainProbability: applyTemperature(applyLogitDelta(baseProbability, logitDelta), "mlb"),
       tier: confidenceTier(applyTemperature(applyLogitDelta(baseProbability, logitDelta), "mlb"), "mlb"),
       learn: { baseLogit: Number(logitOf(baseProbability).toFixed(4)), inputs: factorInputVector(factorInputs) }
-    });
+    }, marketMap.get(`${normalizeTeamName(away.team.name)}|${normalizeTeamName(home.team.name)}`) ?? null));
   }
   return snapshots;
 }
@@ -216,6 +257,7 @@ async function captureNfl(date) {
   const scoreboard = await getJson(`https://site.web.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard?dates=${date.replaceAll("-", "")}`);
   const games = (scoreboard?.events ?? []).filter((event) => event.status?.type?.state === "pre" && event.season?.type === 2);
   if (!games.length) return null;
+  const marketMap = marketMapFrom(scoreboard);
 
   const seasonYear = games[0].season?.year ?? Number(date.slice(0, 4));
   const [currentSeason, priorSeason] = await Promise.all([
@@ -377,7 +419,7 @@ async function captureNfl(date) {
     };
     const terms = factorTerms(factorInputs, DEFAULT_BRAIN_WEIGHTS);
     const { logitDelta } = combineFactors(terms.map((term) => ({ label: term.kind, detail: "", homeLogit: term.homeLogit })));
-    snapshots.push({
+    snapshots.push(withMarket("nfl", {
       gameId: String(event.id),
       gameTimeUtc: event.date ?? null,
       home: home.team?.displayName ?? home.id,
@@ -395,7 +437,7 @@ async function captureNfl(date) {
       brainProbability: applyTemperature(applyLogitDelta(baseProbability, logitDelta), "nfl"),
       tier: confidenceTier(applyTemperature(applyLogitDelta(baseProbability, logitDelta), "nfl"), "nfl"),
       learn: { baseLogit: Number(logitOf(baseProbability).toFixed(4)), inputs: factorInputVector(factorInputs) }
-    });
+    }, marketMap.get(String(event.id)) ?? null));
   }
   return snapshots;
 }
@@ -487,7 +529,12 @@ async function grade(date) {
         homeWon: final.homeWon,
         score: `${final.awayScore}-${final.homeScore}`,
         baseCorrect: snapshot.baseProbability >= 0.5 === final.homeWon,
-        brainCorrect: snapshot.brainProbability >= 0.5 === final.homeWon
+        brainCorrect: snapshot.brainProbability >= 0.5 === final.homeWon,
+        // Market pick and the served 25/75 anchor, graded forward beside the brain (null before markets were archived).
+        marketProbability: snapshot.market?.homeWinProbability ?? null,
+        marketCorrect: snapshot.market ? snapshot.market.homeWinProbability >= 0.5 === final.homeWon : null,
+        anchoredProbability: snapshot.anchoredProbability ?? null,
+        anchoredCorrect: snapshot.anchoredProbability != null ? snapshot.anchoredProbability >= 0.5 === final.homeWon : null
       });
     }
     if (!graded.length) continue;
@@ -513,9 +560,22 @@ async function grade(date) {
     const challengerGraded = graded.filter((game) => game.challengerCorrect !== null);
     ledger.challengerWins = (ledger.challengerWins ?? 0) + challengerGraded.filter((game) => game.challengerCorrect).length;
     ledger.challengerGames = (ledger.challengerGames ?? 0) + challengerGraded.length;
-    ledger.days.push({ date, games: graded.length, baseWins: graded.filter((game) => game.baseCorrect).length, brainWins: graded.filter((game) => game.brainCorrect).length, challengerWins: challengerGraded.filter((game) => game.challengerCorrect).length });
+    const marketGraded = graded.filter((game) => game.marketCorrect !== null);
+    ledger.marketWins = (ledger.marketWins ?? 0) + marketGraded.filter((game) => game.marketCorrect).length;
+    ledger.marketGames = (ledger.marketGames ?? 0) + marketGraded.length;
+    ledger.anchoredWins = (ledger.anchoredWins ?? 0) + marketGraded.filter((game) => game.anchoredCorrect).length;
+    ledger.days.push({
+      date,
+      games: graded.length,
+      baseWins: graded.filter((game) => game.baseCorrect).length,
+      brainWins: graded.filter((game) => game.brainCorrect).length,
+      challengerWins: challengerGraded.filter((game) => game.challengerCorrect).length,
+      marketGames: marketGraded.length,
+      marketWins: marketGraded.filter((game) => game.marketCorrect).length,
+      anchoredWins: marketGraded.filter((game) => game.anchoredCorrect).length
+    });
     fs.writeFileSync(ledgerPath, JSON.stringify(ledger, null, 1));
-    console.log(`[${sport}] graded ${graded.length} games for ${date}; ledger: champion ${ledger.brainWins}-${ledger.games - ledger.brainWins}, challenger ${ledger.challengerWins ?? 0}-${(ledger.challengerGames ?? 0) - (ledger.challengerWins ?? 0)} (learned ${loadBrainState()[sport].state.gamesLearned} games, ${loadBrainState()[sport].state.resets} resets)`);
+    console.log(`[${sport}] graded ${graded.length} games for ${date}; ledger: champion ${ledger.brainWins}-${ledger.games - ledger.brainWins}, challenger ${ledger.challengerWins ?? 0}-${(ledger.challengerGames ?? 0) - (ledger.challengerWins ?? 0)}, market ${ledger.marketWins}-${ledger.marketGames - ledger.marketWins}, anchored ${ledger.anchoredWins}-${ledger.marketGames - ledger.anchoredWins} (learned ${loadBrainState()[sport].state.gamesLearned} games, ${loadBrainState()[sport].state.resets} resets)`);
   }
 }
 

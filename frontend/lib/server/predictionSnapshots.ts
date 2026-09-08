@@ -1,5 +1,7 @@
 import "server-only";
 import type { TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
+import { confidenceTier } from "@/lib/server/brain/brainScoring";
+import { confidenceLabel, pickOutcome } from "@/lib/servingPolicy";
 import { createSupabaseAdminClient, hasSupabaseAdminCredentials } from "@/lib/supabase/admin";
 
 type SnapshotRow = {
@@ -16,8 +18,7 @@ function hasAdminConfig(): boolean {
 }
 
 function applySnapshot(prediction: TeamPrediction, snapshot: SnapshotRow): TeamPrediction {
-  const confidenceValue = Math.max(snapshot.pregame_home_win_probability, snapshot.pregame_away_win_probability);
-  return {
+  const frozen: TeamPrediction = {
     ...prediction,
     predicted_winner: snapshot.pregame_predicted_winner,
     pregame_predicted_winner: snapshot.pregame_predicted_winner,
@@ -26,9 +27,11 @@ function applySnapshot(prediction: TeamPrediction, snapshot: SnapshotRow): TeamP
     pregame_home_win_probability: snapshot.pregame_home_win_probability,
     pregame_away_win_probability: snapshot.pregame_away_win_probability,
     prediction_source: snapshot.model_version,
-    confidence: confidenceValue >= 0.62 ? "Strong" : confidenceValue >= 0.56 ? "Edge" : "Lean",
+    confidence: confidenceLabel(prediction.sport, snapshot.pregame_home_win_probability),
+    prediction_tier: confidenceTier(snapshot.pregame_home_win_probability, prediction.sport),
     factors: snapshot.factors
   };
+  return { ...frozen, ...pickOutcome(frozen) };
 }
 
 export async function preservePregameSnapshots<T extends TodayPredictionsResponse>(slate: T): Promise<T> {

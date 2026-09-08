@@ -31,6 +31,12 @@ export function applyGameEntitlement(prediction: TeamPrediction, access: AccessS
     pregame_away_win_probability: 0.5,
     confidence: "Lean",
     factors: [],
+    model_home_win_probability: null,
+    market_home_win_probability: null,
+    market_delta: null,
+    prediction_tier: null,
+    pick_result: null,
+    pick_leading: null,
     is_locked: true
   };
 }

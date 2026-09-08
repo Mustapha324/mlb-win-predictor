@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { getErrorMessage, getPlayerPicks, type PlayerPick, type PlayerPicksResponse } from "@/lib/api";
+import { getErrorMessage, getPlayerPicks, type LivePaceInfo, type PlayerPick, type PlayerPicksResponse } from "@/lib/api";
 import type { Sport } from "@/lib/sports";
 import { useUiPreferences } from "@/lib/uiPreferences";
 
@@ -30,6 +30,75 @@ function statusLabel(pick: PlayerPick): string {
   return pick.status === "final" ? "Final" : pick.statusLabel;
 }
 
+function paceText(state: LivePaceInfo["state"] | undefined): string {
+  if (state === "cleared") return "text-emerald-200";
+  if (state === "on_pace") return "text-lime-200";
+  if (state === "behind") return "text-amber-200";
+  if (state === "busted") return "text-rose-200";
+  return "text-neutral-400";
+}
+
+function paceBar(state: LivePaceInfo["state"] | undefined): string {
+  if (state === "cleared") return "bg-emerald-300";
+  if (state === "on_pace") return "bg-lime-300";
+  if (state === "behind") return "bg-amber-300";
+  if (state === "busted") return "bg-rose-400";
+  return "bg-neutral-500";
+}
+
+function payoutLabel(americanOdds: number | null): string | null {
+  if (americanOdds === null) return null;
+  const multiplier = americanOdds > 0 ? 1 + americanOdds / 100 : 1 + 100 / Math.abs(americanOdds);
+  return `${multiplier.toFixed(2)}x`;
+}
+
+/** Live progress toward the line while the game runs; the final stat once it is over. */
+function PaceMeter({ pick, compact = false }: { pick: PlayerPick; compact?: boolean }) {
+  const live = pick.live;
+  if (!live || (pick.status !== "live" && pick.status !== "final")) return null;
+  const current = live.current ?? pick.actualValue;
+  if (current === null) return <p className="mt-2 text-[10px] text-neutral-500">{live.label}</p>;
+  const target = pick.selection === "Over" ? pick.line + 0.5 : pick.line;
+  const fill = Math.max(0.04, Math.min(1, current / Math.max(0.5, target)));
+  return (
+    <div className={compact ? "mt-2" : "mt-3"} aria-label={`${live.label}: ${current} of ${pick.line}`}>
+      <div className="flex items-center justify-between gap-2 text-[9px] font-black uppercase tracking-[0.1em]">
+        <span className={`truncate ${paceText(live.state)}`}>{live.label}</span>
+        <span className="shrink-0 font-mono text-white">{current} / {pick.line}</span>
+      </div>
+      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-white/[0.06]"><div className={`h-full rounded-full ${paceBar(live.state)}`} style={{ width: `${fill * 100}%` }} /></div>
+      {pick.status === "live" && !compact ? <p className="mt-1 text-[9px] text-neutral-500">{Math.round(live.progress * 100)}% of the game played{live.projected !== null ? ` · projects ${live.projected}` : ""}</p> : null}
+    </div>
+  );
+}
+
+function LiveStrip({ data }: { data: PlayerPicksResponse }) {
+  const summary = data.liveSummary;
+  if (!summary || (summary.live === 0 && summary.final === 0)) return null;
+  const record = data.slatePerformance;
+  const tiles: Array<[string, string, string]> = [
+    ["Live now", String(summary.live), "text-white"],
+    ["Cleared", String(summary.cleared), "text-emerald-200"],
+    ["On pace", String(summary.onPace), "text-lime-200"],
+    ["In trouble", String(summary.behind + summary.busted), "text-amber-200"],
+    ["Today’s record", record ? `${record.correct}-${record.incorrect}` : "—", "text-white"]
+  ];
+  return (
+    <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5" aria-label="Live pick tracker">
+      {tiles.map(([label, value, tone]) => <div key={label} className="rounded-2xl border border-white/[0.07] bg-white/[0.022] px-4 py-3"><p className="eyebrow">{label}</p><p className={`mt-1 font-mono text-xl font-black ${tone}`}>{value}</p></div>)}
+    </div>
+  );
+}
+
+function topFiveLiveLabel(data: PlayerPicksResponse): string | null {
+  const top = data.topFiveLive;
+  if (!top || (top.live === 0 && top.final === 0)) return null;
+  const parts: string[] = [];
+  if (top.live > 0) parts.push(`${top.live} live`, `${top.cleared} cleared`, `${top.onPace} on pace`, `${top.behind + top.busted} in trouble`);
+  if (top.correct + top.incorrect > 0) parts.push(`${top.correct}-${top.incorrect} final`);
+  return `Top 5 right now: ${parts.join(" · ")}`;
+}
+
 function PlayerImage({ pick, priority = false }: { pick: PlayerPick; priority?: boolean }) {
   return (
     <div className="relative h-24 w-20 shrink-0 self-end overflow-hidden rounded-t-[18px] bg-gradient-to-b from-white/[0.08] to-transparent sm:h-28 sm:w-24">
@@ -49,11 +118,15 @@ function ConfidenceRing({ value, sport }: { value: number | null; sport: Sport }
 }
 
 function PickPrice({ pick }: { pick: PlayerPick }) {
-  if (pick.lineSource !== "sportsbook_consensus" || pick.americanOdds === null) {
+  if (pick.lineSource !== "sportsbook_consensus") {
     return <span className="mt-1 inline-flex rounded-md border border-white/[0.08] px-2 py-1 text-[8px] font-bold uppercase tracking-[0.08em] text-neutral-500">Model line</span>;
   }
+  if (pick.americanOdds === null) {
+    return <span className="mt-1 inline-flex rounded-md border border-emerald-300/20 bg-emerald-300/[0.07] px-2 py-1 text-[8px] font-black uppercase tracking-[0.08em] text-emerald-200">{pick.sportsbook ?? "Sportsbook"} line</span>;
+  }
   const price = `${pick.americanOdds > 0 ? "+" : ""}${pick.americanOdds}`;
-  return <span className="mt-1 inline-flex rounded-md border border-emerald-300/20 bg-emerald-300/[0.07] px-2 py-1 text-[8px] font-black uppercase tracking-[0.08em] text-emerald-200" aria-label={`${price} best captured price${pick.sportsbook ? ` at ${pick.sportsbook}` : ""}`}>{price}{pick.sportsbook ? ` · ${pick.sportsbook}` : ""}</span>;
+  const payout = payoutLabel(pick.americanOdds);
+  return <span className="mt-1 inline-flex rounded-md border border-emerald-300/20 bg-emerald-300/[0.07] px-2 py-1 text-[8px] font-black uppercase tracking-[0.08em] text-emerald-200" aria-label={`${price} pays ${payout}${pick.sportsbook ? ` at ${pick.sportsbook}` : ""}`}>{price} · {payout}{pick.sportsbook ? ` · ${pick.sportsbook}` : ""}</span>;
 }
 
 function TopPickCard({ pick, sport, priority }: { pick: PlayerPick; sport: Sport; priority: boolean }) {
@@ -74,6 +147,7 @@ function TopPickCard({ pick, sport, priority }: { pick: PlayerPick; sport: Sport
             <div><p className="eyebrow">Projection</p><p className="mt-1 font-mono text-xs font-bold text-neutral-300">{pick.projection ?? "—"}</p></div>
             <span className={`rounded-full border px-2 py-1 text-[8px] font-black uppercase tracking-[0.1em] ${resultTone(pick.result)}`}>{statusLabel(pick)}</span>
           </div>
+          <PaceMeter pick={pick} />
         </div>
       </div>
     </article>
@@ -147,9 +221,9 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
     <section id="player-picks" className="mt-9 scroll-mt-28 border-t border-white/[0.08] pt-8" aria-labelledby={`${sport}-player-picks-heading`}>
       <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <div className="flex flex-wrap items-center gap-2"><p className={`text-[10px] font-black uppercase tracking-[0.2em] ${accent}`}>{sport.toUpperCase()} player model</p><span className="rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-amber-200">Pro</span>{data?.hasLiveGames ? <span className="rounded-full border border-rose-300/20 bg-rose-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-rose-200">● Live</span> : null}</div>
+          <div className="flex flex-wrap items-center gap-2"><p className={`text-[10px] font-black uppercase tracking-[0.2em] ${accent}`}>{sport.toUpperCase()} player model</p><span className="rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-amber-200">Pro</span>{data?.lineProvider ? <span className="rounded-md border border-emerald-300/25 bg-emerald-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-emerald-200">{data.lineProvider} lines</span> : null}{data?.hasLiveGames ? <span className="rounded-full border border-rose-300/20 bg-rose-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-rose-200">● Live</span> : null}</div>
           <h2 id={`${sport}-player-picks-heading`} className="mt-2 text-3xl font-black tracking-[-0.045em] text-white sm:text-5xl">Player Picks</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-400">Pregame player calls with confidence, model edge, sportsbook consensus when available, live stat progress, and a permanent final result. Picks refresh daily; live games refresh every 30 seconds when enabled.</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-400">Pregame player calls on real sportsbook lines with their payout multipliers, live pace toward the line while games run, and a permanent final result. Picks lock daily; live games refresh every 30 seconds when enabled.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-xl border border-white/[0.09] bg-white/[0.025] p-1" aria-label="Choose sport">
@@ -172,7 +246,8 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
 
       {!loading && !error && data && view === "board" ? (
         <>
-          <div className="mt-6 flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow">Premium board</p><h3 className="mt-1 text-lg font-black text-white">★ Today&apos;s Top 5</h3></div><p className="text-xs text-neutral-600">Ranked before game time · never rewritten</p></div>
+          <LiveStrip data={data} />
+          <div className="mt-6 flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow">Premium board</p><h3 className="mt-1 text-lg font-black text-white">★ Today&apos;s Top 5</h3></div><p className={`text-xs ${topFiveLiveLabel(data) ? "font-bold text-lime-200" : "text-neutral-600"}`}>{topFiveLiveLabel(data) ?? "Ranked before game time · never rewritten"}</p></div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
             {data.isPro ? topPicks.map((pick, index) => <TopPickCard key={pick.id} pick={pick} sport={sport} priority={index === 0} />) : [1, 2, 3, 4, 5].map((rank) => <LockedTopCard key={rank} rank={rank} sport={sport} />)}
           </div>
@@ -198,7 +273,7 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
                 <div><p className="eyebrow lg:hidden">Pick & captured price</p><p className="mt-1 text-sm font-black text-white">{pick.selection} {pick.line}</p><p className="mt-1 text-[10px] text-neutral-400">{pick.market}</p><PickPrice pick={pick} /></div>
                 <p className="font-mono text-sm font-bold text-neutral-300"><span className="mr-2 font-sans text-[9px] font-black uppercase tracking-[0.12em] text-neutral-500 lg:hidden">Projection</span>{pick.projection ?? "—"}</p>
                 <p className={`font-mono text-sm font-black ${accent}`}><span className="mr-2 font-sans text-[9px] font-black uppercase tracking-[0.12em] text-neutral-500 lg:hidden">Confidence</span>{percent(pick.confidence)}</p>
-                <div><span className={`inline-flex rounded-full border px-2 py-1 text-[8px] font-black uppercase tracking-[0.09em] ${resultTone(pick.result)}`}>{statusLabel(pick)}</span>{pick.actualValue !== null ? <p className="mt-1 text-[10px] text-neutral-500">Current: <span className="font-mono text-white">{pick.actualValue}</span></p> : null}</div>
+                <div><span className={`inline-flex rounded-full border px-2 py-1 text-[8px] font-black uppercase tracking-[0.09em] ${resultTone(pick.result)}`}>{statusLabel(pick)}</span>{pick.live && pick.status === "live" ? <PaceMeter pick={pick} compact /> : pick.actualValue !== null ? <p className="mt-1 text-[10px] text-neutral-500">Final: <span className="font-mono text-white">{pick.actualValue}</span> / {pick.line}</p> : null}</div>
                 <div><p className="text-xs leading-5 text-neutral-400">{pick.explanation}</p><div className="mt-2 flex flex-wrap gap-1">{pick.supportingStats.slice(0, 3).map((stat) => <span key={stat} className="rounded-md bg-white/[0.04] px-2 py-1 text-[8px] text-neutral-500">{stat}</span>)}</div></div>
               </article>)}
             </div>
@@ -229,10 +304,10 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
           {[
             ["01", "Pregame-only inputs", sport === "mlb" ? "Season rates, last-10 form, probable starters, opponent history, and the team model are captured before first pitch." : "Only games completed before kickoff feed the rolling three-game player form, role, team strength, and matchup context."],
             ["02", "Calibrated confidence", "Confidence is capped for small samples and volatile markets. It describes model separation from the line—not certainty or a guarantee."],
-            ["03", "Market-aware value", "When bookmaker props are available, Sport IQ uses the most widely posted line, removes the vig for consensus, and records the best captured price for the selected side."],
-            ["04", "Live accountability", "The saved pick never changes. Official box scores update the current value, then grade correct, missed, push, or void only when the game is final."]
+            ["03", "Real lines, real payouts", "Every pick is built on the DraftKings line posted for that exact market, with its payout multiplier shown. Top-five slots require a price no heavier than -160, and the model only surfaces a side when it still likes it against the market."],
+            ["04", "Starters only, tracked live", sport === "nfl" ? "Current rosters, injury designations, and depth charts gate every NFL pick, so backups and inactive players are never propositions. During games each pick shows its pace toward the line; the saved pick never changes and grades only once the game is final." : "Active rosters, posted lineups, probable starters, and playing-time share gate every pick. During games each pick shows its pace toward the line; the saved pick never changes and grades only once the game is final."]
           ].map(([number, title, copy]) => <article key={number} className="rounded-[24px] border border-white/[0.08] bg-[#090909] p-6"><span className={`font-mono text-xs font-black ${accent}`}>{number}</span><h3 className="mt-4 text-lg font-black text-white">{title}</h3><p className="mt-3 text-sm leading-6 text-neutral-400">{copy}</p></article>)}
-          <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-6 md:col-span-2 xl:col-span-4"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow">Current release</p><p className="mt-2 font-mono text-sm font-black text-white">{sport === "mlb" ? "mlb-player-blend-v2+market-v1" : "nfl-player-form-v3+market-v1"}</p><p className="mt-2 text-xs text-neutral-400">Daily locked snapshot · optional 30-second live polling · official final grading</p></div><span className={`w-fit rounded-full border px-3 py-2 text-[9px] font-black uppercase tracking-[0.12em] ${accentButton}`}>Audit trail active</span></div></div>
+          <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-6 md:col-span-2 xl:col-span-4"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow">Current release</p><p className="mt-2 font-mono text-sm font-black text-white">{sport === "mlb" ? "mlb-player-board-v3+book-v1" : "nfl-player-board-v3+book-v1"}</p><p className="mt-2 text-xs text-neutral-400">Daily locked snapshot · optional 30-second live polling · official final grading</p></div><span className={`w-fit rounded-full border px-3 py-2 text-[9px] font-black uppercase tracking-[0.12em] ${accentButton}`}>Audit trail active</span></div></div>
         </div>
       ) : null}
     </section>

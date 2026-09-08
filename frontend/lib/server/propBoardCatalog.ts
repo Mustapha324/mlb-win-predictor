@@ -34,6 +34,18 @@ export const MAX_REAL_BOARD_CONFIDENCE = 0.78;
 export const MIN_RARE_OVER_PROBABILITY = 0.3;
 /** At most this many rare boost-style picks (HR, SB, Rush+Rec TDs) per slate. */
 export const RARE_EVENT_SLATE_CAP = 2;
+/**
+ * Any standard pick must pay at least this much. -160 is a 1.63x multiplier;
+ * a heavier favourite (Under 1.5 hits at -250, say) is a low-payout square
+ * that is not worth a slot however sure the model is, so it is dropped from
+ * the board outright. Rare over-only markets are plus-money by nature.
+ */
+export const MAX_PICK_JUICE = -160;
+
+/** Whether a price is worth selling; an unknown price is allowed (lines-only feeds). */
+export function isSellablePrice(americanOdds: number | null): boolean {
+  return americanOdds === null || americanOdds > 0 || americanOdds >= MAX_PICK_JUICE;
+}
 
 export const RARE_EVENT_MARKETS = new Set(["Home runs", "Stolen bases", "Rush+Rec TDs"]);
 
@@ -128,6 +140,7 @@ type DiversifiableCandidate = {
   market: string;
   confidence: number | null;
   modelEdge: number | null;
+  expectedValue?: number | null;
 };
 
 /**
@@ -137,8 +150,10 @@ type DiversifiableCandidate = {
  */
 export function diversifyBoard<T extends DiversifiableCandidate>(
   candidates: T[],
-  limits: { top: number; freePreview: number; maximum: number }
+  limits: { top: number; freePreview: number; maximum: number },
+  options: { headline?: (pick: T) => boolean } = {}
 ): T[] {
+  const headline = options.headline ?? (() => true);
   const standard = candidates.filter((pick) => !RARE_EVENT_MARKETS.has(pick.market));
   const rare = candidates
     .filter((pick) => RARE_EVENT_MARKETS.has(pick.market))
@@ -147,7 +162,10 @@ export function diversifyBoard<T extends DiversifiableCandidate>(
   const standardLimit = limits.maximum - rare.length;
 
   const ordered = standard.toSorted(
-    (a, b) => (b.confidence ?? 0) - (a.confidence ?? 0) || Math.abs(b.modelEdge ?? 0) - Math.abs(a.modelEdge ?? 0)
+    (a, b) =>
+      (b.confidence ?? 0) - (a.confidence ?? 0) ||
+      (b.expectedValue ?? 0) - (a.expectedValue ?? 0) ||
+      Math.abs(b.modelEdge ?? 0) - Math.abs(a.modelEdge ?? 0)
   );
   const selected: T[] = [];
   const selectedIds = new Set<string>();
@@ -161,7 +179,14 @@ export function diversifyBoard<T extends DiversifiableCandidate>(
   };
   for (const pick of ordered) {
     if (selected.length >= limits.top) break;
+    if (!headline(pick)) continue;
     if ((playerCounts.get(pick.playerId) ?? 0) >= 1 || (marketCounts.get(pick.market) ?? 0) >= 2) continue;
+    add(pick);
+  }
+  // Headline slots stay headline-only: relax the market cap before ever letting a non-headline pick in.
+  for (const pick of ordered) {
+    if (selected.length >= limits.top) break;
+    if (selectedIds.has(pick.id) || !headline(pick) || (playerCounts.get(pick.playerId) ?? 0) >= 1) continue;
     add(pick);
   }
   for (const pick of ordered) {

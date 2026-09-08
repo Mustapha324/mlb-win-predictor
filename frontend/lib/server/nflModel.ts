@@ -1,5 +1,6 @@
 import "server-only";
 import { getMarketConsensus, type MarketConsensus } from "@/lib/server/marketOdds";
+import { pickOutcome, serveProbability, withMarketFactor } from "@/lib/servingPolicy";
 import type { ModelMetricsResponse, PredictionHistoryItem, TeamIdentity, TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
 import { fetchEspnNflSeason } from "@/lib/server/espnNflFeed";
 import nflArtifact from "@/data/nfl-model-v2.json";
@@ -318,9 +319,16 @@ function factorsFor(state: ModelState, game: ParsedGame): string[] {
   return factors;
 }
 
-function predictionFor(game: ParsedGame, state: ModelState): TeamPrediction {
-  const probability = Number(winProbability(state, game).toFixed(4));
-  const awayProbability = Number((1 - probability).toFixed(4));
+function predictionFor(game: ParsedGame, state: ModelState, quote: MarketConsensus | null = null): TeamPrediction {
+  // Served probability = model anchored to the pregame sportsbook line when one exists (lib/servingPolicy.ts).
+  const served = serveProbability(
+    "nfl",
+    winProbability(state, game),
+    game.completed || game.state === "in" ? null : quote?.homeWinProbability ?? null,
+    NFL_MODEL.modelVersion
+  );
+  const probability = served.homeWinProbability;
+  const awayProbability = served.awayWinProbability;
   const winner = probability >= 0.5 ? game.home.team.displayName : game.away.team.displayName;
   const liveHome = liveProbability(game, probability);
   const liveHomeRounded = liveHome === null ? null : Number(liveHome.toFixed(4));
@@ -331,7 +339,8 @@ function predictionFor(game: ParsedGame, state: ModelState): TeamPrediction {
     ? game.homeScore > game.awayScore ? game.home.team.displayName : game.away.team.displayName
     : null;
 
-  return {
+  const factors = withMarketFactor(factorsFor(state, game), served, quote);
+  const prediction: TeamPrediction = {
     sport: "nfl",
     game_id: game.id,
     gameId: game.id,
@@ -360,15 +369,22 @@ function predictionFor(game: ParsedGame, state: ModelState): TeamPrediction {
     live_favorite: liveHomeRounded === null ? null : liveHomeRounded >= 0.5 ? game.home.team.displayName : game.away.team.displayName,
     live_probability_source: game.completed ? "Final score" : liveHomeRounded === null ? null : "In-game score model",
     live_updated_at: liveHomeRounded === null ? null : new Date().toISOString(),
-    live_market: null as MarketConsensus | null,
+    live_market: quote,
     actual_winner: actualWinner,
     is_final: game.completed,
-    prediction_source: NFL_MODEL.modelVersion,
+    prediction_source: served.source,
     confidence: Math.max(probability, awayProbability) >= 0.65 ? "Strong" : Math.max(probability, awayProbability) >= 0.57 ? "Edge" : "Lean",
-    factors: factorsFor(state, game),
+    factors,
     home_score: game.homeScore,
-    away_score: game.awayScore
+    away_score: game.awayScore,
+    model_home_win_probability: served.modelHomeWinProbability,
+    market_home_win_probability: served.marketHomeWinProbability,
+    market_delta: served.marketDelta,
+    prediction_tier: served.tier,
+    pick_result: null,
+    pick_leading: null
   };
+  return { ...prediction, ...pickOutcome(prediction) };
 }
 
 async function seasonContext(dateValue: string) {
@@ -382,17 +398,17 @@ export async function getNflPredictions(dateValue = easternToday()): Promise<Tod
   const { start, end } = weekWindow(dateValue);
   const context = await seasonContext(dateValue);
   const slate = context.current.filter((game) => game.date.slice(0, 10) >= start && game.date.slice(0, 10) <= end);
+  const market = await getMarketConsensus(
+    "nfl",
+    slate.map((game) => ({ gameId: game.id, homeTeam: game.home.team.displayName, awayTeam: game.away.team.displayName, gameTimeUtc: game.date })),
+    dateValue
+  );
   const predictions = slate.map((game) => {
     const state = cloneModelState(context.baseline.state);
     const priorCurrentGames = context.current.filter((prior) => prior.completed && prior.date < game.date);
     replay(priorCurrentGames, state);
-    return predictionFor(game, state);
+    return predictionFor(game, state, market.get(game.id) ?? null);
   });
-  const market = await getMarketConsensus(
-    "nfl",
-    predictions.map((prediction) => ({ gameId: prediction.gameId, homeTeam: prediction.home_team, awayTeam: prediction.away_team }))
-  );
-  for (const prediction of predictions) prediction.live_market = market.get(prediction.gameId) ?? null;
   const weeks = [...new Set(slate.map((game) => game.week).filter((week): week is number => week !== null))];
   return {
     sport: "nfl",
@@ -470,8 +486,10 @@ export async function getNflGamePrediction(gameId: string): Promise<TeamPredicti
   if (!game) return null;
   const state = cloneModelState(context.baseline.state);
   replay(context.current.filter((prior) => prior.completed && prior.date < game.date), state);
-  const prediction = predictionFor(game, state);
-  const market = await getMarketConsensus("nfl", [{ gameId, homeTeam: prediction.home_team, awayTeam: prediction.away_team }]);
-  prediction.live_market = market.get(gameId) ?? null;
-  return prediction;
+  const market = await getMarketConsensus(
+    "nfl",
+    [{ gameId, homeTeam: game.home.team.displayName, awayTeam: game.away.team.displayName, gameTimeUtc: game.date }],
+    game.date.slice(0, 10)
+  );
+  return predictionFor(game, state, market.get(gameId) ?? null);
 }
