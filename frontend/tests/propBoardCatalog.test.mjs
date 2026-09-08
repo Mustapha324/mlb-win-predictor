@@ -84,3 +84,23 @@ test("rare boost picks are capped and can never crowd the headline board", () =>
   assert.deepEqual(board.slice(-2).map((pick) => pick.market), ["Home runs", "Home runs"], "rare picks rank at the bottom");
   assert.equal(new Set(board.slice(0, 5).map((pick) => pick.playerId)).size, 5, "top five stays player-diverse");
 });
+
+test("headline slots skip picks that fail the price gate but still fill the board with them", async () => {
+  const { isSellablePrice, MAX_PICK_JUICE } = await import("../lib/server/propBoardCatalog.ts");
+  assert.equal(MAX_PICK_JUICE, -160);
+  assert.equal(isSellablePrice(null), true);
+  assert.equal(isSellablePrice(-160), true);
+  assert.equal(isSellablePrice(-230), false);
+  assert.equal(isSellablePrice(120), true);
+  const candidates = Array.from({ length: 12 }, (_, index) => ({
+    id: `pick-${index}`,
+    playerId: `player-${index}`,
+    market: index % 2 ? "Hits" : "Total bases",
+    confidence: 0.75 - index * 0.01,
+    modelEdge: 0.3,
+    headline: index >= 4
+  }));
+  const board = diversifyBoard(candidates, { top: 5, freePreview: 5, maximum: 40 }, { headline: (pick) => pick.headline });
+  assert.deepEqual(board.slice(0, 5).map((pick) => pick.id), ["pick-4", "pick-5", "pick-6", "pick-7", "pick-8"]);
+  assert.ok(board.some((pick) => pick.id === "pick-0"), "heavily juiced picks still appear lower on the board");
+});
