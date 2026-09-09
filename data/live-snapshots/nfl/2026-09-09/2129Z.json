@@ -1,0 +1,127 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-09",
+ "capturedAt": "2026-09-09T21:29:28.230Z",
+ "games": [
+  {
+   "gameId": "401872656",
+   "gameTimeUtc": "2026-09-10T00:20Z",
+   "home": "Seattle Seahawks",
+   "away": "New England Patriots",
+   "injuries": {
+    "home": {
+     "burden": 0.9923,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Terrion Arnold",
+       "position": "CB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Ty Okada",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jake Bobo",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Zach Charbonnet",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Irv Charles",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9903,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Ben Brown",
+       "position": "C",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "TreVeyon Henderson",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Bryce Baringer",
+       "position": "P",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Marcus Bryant",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Julian Hill",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 0,
+     "lastTenGames": 0,
+     "streak": 0,
+     "restDays": null
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 0,
+     "streak": 0,
+     "restDays": null
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [],
+   "baseProbability": 0.5589,
+   "brainProbability": 0.5589,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.3433,
+    "inputs": {}
+   },
+   "market": {
+    "homeWinProbability": 0.6016,
+    "awayWinProbability": 0.3984,
+    "homeAmericanOdds": -166,
+    "awayAmericanOdds": 142,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118042"
+   },
+   "anchoredProbability": 0.591
+  }
+ ]
+}
