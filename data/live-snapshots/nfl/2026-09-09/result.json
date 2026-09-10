@@ -1,0 +1,22 @@
+{
+ "date": "2026-09-09",
+ "graded": [
+  {
+   "challengerProbability": 0.5589,
+   "challengerCorrect": true,
+   "gameId": "401872656",
+   "matchup": "New England Patriots @ Seattle Seahawks",
+   "capturedAt": "2026-09-09T21:29:28.230Z",
+   "baseProbability": 0.5589,
+   "brainProbability": 0.5589,
+   "homeWon": true,
+   "score": "10-13",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.6016,
+   "marketCorrect": true,
+   "anchoredProbability": 0.591,
+   "anchoredCorrect": true
+  }
+ ]
+}

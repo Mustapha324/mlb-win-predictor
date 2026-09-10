@@ -1,0 +1,517 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-10",
+ "capturedAt": "2026-09-10T05:34:27.715Z",
+ "games": [
+  {
+   "gameId": "824872",
+   "gameTimeUtc": "2026-09-10T16:15:00Z",
+   "home": "Atlanta Braves",
+   "away": "Tampa Bay Rays",
+   "probables": {
+    "home": "Martín Pérez",
+    "away": "Nick Martinez"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4457,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.6678,
+     "count": 10
+    }
+   },
+   "weather": {
+    "tempF": 85.9,
+    "windMph": 3.3,
+    "gustMph": 3.8,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated LHP Bailey Falter.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Atlanta Braves designated RHP Elieser Hernández for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated RHP Reynaldo López from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves placed RHP Bryce Elder on the 15-day injured list retroactive to September 6, 2026. Right knee surgery.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Atlanta Braves selected the contract of LHP Bailey Falter from Gwinnett Stripers.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Tampa Bay Rays placed SS Taylor Walls on the 10-day injured list retroactive to September 6, 2026. Right hip flexor strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Tampa Bay Rays designated RHP Hunter Bigge for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Tampa Bay Rays selected the contract of 3B Nick Madrigal from Durham Bulls.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.011104999999999999
+    }
+   ],
+   "baseProbability": 0.5174,
+   "brainProbability": 0.5195,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0907,
+    "inputs": {
+     "injuryGap": 0.22209999999999996,
+     "formWinRate": -0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5313,
+    "awayWinProbability": 0.4687,
+    "homeAmericanOdds": -125,
+    "awayAmericanOdds": 104,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34643928"
+   },
+   "anchoredProbability": 0.5284
+  },
+  {
+   "gameId": "823413",
+   "gameTimeUtc": "2026-09-10T17:05:00Z",
+   "home": "Philadelphia Phillies",
+   "away": "Houston Astros",
+   "probables": {
+    "home": "Zack Wheeler",
+    "away": "Cristian Javier"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.5084,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.4345,
+     "count": 5
+    }
+   },
+   "weather": {
+    "tempF": 87.4,
+    "windMph": 8.8,
+    "gustMph": 13.4,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Houston Astros activated CF Jorge Barrosa.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0036949999999999986
+    }
+   ],
+   "baseProbability": 0.5733,
+   "brainProbability": 0.5733,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3838,
+    "inputs": {
+     "injuryGap": -0.07389999999999997
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6278,
+    "awayWinProbability": 0.3722,
+    "homeAmericanOdds": -191,
+    "awayAmericanOdds": 157,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34643929"
+   },
+   "anchoredProbability": 0.6144
+  },
+  {
+   "gameId": "823088",
+   "gameTimeUtc": "2026-09-10T20:10:00Z",
+   "home": "Seattle Mariners",
+   "away": "Texas Rangers",
+   "probables": {
+    "home": "Logan Gilbert",
+    "away": "Jacob deGrom"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.6884,
+     "count": 10
+    },
+    "away": {
+     "burden": 0.6542,
+     "count": 10
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Seattle Mariners designated CF Stuart Fairchild for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Seattle Mariners activated LHP Hoby Milner.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Seattle Mariners activated RF Victor Robles.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Texas Rangers activated LHP Robert Garcia from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0017100000000000006
+    }
+   ],
+   "baseProbability": 0.5162,
+   "brainProbability": 0.5162,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0842,
+    "inputs": {
+     "injuryGap": -0.03420000000000001,
+     "formWinRate": -0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5424,
+    "awayWinProbability": 0.4576,
+    "homeAmericanOdds": -131,
+    "awayAmericanOdds": 109,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34643930"
+   },
+   "anchoredProbability": 0.5359
+  },
+  {
+   "gameId": "823499",
+   "gameTimeUtc": "2026-09-10T23:05:00Z",
+   "home": "New York Yankees",
+   "away": "Colorado Rockies",
+   "probables": {
+    "home": "Max Fried",
+    "away": "Ryan Feltner"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4759,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.6117,
+     "count": 9
+    }
+   },
+   "weather": {
+    "tempF": 84.1,
+    "windMph": 5.9,
+    "gustMph": 13,
+    "precipProbability": 0.01,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "New York Yankees designated RHP Chase Hampton for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees activated RF Aaron Judge from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Colorado Rockies activated 3B Kyle Karros from the 7-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.006790000000000002
+    }
+   ],
+   "baseProbability": 0.6685,
+   "brainProbability": 0.6696,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.9117,
+    "inputs": {
+     "injuryGap": 0.13580000000000003,
+     "formWinRate": 0.39999999999999997
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7414,
+    "awayWinProbability": 0.2586,
+    "homeAmericanOdds": -344,
+    "awayAmericanOdds": 270,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34643931"
+   },
+   "anchoredProbability": 0.7244
+  },
+  {
+   "gameId": "824550",
+   "gameTimeUtc": "2026-09-10T23:40:00Z",
+   "home": "Chicago White Sox",
+   "away": "Pittsburgh Pirates",
+   "probables": {
+    "home": "Hagen Smith",
+    "away": "Jared Jones"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.6744,
+     "count": 10
+    },
+    "away": {
+     "burden": 0.4207,
+     "count": 5
+    }
+   },
+   "weather": {
+    "tempF": 73.4,
+    "windMph": 7.5,
+    "gustMph": 11.4,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated LHP Chris Murphy.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated LHP Chris Murphy from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox placed RHP Tyler Davis on the bereavement list.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago White Sox recalled LHP Chris Murphy from Charlotte Knights.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Pittsburgh Pirates placed RHP Isaac Mattson on the 15-day injured list. Right hip impingement.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Pittsburgh Pirates recalled LHP Brandon Eisert from Indianapolis Indians.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.012685
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.01
+    }
+   ],
+   "baseProbability": 0.5263,
+   "brainProbability": 0.522,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1371,
+    "inputs": {
+     "injuryGap": -0.2537,
+     "formWinRate": -0.5
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5,
+    "awayWinProbability": 0.5,
+    "homeAmericanOdds": -110,
+    "awayAmericanOdds": -110,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34643933"
+   },
+   "anchoredProbability": 0.5055
+  }
+ ]
+}
