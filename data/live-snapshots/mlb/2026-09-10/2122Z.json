@@ -1,0 +1,233 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-10",
+ "capturedAt": "2026-09-10T21:22:55.725Z",
+ "games": [
+  {
+   "gameId": "823499",
+   "gameTimeUtc": "2026-09-10T23:05:00Z",
+   "home": "New York Yankees",
+   "away": "Colorado Rockies",
+   "probables": {
+    "home": "Max Fried",
+    "away": "Ryan Feltner"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5379,
+     "count": 7
+    },
+    "away": {
+     "burden": 0.6117,
+     "count": 9
+    }
+   },
+   "weather": {
+    "tempF": 82.7,
+    "windMph": 5.2,
+    "gustMph": 11.9,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees activated RF Aaron Judge from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "New York Yankees designated RHP Chase Hampton for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees placed 2B Jazz Chisholm Jr. on the 10-day injured list retroactive to September 9, 2026. Right thumb sprain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "New York Yankees recalled SS Anthony Volpe from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Colorado Rockies activated 3B Kyle Karros from the 7-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.003689999999999999
+    }
+   ],
+   "baseProbability": 0.6685,
+   "brainProbability": 0.6684,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.9117,
+    "inputs": {
+     "injuryGap": 0.07379999999999998,
+     "formWinRate": 0.39999999999999997
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7203,
+    "awayWinProbability": 0.2797,
+    "homeAmericanOdds": -305,
+    "awayAmericanOdds": 242,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34643931"
+   },
+   "anchoredProbability": 0.7078
+  },
+  {
+   "gameId": "824550",
+   "gameTimeUtc": "2026-09-10T23:40:00Z",
+   "home": "Chicago White Sox",
+   "away": "Pittsburgh Pirates",
+   "probables": {
+    "home": "Hagen Smith",
+    "away": "Jared Jones"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6744,
+     "count": 10
+    },
+    "away": {
+     "burden": 0.4207,
+     "count": 5
+    }
+   },
+   "weather": {
+    "tempF": 70.4,
+    "windMph": 6,
+    "gustMph": 9.8,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated LHP Chris Murphy.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated LHP Chris Murphy from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox placed RHP Tyler Davis on the bereavement list.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago White Sox recalled LHP Chris Murphy from Charlotte Knights.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Pittsburgh Pirates placed RHP Isaac Mattson on the 15-day injured list. Right hip impingement.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Pittsburgh Pirates recalled LHP Brandon Eisert from Indianapolis Indians.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.012685
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.01
+    }
+   ],
+   "baseProbability": 0.5263,
+   "brainProbability": 0.522,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1371,
+    "inputs": {
+     "injuryGap": -0.2537,
+     "formWinRate": -0.5
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.512,
+    "awayWinProbability": 0.488,
+    "homeAmericanOdds": -115,
+    "awayAmericanOdds": -104,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34643933"
+   },
+   "anchoredProbability": 0.5145
+  }
+ ]
+}

@@ -1,0 +1,134 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-10",
+ "capturedAt": "2026-09-10T21:22:56.347Z",
+ "games": [
+  {
+   "gameId": "401872657",
+   "gameTimeUtc": "2026-09-11T00:35Z",
+   "home": "Los Angeles Rams",
+   "away": "San Francisco 49ers",
+   "injuries": {
+    "home": {
+     "burden": 0.9933,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Aaron Donald",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Matthew Caldwell",
+       "position": "QB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Justin Dedich",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Zech McPhearson",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Daniel Rickert",
+       "position": "DE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.997,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Alfred Collins",
+       "position": "DT",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Andrew Farmer II",
+       "position": "DE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Darrick Forrest",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Isaac Guerendo",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Nate Hobbs",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 0,
+     "lastTenGames": 0,
+     "streak": 0,
+     "restDays": null
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 0,
+     "streak": 0,
+     "restDays": null
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "division",
+     "homeLogit": -0.04984366182859326
+    }
+   ],
+   "baseProbability": 0.5322,
+   "brainProbability": 0.5236,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1867,
+    "inputs": {
+     "divisionDamp": -0.18460615492071578
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6369,
+    "awayWinProbability": 0.3631,
+    "homeAmericanOdds": -198,
+    "awayAmericanOdds": 164,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34107951"
+   },
+   "anchoredProbability": 0.6095
+  }
+ ]
+}
