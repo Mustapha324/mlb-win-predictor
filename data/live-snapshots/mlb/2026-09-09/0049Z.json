@@ -1,0 +1,121 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-09",
+ "capturedAt": "2026-09-10T00:49:26.924Z",
+ "games": [
+  {
+   "gameId": "823900",
+   "gameTimeUtc": "2026-09-10T02:10:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "Cincinnati Reds",
+   "probables": {
+    "home": "Yoshinobu Yamamoto",
+    "away": "Rhett Lowder"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6744,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.3971,
+     "count": 4
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 6,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers placed C Dalton Rushing on the 10-day injured list retroactive to September 5, 2026. Right elbow discomfort.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Dodgers recalled C Eliezer Alfonzo from Oklahoma City Comets.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Dodgers recalled RHP Emmet Sheehan from Oklahoma City Comets.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Cincinnati Reds activated RHP Graham Ashcraft from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Cincinnati Reds designated LHP Sam Moll for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Cincinnati Reds activated 3B Ke'Bryan Hayes from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Released",
+      "detail": "Cincinnati Reds released LHP Sam Moll.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.013865
+    }
+   ],
+   "baseProbability": 0.617,
+   "brainProbability": 0.6145,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.6199,
+    "inputs": {
+     "injuryGap": -0.2773,
+     "formWinRate": 0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7119,
+    "awayWinProbability": 0.2881,
+    "homeAmericanOdds": -291,
+    "awayAmericanOdds": 232,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34639870"
+   },
+   "anchoredProbability": 0.6889
+  }
+ ]
+}
