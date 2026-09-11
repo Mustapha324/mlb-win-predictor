@@ -1,5 +1,5 @@
 {
- "games": 1,
+ "games": 2,
  "baseWins": 1,
  "brainWins": 1,
  "days": [
@@ -12,11 +12,21 @@
    "marketGames": 1,
    "marketWins": 1,
    "anchoredWins": 1
+  },
+  {
+   "date": "2026-09-10",
+   "games": 1,
+   "baseWins": 0,
+   "brainWins": 0,
+   "challengerWins": 0,
+   "marketGames": 1,
+   "marketWins": 0,
+   "anchoredWins": 0
   }
  ],
  "challengerWins": 1,
- "challengerGames": 1,
+ "challengerGames": 2,
  "marketWins": 1,
- "marketGames": 1,
+ "marketGames": 2,
  "anchoredWins": 1
 }

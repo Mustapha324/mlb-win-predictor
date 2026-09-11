@@ -1,0 +1,22 @@
+{
+ "date": "2026-09-10",
+ "graded": [
+  {
+   "challengerProbability": 0.5236,
+   "challengerCorrect": false,
+   "gameId": "401872657",
+   "matchup": "San Francisco 49ers @ Los Angeles Rams",
+   "capturedAt": "2026-09-10T21:22:56.347Z",
+   "baseProbability": 0.5322,
+   "brainProbability": 0.5236,
+   "homeWon": false,
+   "score": "27-7",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.6369,
+   "marketCorrect": false,
+   "anchoredProbability": 0.6095,
+   "anchoredCorrect": false
+  }
+ ]
+}
