@@ -1,0 +1,401 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-11",
+ "capturedAt": "2026-09-12T00:53:35.346Z",
+ "games": [
+  {
+   "gameId": "823012",
+   "gameTimeUtc": "2026-09-12T00:15:00Z",
+   "home": "St. Louis Cardinals",
+   "away": "Chicago White Sox",
+   "probables": {
+    "home": "Matthew Liberatore",
+    "away": "Anthony Kay"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4821,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.6744,
+     "count": 10
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "St. Louis Cardinals activated SS Masyn Winn from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox placed RHP Tyler Davis on the bereavement list.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago White Sox recalled LHP Chris Murphy from Charlotte Knights.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.009615000000000002
+    }
+   ],
+   "baseProbability": 0.5123,
+   "brainProbability": 0.5141,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0638,
+    "inputs": {
+     "injuryGap": 0.19230000000000003,
+     "formWinRate": 0.10000000000000003,
+     "restDay": 1
+    }
+   },
+   "market": null,
+   "anchoredProbability": null
+  },
+  {
+   "gameId": "824954",
+   "gameTimeUtc": "2026-09-12T01:40:00Z",
+   "home": "Athletics",
+   "away": "Seattle Mariners",
+   "probables": {
+    "home": "Jeffrey Springs",
+    "away": "George Kirby"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7539,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.6884,
+     "count": 10
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Released",
+      "detail": "Athletics released LHP José Suarez.",
+      "tags": []
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Athletics designated RHP Taylor Rashi for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "Athletics claimed RHP Hunter Bigge off waivers from Tampa Bay Rays.",
+      "tags": [
+       "trade"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Seattle Mariners activated LHP Hoby Milner.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Seattle Mariners activated RF Victor Robles.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Seattle Mariners designated CF Stuart Fairchild for assignment.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.003275
+    }
+   ],
+   "baseProbability": 0.4761,
+   "brainProbability": 0.4761,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.1241,
+    "inputs": {
+     "injuryGap": -0.0655,
+     "formWinRate": 0.09999999999999998,
+     "restDay": 1
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4018,
+    "awayWinProbability": 0.5982,
+    "homeAmericanOdds": 138,
+    "awayAmericanOdds": -167,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34649537"
+   },
+   "anchoredProbability": 0.4201
+  },
+  {
+   "gameId": "825036",
+   "gameTimeUtc": "2026-09-12T01:40:00Z",
+   "home": "Arizona Diamondbacks",
+   "away": "Texas Rangers",
+   "probables": {
+    "home": "Merrill Kelly",
+    "away": "MacKenzie Gore"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.3935,
+     "count": 5
+    },
+    "away": {
+     "burden": 0.6542,
+     "count": 10
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks activated RHP Corbin Burnes from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Released",
+      "detail": "Arizona Diamondbacks released LF Max Kepler.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled RHP Kade Strowd from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks activated RHP Michael Soroka from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks activated RHP Zac Gallen from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.013035
+    }
+   ],
+   "baseProbability": 0.554,
+   "brainProbability": 0.5565,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.2819,
+    "inputs": {
+     "injuryGap": 0.2607,
+     "restDay": 1
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.513,
+    "awayWinProbability": 0.487,
+    "homeAmericanOdds": -116,
+    "awayAmericanOdds": -104,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34649538"
+   },
+   "anchoredProbability": 0.5239
+  },
+  {
+   "gameId": "823173",
+   "gameTimeUtc": "2026-09-12T02:15:00Z",
+   "home": "San Francisco Giants",
+   "away": "San Diego Padres",
+   "probables": {
+    "home": "Anthony Molina",
+    "away": "Robbie Ray"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.8954,
+     "count": 20
+    },
+    "away": {
+     "burden": 0.6401,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 4,
+     "restDays": 1
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "San Francisco Giants recalled 3B Brett Harris from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "San Francisco Giants designated RHP Spencer Bivens for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "San Francisco Giants claimed RHP Duncan Davitt off waivers from Atlanta Braves.",
+      "tags": [
+       "trade"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "San Diego Padres signed free agent RHP Trevor Gott to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Released",
+      "detail": "San Diego Padres released C Blake Hunt.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres placed 1B Ty France on the paternity list.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Diego Padres recalled 2B Mason McCoy from El Paso Chihuahuas.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.012764999999999999
+    }
+   ],
+   "baseProbability": 0.4682,
+   "brainProbability": 0.4657,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.1657,
+    "inputs": {
+     "injuryGap": -0.25529999999999997
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4081,
+    "awayWinProbability": 0.5919,
+    "homeAmericanOdds": 134,
+    "awayAmericanOdds": -163,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34649547"
+   },
+   "anchoredProbability": 0.4223
+  }
+ ]
+}
