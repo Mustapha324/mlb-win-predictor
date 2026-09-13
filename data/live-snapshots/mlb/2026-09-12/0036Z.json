@@ -1,0 +1,93 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-12",
+ "capturedAt": "2026-09-13T00:36:10.566Z",
+ "games": [
+  {
+   "gameId": "824955",
+   "gameTimeUtc": "2026-09-13T01:40:00Z",
+   "home": "Athletics",
+   "away": "Seattle Mariners",
+   "probables": {
+    "home": "Gage Jump",
+    "away": "Bryan Woo"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7208,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.6884,
+     "count": 10
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Athletics designated RHP Taylor Rashi for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "Athletics claimed RHP Hunter Bigge off waivers from Tampa Bay Rays.",
+      "tags": [
+       "trade"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Athletics activated C Shea Langeliers from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0016199999999999993
+    }
+   ],
+   "baseProbability": 0.4794,
+   "brainProbability": 0.4795,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.107,
+    "inputs": {
+     "injuryGap": -0.032399999999999984,
+     "formWinRate": 0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4175,
+    "awayWinProbability": 0.5825,
+    "homeAmericanOdds": 129,
+    "awayAmericanOdds": -156,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34653930"
+   },
+   "anchoredProbability": 0.4328
+  }
+ ]
+}
