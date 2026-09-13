@@ -1,0 +1,425 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-13",
+ "capturedAt": "2026-09-13T17:54:24.088Z",
+ "games": [
+  {
+   "gameId": "824708",
+   "gameTimeUtc": "2026-09-13T19:05:00Z",
+   "home": "Boston Red Sox",
+   "away": "Kansas City Royals",
+   "probables": {
+    "home": "Payton Tolle",
+    "away": "Noah Cameron"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7878,
+     "count": 14
+    },
+    "away": {
+     "burden": 0.7123,
+     "count": 12
+    }
+   },
+   "weather": {
+    "tempF": 66.5,
+    "windMph": 7.8,
+    "gustMph": 14.1,
+    "precipProbability": 0.88,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox placed CF Eli White on the 10-day injured list retroactive to September 9, 2026. Right foot ligament injury.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Boston Red Sox recalled 2B Anthony Seigler from Worcester Red Sox.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox activated 1B Willson Contreras from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox placed 2B Anthony Seigler on the 10-day injured list. Right wrist inflammation.",
+      "tags": [
+       "injury"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "Kansas City Royals claimed RHP Spencer Bivens off waivers from San Francisco Giants.",
+      "tags": [
+       "trade"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0037749999999999954
+    },
+    {
+     "kind": "weather",
+     "homeLogit": 0.012
+    }
+   ],
+   "baseProbability": 0.5986,
+   "brainProbability": 0.6008,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.5193,
+    "inputs": {
+     "injuryGap": -0.0754999999999999,
+     "formWinRate": 0.19999999999999996,
+     "weatherHome": 0.2
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6309,
+    "awayWinProbability": 0.3691,
+    "homeAmericanOdds": -194,
+    "awayAmericanOdds": 159,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34658472"
+   },
+   "anchoredProbability": 0.6235
+  },
+  {
+   "gameId": "824952",
+   "gameTimeUtc": "2026-09-13T20:05:00Z",
+   "home": "Athletics",
+   "away": "Seattle Mariners",
+   "probables": {
+    "home": "Jacob Lopez",
+    "away": "Bryce Miller"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7208,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.6884,
+     "count": 10
+    }
+   },
+   "weather": {
+    "tempF": 75.6,
+    "windMph": 8.5,
+    "gustMph": 11.4,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Athletics designated RHP Taylor Rashi for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "Athletics claimed RHP Hunter Bigge off waivers from Tampa Bay Rays.",
+      "tags": [
+       "trade"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Athletics activated C Shea Langeliers from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Athletics recalled LHP Drew Rom from Las Vegas Aviators.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0016199999999999993
+    }
+   ],
+   "baseProbability": 0.4672,
+   "brainProbability": 0.4672,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.1707,
+    "inputs": {
+     "injuryGap": -0.032399999999999984,
+     "formWinRate": 0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4528,
+    "awayWinProbability": 0.5472,
+    "homeAmericanOdds": 111,
+    "awayAmericanOdds": -134,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34658486"
+   },
+   "anchoredProbability": 0.4564
+  },
+  {
+   "gameId": "825033",
+   "gameTimeUtc": "2026-09-13T20:10:00Z",
+   "home": "Arizona Diamondbacks",
+   "away": "Texas Rangers",
+   "probables": {
+    "home": "Eduardo Rodriguez",
+    "away": "Cal Quantrill"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4727,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.5709,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks placed 1B Tyler Locklear on the 60-day injured list. Fractured right thumb.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled 1B Tyler Locklear from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Arizona Diamondbacks selected the contract of 1B Pavin Smith from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Arizona Diamondbacks designated LF Lourdes Gurriel Jr. for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled DH Jose Fernandez from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Texas Rangers activated 3B Josh Jung from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Texas Rangers activated RHP Nathan Eovaldi from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.004909999999999998
+    }
+   ],
+   "baseProbability": 0.5537,
+   "brainProbability": 0.5537,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.2804,
+    "inputs": {
+     "injuryGap": 0.09819999999999995,
+     "formWinRate": 0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5424,
+    "awayWinProbability": 0.4576,
+    "homeAmericanOdds": -131,
+    "awayAmericanOdds": 109,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34658487"
+   },
+   "anchoredProbability": 0.5452
+  },
+  {
+   "gameId": "823171",
+   "gameTimeUtc": "2026-09-13T23:20:00Z",
+   "home": "San Francisco Giants",
+   "away": "San Diego Padres",
+   "probables": {
+    "home": "Logan Webb",
+    "away": "Nick Pivetta"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.8954,
+     "count": 20
+    },
+    "away": {
+     "burden": 0.6401,
+     "count": 9
+    }
+   },
+   "weather": {
+    "tempF": 70.2,
+    "windMph": 16.9,
+    "gustMph": 25.1,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 6,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres placed 1B Ty France on the paternity list.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Diego Padres recalled 2B Mason McCoy from El Paso Chihuahuas.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.012764999999999999
+    },
+    {
+     "kind": "weather",
+     "homeLogit": 0.012
+    }
+   ],
+   "baseProbability": 0.4611,
+   "brainProbability": 0.4609,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.2028,
+    "inputs": {
+     "injuryGap": -0.25529999999999997,
+     "formWinRate": -0.19999999999999996,
+     "weatherHome": 0.2
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4576,
+    "awayWinProbability": 0.5424,
+    "homeAmericanOdds": 109,
+    "awayAmericanOdds": -131,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34658488"
+   },
+   "anchoredProbability": 0.4584
+  }
+ ]
+}
