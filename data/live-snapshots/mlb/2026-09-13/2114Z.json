@@ -1,0 +1,104 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-13",
+ "capturedAt": "2026-09-13T21:14:31.229Z",
+ "games": [
+  {
+   "gameId": "823171",
+   "gameTimeUtc": "2026-09-13T23:20:00Z",
+   "home": "San Francisco Giants",
+   "away": "San Diego Padres",
+   "probables": {
+    "home": "Logan Webb",
+    "away": "Nick Pivetta"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.9091,
+     "count": 21
+    },
+    "away": {
+     "burden": 0.6401,
+     "count": 9
+    }
+   },
+   "weather": {
+    "tempF": 69.8,
+    "windMph": 16,
+    "gustMph": 23.7,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 6,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Selected",
+      "detail": "San Francisco Giants selected the contract of LF Scott Bandura from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres placed 1B Ty France on the paternity list.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Diego Padres recalled 2B Mason McCoy from El Paso Chihuahuas.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.013450000000000002
+    },
+    {
+     "kind": "weather",
+     "homeLogit": 0.012
+    }
+   ],
+   "baseProbability": 0.4611,
+   "brainProbability": 0.4608,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.2028,
+    "inputs": {
+     "injuryGap": -0.269,
+     "formWinRate": -0.19999999999999996,
+     "weatherHome": 0.2
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4369,
+    "awayWinProbability": 0.5631,
+    "homeAmericanOdds": 119,
+    "awayAmericanOdds": -143,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34658488"
+   },
+   "anchoredProbability": 0.4429
+  }
+ ]
+}
