@@ -1,0 +1,134 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-14",
+ "capturedAt": "2026-09-14T16:45:58.770Z",
+ "games": [
+  {
+   "gameId": "401872931",
+   "gameTimeUtc": "2026-09-15T00:15Z",
+   "home": "Kansas City Chiefs",
+   "away": "Denver Broncos",
+   "injuries": {
+    "home": {
+     "burden": 0.9943,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Josh Simmons",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Chamarri Conner",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jeff Caldwell",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Ethan Downs",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "John Michael Gyllenborg",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9921,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Jonathon Cooper",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Levelle Bailey",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Frank Crum",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Michael Deiter",
+       "position": "C",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Nick Gargiulo",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 0,
+     "lastTenGames": 0,
+     "streak": 0,
+     "restDays": null
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 0,
+     "streak": 0,
+     "restDays": null
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "division",
+     "homeLogit": 0.12061266082876879
+    }
+   ],
+   "baseProbability": 0.4179,
+   "brainProbability": 0.4383,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.4806,
+    "inputs": {
+     "divisionDamp": 0.44671355862506956
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5427,
+    "awayWinProbability": 0.4573,
+    "homeAmericanOdds": -130,
+    "awayAmericanOdds": 110,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118255"
+   },
+   "anchoredProbability": 0.5166
+  }
+ ]
+}
