@@ -26,7 +26,6 @@ function isInProgress(status: string): boolean {
 
 export function GameCard({ game }: { game: TeamPrediction }) {
   const [showReason, setShowReason] = useState(false);
-  const locked = game.is_locked === true;
   const homeIsPick = game.pregame_predicted_winner === game.home_team;
   const pick = homeIsPick ? game.homeTeam : game.awayTeam;
   const pickProbability = homeIsPick ? game.pregame_home_win_probability : game.pregame_away_win_probability;
@@ -69,7 +68,7 @@ export function GameCard({ game }: { game: TeamPrediction }) {
             </div>
             <div className="text-right">
               {showScore && entry.score !== null ? <p className="text-lg font-black text-white">{entry.score}</p> : null}
-              <p className={`font-mono text-sm font-bold text-neutral-200 ${locked ? "blur-[5px] select-none" : ""}`}>{percent(entry.probability)}</p>
+              <p className="font-mono text-sm font-bold text-neutral-200">{percent(entry.probability)}</p>
             </div>
           </div>
         ))}
@@ -80,7 +79,7 @@ export function GameCard({ game }: { game: TeamPrediction }) {
       </div>
 
       <div className="relative mt-5 overflow-hidden rounded-2xl border border-white/[0.08] bg-white/[0.025] p-4">
-        <div className={locked ? "blur-[8px] select-none" : ""}>
+        <div>
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-neutral-600">Pregame pick · locked</p>
@@ -93,13 +92,12 @@ export function GameCard({ game }: { game: TeamPrediction }) {
         </div>
         <p className="mt-3 line-clamp-1 text-xs text-neutral-500">{game.factors[0] ?? "Balanced matchup"}</p>
         </div>
-        {locked ? <div className="absolute inset-0 grid place-items-center bg-black/25"><Link href="/pro" className="rounded-full border border-lime-300/30 bg-black/90 px-4 py-2 text-[10px] font-black uppercase tracking-[0.13em] text-lime-200 shadow-xl">Unlock this pick</Link></div> : null}
       </div>
 
       {finished && game.actual_winner ? (
         <div className="relative mt-4 flex items-center justify-between gap-4 rounded-2xl border border-white/[0.09] bg-white/[0.04] p-4">
           <div><p className="text-[9px] font-black uppercase tracking-[0.16em] text-neutral-600">Final winner</p><p className="mt-1 text-sm font-black text-white">{game.actual_winner}</p></div>
-          {!locked ? <span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] ${game.actual_winner === game.pregame_predicted_winner ? "bg-emerald-300/10 text-emerald-200" : "bg-rose-300/10 text-rose-200"}`}>{game.actual_winner === game.pregame_predicted_winner ? "Pick hit" : "Pick missed"}</span> : <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-neutral-600">Pick locked</span>}
+          {<span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] ${game.actual_winner === game.pregame_predicted_winner ? "bg-emerald-300/10 text-emerald-200" : "bg-rose-300/10 text-rose-200"}`}>{game.actual_winner === game.pregame_predicted_winner ? "Pick hit" : "Pick missed"}</span>}
         </div>
       ) : null}
 
@@ -112,8 +110,7 @@ export function GameCard({ game }: { game: TeamPrediction }) {
         </div>
       ) : (
         <div className="relative mt-4 flex items-center justify-between rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4">
-          <div><p className="text-[9px] font-black uppercase tracking-[0.16em] text-neutral-600">Live movement</p><p className="mt-1 text-xs font-bold text-neutral-400">Available with Sport IQ Pro</p></div>
-          <Link href="/pro" className="text-[10px] font-black uppercase tracking-[0.12em] text-lime-300">Unlock →</Link>
+          <div><p className="text-[9px] font-black uppercase tracking-[0.16em] text-neutral-600">Live movement</p><p className="mt-1 text-xs font-bold text-neutral-400">Waiting for live game data</p></div>
         </div>
       ) : null}
 
@@ -121,9 +118,9 @@ export function GameCard({ game }: { game: TeamPrediction }) {
         <p className="relative mt-4 rounded-xl border border-white/10 bg-white/[0.035] p-3 text-xs leading-5 text-neutral-300">{reasonSummary}</p>
       ) : null}
       <div className="relative mt-4 flex flex-wrap items-center gap-4">
-        {!locked ? <button type="button" onClick={() => setShowReason((value) => !value)} className={`text-xs font-bold uppercase tracking-[0.12em] transition ${game.sport === "nfl" ? "text-lime-300 hover:text-lime-100" : "text-cyan-300 hover:text-cyan-100"}`} aria-expanded={showReason}>
+        {<button type="button" onClick={() => setShowReason((value) => !value)} className={`text-xs font-bold uppercase tracking-[0.12em] transition ${game.sport === "nfl" ? "text-lime-300 hover:text-lime-100" : "text-cyan-300 hover:text-cyan-100"}`} aria-expanded={showReason}>
           {showReason ? "Hide reason" : "Why this pick?"}
-        </button> : null}
+        </button>}
         <Link href={game.sport === "nfl" ? `/nfl/games/${game.gameId}` : `/games/${game.gameId}`} className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-neutral-500 transition hover:text-white">
           Full breakdown <span aria-hidden="true">→</span>
         </Link>

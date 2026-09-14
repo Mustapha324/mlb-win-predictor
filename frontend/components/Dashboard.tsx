@@ -65,21 +65,20 @@ export function Dashboard({ sport }: { sport: Sport }) {
   }, [load]);
 
   const hasActiveGame = data?.predictions.some((game) => !game.is_final && (game.live_home_win_probability !== null || isActive(game.status))) ?? false;
-  const isPro = data?.access?.isPro ?? false;
   useEffect(() => {
-    if (!preferences.liveRefresh || !isPro || !hasActiveGame) return;
+    if (!preferences.liveRefresh || !hasActiveGame) return;
     const interval = window.setInterval(() => void load(true), 30_000);
     return () => window.clearInterval(interval);
-  }, [hasActiveGame, isPro, load, preferences.liveRefresh]);
+  }, [hasActiveGame, load, preferences.liveRefresh]);
 
   const visibleGames = useMemo(() => {
     const games = data?.predictions ?? [];
-    if (filter === "strong") return games.filter((game) => !game.is_locked && game.confidence === "Strong");
+    if (filter === "strong") return games.filter((game) => game.confidence === "Strong");
     if (filter === "active") return games.filter((game) => !game.is_final && (game.live_home_win_probability !== null || isActive(game.status)));
     return games;
   }, [data, filter]);
 
-  const availableGames = data?.predictions.filter((game) => !game.is_locked) ?? [];
+  const availableGames = data?.predictions ?? [];
   const averageConfidence = availableGames.length
     ? availableGames.reduce((sum, game) => sum + Math.max(game.pregame_home_win_probability, game.pregame_away_win_probability), 0) / availableGames.length
     : 0;
@@ -94,17 +93,17 @@ export function Dashboard({ sport }: { sport: Sport }) {
           <div className="max-w-3xl">
             <div className="mb-5 flex flex-wrap items-center gap-2">
               <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.16em] ${sport === "nfl" ? "border-lime-300/20 bg-lime-300/[0.07] text-lime-200" : "border-cyan-300/20 bg-cyan-300/[0.07] text-cyan-200"}`}>● {config.shortName} intelligence</span>
-              <span className="rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">Pregame picks stay locked</span>
+              <span className="rounded-full border border-white/[0.08] bg-white/[0.025] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.16em] text-neutral-500">Free · Open source · MLB + NFL</span>
             </div>
             <p className={`text-xs font-black uppercase tracking-[0.24em] ${accent}`}>{sport === "nfl" ? "Weekly matchup intelligence" : "Daily matchup intelligence"}</p>
-            <h1 className="mt-3 max-w-3xl text-4xl font-black leading-[0.94] tracking-[-0.06em] text-white sm:text-6xl lg:text-7xl">Know the call. Watch it move.</h1>
-            <p className="mt-5 max-w-2xl text-sm leading-6 text-neutral-400 sm:text-base">Sport IQ preserves the model&apos;s original pregame pick, then layers live probability, market movement, and the verified winner beside it.</p>
+            <h1 className="mt-3 max-w-3xl text-4xl font-black leading-[0.94] tracking-[-0.06em] text-white sm:text-6xl lg:text-7xl">Machine-learning sports predictions.</h1>
+            <p className="mt-5 max-w-2xl text-sm leading-6 text-neutral-400 sm:text-base">Make your picks. Track your record. Compete with the model. Every prediction, explanation, and result is free. No account needed to explore.</p>
           </div>
           <div className="w-full rounded-2xl border border-white/[0.09] bg-white/[0.025] p-4 lg:min-w-[290px]">
-            <div className="flex items-center justify-between"><p className="eyebrow">Your access</p><span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.13em] ${isPro ? "bg-lime-300 text-black" : "bg-white/[0.07] text-neutral-400"}`}>{isPro ? "Pro" : "Free preview"}</span></div>
-            <p className="mt-4 text-sm font-bold text-white">{isPro ? "Full player + team boards" : "5 player samples + team preview"}</p>
-            <p className="mt-2 text-xs leading-5 text-neutral-600">{isPro ? "Every player pick, team pick, and live result refreshes without changing the pregame call." : "Your player samples come from below today’s premium top five."}</p>
-            {!isPro ? <Link href="/pro" className="mt-4 inline-flex text-[10px] font-black uppercase tracking-[0.13em] text-lime-300">Unlock Pro for $3.99 →</Link> : null}
+            <p className="eyebrow">The model comes first</p>
+            <p className="mt-4 text-sm font-bold text-white">Full player + team boards</p>
+            <p className="mt-2 text-xs leading-5 text-neutral-400">Original pregame calls, live movement, and verified results. Create an optional profile to track your own record.</p>
+            <Link href="#team-picks" className="mt-4 inline-flex text-[10px] font-black uppercase tracking-[0.13em] text-lime-300">View today&apos;s predictions →</Link>
           </div>
         </div>
       </section>
@@ -118,13 +117,13 @@ export function Dashboard({ sport }: { sport: Sport }) {
             <button type="button" onClick={() => setDate((value) => shiftDate(value, sport === "nfl" ? 7 : 1))} className="grid min-h-11 min-w-11 place-items-center rounded-lg text-neutral-300 hover:bg-white/[0.07] hover:text-white" aria-label={sport === "nfl" ? "Next week" : "Next date"}>→</button>
           </div>
           <div role="group" aria-label="Filter team picks" className="flex flex-1 gap-2 sm:flex-none">{(["all", "strong", "active"] as GameFilter[]).map((option) => <button key={option} type="button" aria-pressed={filter === option} onClick={() => setFilter(option)} className={`min-h-11 flex-1 rounded-xl border px-3 py-2.5 text-[10px] font-bold uppercase tracking-[0.12em] transition sm:flex-none ${filter === option ? sport === "nfl" ? "border-lime-300/25 bg-lime-300/10 text-lime-200" : "border-cyan-300/25 bg-cyan-300/10 text-cyan-200" : "border-white/[0.08] bg-white/[0.02] text-neutral-400 hover:text-white"}`}>{option}</button>)}</div>
-          {isPro ? <button type="button" onClick={() => void load(true)} disabled={refreshing} className="rounded-xl border border-lime-300/20 px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em] text-lime-300 disabled:opacity-50">{refreshing ? "Updating…" : "Refresh live"}</button> : null}
+          {<button type="button" onClick={() => void load(true)} disabled={refreshing} className="rounded-xl border border-lime-300/20 px-3 py-2.5 text-[10px] font-black uppercase tracking-[0.12em] text-lime-300 disabled:opacity-50">{refreshing ? "Updating…" : "Refresh live"}</button>}
         </div>
       </section>
 
       <p className="sr-only" aria-live="polite">{refreshing ? "Refreshing live predictions" : error ? error : data ? `${data.predictions.length} team predictions loaded` : "Loading predictions"}</p>
 
-      {data && !loading ? <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">{[["Games", String(data.predictions.length)],["Avg. revealed pick", averageConfidence ? `${Math.round(averageConfidence * 100)}%` : "—"],["Strong revealed", String(strongEdges)],["Live access", isPro ? "On" : "Pro"]].map(([label,value]) => <div key={label} className="rounded-2xl border border-white/[0.07] bg-white/[0.022] px-4 py-3"><p className="eyebrow">{label}</p><p className="mt-1 font-mono text-xl font-black text-white">{value}</p></div>)}</section> : null}
+      {data && !loading ? <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">{[["Games", String(data.predictions.length)],["Avg. model confidence", averageConfidence ? `${Math.round(averageConfidence * 100)}%` : "—"],["Strong picks", String(strongEdges)],["Live updates", preferences.liveRefresh ? "On" : "Paused"]].map(([label,value]) => <div key={label} className="rounded-2xl border border-white/[0.07] bg-white/[0.022] px-4 py-3"><p className="eyebrow">{label}</p><p className="mt-1 font-mono text-xl font-black text-white">{value}</p></div>)}</section> : null}
 
       <PlayerPicksSection sport={sport} date={date} />
 

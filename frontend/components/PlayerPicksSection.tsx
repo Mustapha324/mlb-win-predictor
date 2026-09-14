@@ -80,16 +80,6 @@ function TopPickCard({ pick, sport, priority }: { pick: PlayerPick; sport: Sport
   );
 }
 
-function LockedTopCard({ rank, sport }: { rank: number; sport: Sport }) {
-  return (
-    <article className="relative grid min-h-52 place-items-center overflow-hidden rounded-[22px] border border-white/[0.08] bg-[#090909] p-5 text-center">
-      <div className={`absolute inset-x-0 top-0 h-px ${sport === "nfl" ? "bg-gradient-to-r from-transparent via-lime-300/40 to-transparent" : "bg-gradient-to-r from-transparent via-cyan-300/40 to-transparent"}`} />
-      <span className="absolute left-3 top-3 grid h-7 min-w-7 place-items-center rounded-lg border border-white/10 bg-white/[0.04] px-1 font-mono text-xs font-black text-neutral-600">{rank}</span>
-      <div><span className="mx-auto grid h-11 w-11 place-items-center rounded-full border border-lime-300/20 bg-lime-300/[0.07] text-lg text-lime-200">◆</span><p className="mt-3 text-sm font-black text-white">Top-five pick</p><p className="mt-1 text-[10px] leading-4 text-neutral-600">Reserved for Pro and Friends & Family</p></div>
-    </article>
-  );
-}
-
 export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string }) {
   const preferences = useUiPreferences();
   const [data, setData] = useState<PlayerPicksResponse | null>(null);
@@ -129,7 +119,7 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
   }, [data?.hasLiveGames, load, preferences.liveRefresh]);
 
   const loading = !error && (!data || data.date !== date || data.sport !== sport);
-  const topPicks = data?.isPro ? data.picks.filter((pick) => pick.isTopFive).slice(0, 5) ?? [] : [];
+  const topPicks = data?.picks.filter((pick) => pick.isTopFive).slice(0, 5) ?? [];
   const boardPicks = useMemo(() => {
     const picks = data?.picks.filter((pick) => !pick.isTopFive) ?? [];
     const normalized = query.trim().toLowerCase();
@@ -147,7 +137,7 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
     <section id="player-picks" className="mt-9 scroll-mt-28 border-t border-white/[0.08] pt-8" aria-labelledby={`${sport}-player-picks-heading`}>
       <header className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <div className="flex flex-wrap items-center gap-2"><p className={`text-[10px] font-black uppercase tracking-[0.2em] ${accent}`}>{sport.toUpperCase()} player model</p><span className="rounded-md border border-amber-300/25 bg-amber-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-amber-200">Pro</span>{data?.hasLiveGames ? <span className="rounded-full border border-rose-300/20 bg-rose-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-rose-200">● Live</span> : null}</div>
+          <div className="flex flex-wrap items-center gap-2"><p className={`text-[10px] font-black uppercase tracking-[0.2em] ${accent}`}>{sport.toUpperCase()} player model</p>{data?.hasLiveGames ? <span className="rounded-full border border-rose-300/20 bg-rose-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-rose-200">● Live</span> : null}</div>
           <h2 id={`${sport}-player-picks-heading`} className="mt-2 text-3xl font-black tracking-[-0.045em] text-white sm:text-5xl">Player Picks</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-400">Pregame player calls with confidence, model edge, sportsbook consensus when available, live stat progress, and a permanent final result. Picks refresh daily; live games refresh every 30 seconds when enabled.</p>
         </div>
@@ -156,7 +146,6 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
             <Link href="/#player-picks" aria-current={sport === "mlb" ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${sport === "mlb" ? "bg-cyan-300 text-black" : "text-neutral-400 hover:text-white"}`}>MLB</Link>
             <Link href="/nfl#player-picks" aria-current={sport === "nfl" ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${sport === "nfl" ? "bg-lime-300 text-black" : "text-neutral-400 hover:text-white"}`}>NFL</Link>
           </div>
-          {data?.isPro ? <span className="rounded-xl border border-lime-300/20 bg-lime-300/[0.07] px-4 py-3 text-[10px] font-black uppercase tracking-[0.12em] text-lime-200">{data.tier === "friends_family" ? "Family Pro" : "All picks unlocked"}</span> : <Link href="/pro" className="primary-button">Unlock today&apos;s top 5</Link>}
         </div>
       </header>
 
@@ -172,15 +161,14 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
 
       {!loading && !error && data && view === "board" ? (
         <>
-          <div className="mt-6 flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow">Premium board</p><h3 className="mt-1 text-lg font-black text-white">★ Today&apos;s Top 5</h3></div><p className="text-xs text-neutral-600">Ranked before game time · never rewritten</p></div>
+          <div className="mt-6 flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow">Top-ranked board</p><h3 className="mt-1 text-lg font-black text-white">★ Today&apos;s Top 5</h3></div><p className="text-xs text-neutral-600">Ranked before game time · never rewritten</p></div>
           <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
-            {data.isPro ? topPicks.map((pick, index) => <TopPickCard key={pick.id} pick={pick} sport={sport} priority={index === 0} />) : [1, 2, 3, 4, 5].map((rank) => <LockedTopCard key={rank} rank={rank} sport={sport} />)}
+            {topPicks.map((pick, index) => <TopPickCard key={pick.id} pick={pick} sport={sport} priority={index === 0} />)}
           </div>
 
-          {!data.isPro ? <div className="mt-5 flex flex-col gap-3 rounded-[20px] border border-lime-300/15 bg-lime-300/[0.045] p-5 sm:flex-row sm:items-center sm:justify-between"><div><p className="text-sm font-black text-white">Your free board is five picks from ranks 6–10.</p><p className="mt-1 text-xs leading-5 text-neutral-500">The top five and remaining board are withheld server-side. Pro and Friends & Family see every available pick.</p></div><Link href="/pro" className="shrink-0 text-[10px] font-black uppercase tracking-[0.13em] text-lime-300">See all {data.totalPicks || 40} picks →</Link></div> : null}
 
           <div className="mt-7 flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-            <div><p className="eyebrow">Full board</p><h3 className="mt-1 text-lg font-black text-white">{data.isPro ? `${Math.max(0, data.totalPicks - data.topFiveCount)} more player picks` : "Your five free player picks"}</h3></div>
+            <div><p className="eyebrow">Full board</p><h3 className="mt-1 text-lg font-black text-white">{`${Math.max(0, data.totalPicks - data.topFiveCount)} more player picks`}</h3></div>
             <div className="grid gap-2 sm:grid-cols-3">
               <input value={query} onChange={(event) => setQuery(event.target.value)} className="min-h-11 rounded-xl border border-white/[0.09] bg-white/[0.025] px-3 text-xs text-white outline-none placeholder:text-neutral-500 focus:border-white/20" placeholder="Search player or team" aria-label="Search player picks" />
               <select value={market} onChange={(event) => setMarket(event.target.value)} className="min-h-11 rounded-xl border border-white/[0.09] bg-[#090909] px-3 text-xs text-neutral-300" aria-label="Filter by market"><option value="all">All markets</option>{markets.map((item) => <option key={item} value={item}>{item}</option>)}</select>

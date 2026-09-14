@@ -39,14 +39,3 @@ export async function signOut(): Promise<void> {
   redirect("/");
 }
 
-export async function redeemInviteCode(formData: FormData): Promise<void> {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) accountRedirect("error", "Supabase is not configured yet.");
-  const code = String(formData.get("code") ?? "").trim().toUpperCase();
-  if (!code) accountRedirect("error", "Enter an invite code.");
-  const { data, error } = await supabase.rpc("redeem_pro_code", { p_code: code });
-  if (error) accountRedirect("error", error.message);
-  const result = data as { ok?: boolean; message?: string } | null;
-  if (!result?.ok) accountRedirect("error", result?.message ?? "That code could not be redeemed.");
-  accountRedirect("success", "Friends & Family Pro is active permanently.");
-}

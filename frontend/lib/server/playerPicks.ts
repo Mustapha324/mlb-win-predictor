@@ -1,15 +1,14 @@
 import "server-only";
 import type { PlayerPick, PlayerPicksResponse, TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
 import { americanToDecimal, playerPropKey, type PlayerPropQuote } from "@/lib/playerPropOdds";
-import type { AccessState } from "@/lib/server/access";
 import { getPredictions } from "@/lib/server/mlbModel";
 import { getNflPredictions } from "@/lib/server/nflModel";
 import { getPlayerPropMarkets } from "@/lib/server/marketOdds";
 import { ESPN_NFL_BASE, ESPN_NFL_HEADERS, fetchEspnNflSeason } from "@/lib/server/espnNflFeed";
 import {
-  applyPlayerPickAccess,
-  applyResultAccess,
-  FREE_PLAYER_PICK_COUNT,
+  publicPlayerPicks,
+  publicPlayerResults,
+  SECONDARY_PLAYER_PICK_COUNT,
   MAX_PLAYER_PICK_COUNT,
   TOP_PLAYER_PICK_COUNT
 } from "@/lib/server/playerPickAccess";
@@ -375,7 +374,7 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
 function diversify(candidates: Candidate[]): Candidate[] {
   return diversifyBoard(candidates, {
     top: TOP_PLAYER_PICK_COUNT,
-    freePreview: FREE_PLAYER_PICK_COUNT,
+    freePreview: SECONDARY_PLAYER_PICK_COUNT,
     maximum: MAX_PLAYER_PICK_COUNT
   });
 }
@@ -686,7 +685,7 @@ async function enrichLiveResults(picks: PlayerPick[], slate: TodayPredictionsRes
   });
 }
 
-export async function getPlayerPicks(sport: Sport, date: string, access: AccessState, slateOverride?: TodayPredictionsResponse): Promise<PlayerPicksResponse> {
+export async function getPlayerPicks(sport: Sport, date: string, slateOverride?: TodayPredictionsResponse): Promise<PlayerPicksResponse> {
   const slate = slateOverride ?? (sport === "nfl" ? await getNflPredictions(date) : await getPredictions(date));
   let picks = await loadPlayerPickSnapshots(sport, date);
   if (!picks?.length) {
@@ -703,9 +702,9 @@ export async function getPlayerPicks(sport: Sport, date: string, access: AccessS
   const storedResults = await loadRecentPlayerPickResults(sport);
   const performanceSource = storedResults ?? picks.filter((pick) => pick.result !== "pending");
   return {
-    sport, date, updatedAt: new Date().toISOString(), isPro: access.isPro, tier: access.tier,
-    totalPicks: picks.length, topFiveCount: Math.min(TOP_PLAYER_PICK_COUNT, picks.length), freePreviewCount: FREE_PLAYER_PICK_COUNT,
+    sport, date, updatedAt: new Date().toISOString(),
+    totalPicks: picks.length, topFiveCount: Math.min(TOP_PLAYER_PICK_COUNT, picks.length),
     hasLiveGames: picks.some((pick) => pick.status === "live"), performance: calculatePerformance(performanceSource),
-    recentResults: applyResultAccess(performanceSource, access.isPro, 24), picks: applyPlayerPickAccess(picks, access.isPro)
+    recentResults: publicPlayerResults(performanceSource, 24), picks: publicPlayerPicks(picks)
   };
 }

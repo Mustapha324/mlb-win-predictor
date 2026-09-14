@@ -1,4 +1,3 @@
-import { getServerAccess } from "@/lib/server/access";
 import { getPlayerPicks } from "@/lib/server/playerPicks";
 import { isValidPickDate } from "@/lib/server/playerPickScoring";
 import { isSport } from "@/lib/sports";
@@ -15,9 +14,8 @@ export async function GET(request: Request): Promise<Response> {
   const date = query.get("date") ?? easternToday();
   if (!isValidPickDate(date)) return Response.json({ error: "Use a valid date in YYYY-MM-DD format." }, { status: 400 });
   try {
-    const access = await getServerAccess();
-    return Response.json(await getPlayerPicks(sport, date, access), {
-      headers: { "Cache-Control": "private, no-store", Vary: "Cookie" }
+    return Response.json(await getPlayerPicks(sport, date), {
+      headers: { "Cache-Control": "no-store" }
     });
   } catch {
     return Response.json({ error: "Player picks are temporarily unavailable." }, { status: 503, headers: { "Retry-After": "30" } });
