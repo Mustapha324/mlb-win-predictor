@@ -1,0 +1,276 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-14",
+ "capturedAt": "2026-09-14T23:40:41.315Z",
+ "games": [
+  {
+   "gameId": "824308",
+   "gameTimeUtc": "2026-09-15T00:40:00Z",
+   "home": "Colorado Rockies",
+   "away": "San Diego Padres",
+   "probables": {
+    "home": "Tomoyuki Sugano",
+    "away": "Casey Mize"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6117,
+     "count": 9
+    },
+    "away": {
+     "burden": 0.6401,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 10,
+     "streak": -7,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 7,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres placed 1B Ty France on the paternity list.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Diego Padres recalled 2B Mason McCoy from El Paso Chihuahuas.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres activated 1B Ty France from the paternity list.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0014199999999999992
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.012000000000000002
+    }
+   ],
+   "baseProbability": 0.3905,
+   "brainProbability": 0.3883,
+   "tier": "A",
+   "learn": {
+    "baseLogit": -0.579,
+    "inputs": {
+     "injuryGap": 0.02839999999999998,
+     "formWinRate": -0.6000000000000001
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3554,
+    "awayWinProbability": 0.6446,
+    "homeAmericanOdds": 169,
+    "awayAmericanOdds": -207,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34664977"
+   },
+   "anchoredProbability": 0.3635
+  },
+  {
+   "gameId": "823981",
+   "gameTimeUtc": "2026-09-15T01:38:00Z",
+   "home": "Los Angeles Angels",
+   "away": "Seattle Mariners",
+   "probables": {
+    "home": "Reid Detmers",
+    "away": "Kade Anderson"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5983,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.6884,
+     "count": 10
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.004504999999999998
+    }
+   ],
+   "baseProbability": 0.493,
+   "brainProbability": 0.493,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0363,
+    "inputs": {
+     "injuryGap": 0.09009999999999996,
+     "formWinRate": -0.10000000000000003
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5,
+    "awayWinProbability": 0.5,
+    "homeAmericanOdds": -110,
+    "awayAmericanOdds": -110,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34664978"
+   },
+   "anchoredProbability": 0.4982
+  },
+  {
+   "gameId": "825034",
+   "gameTimeUtc": "2026-09-15T01:40:00Z",
+   "home": "Arizona Diamondbacks",
+   "away": "Miami Marlins",
+   "probables": {
+    "home": "Corbin Burnes",
+    "away": "Sandy Alcantara"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4727,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.5534,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks placed 1B Tyler Locklear on the 60-day injured list. Fractured right thumb.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Arizona Diamondbacks selected the contract of 1B Pavin Smith from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled 1B Tyler Locklear from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Arizona Diamondbacks designated LF Lourdes Gurriel Jr. for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled DH Jose Fernandez from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Miami Marlins activated 2B Xavier Edwards from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Miami Marlins placed RF Owen Caissie on the 10-day injured list. Lumbar stress reaction.",
+      "tags": [
+       "injury"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0040349999999999995
+    }
+   ],
+   "baseProbability": 0.5378,
+   "brainProbability": 0.5378,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1971,
+    "inputs": {
+     "injuryGap": 0.0807,
+     "formWinRate": 0.3
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5444,
+    "awayWinProbability": 0.4556,
+    "homeAmericanOdds": -132,
+    "awayAmericanOdds": 110,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34664982"
+   },
+   "anchoredProbability": 0.5428
+  }
+ ]
+}
