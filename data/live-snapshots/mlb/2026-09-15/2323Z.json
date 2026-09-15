@@ -1,0 +1,664 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-15",
+ "capturedAt": "2026-09-15T23:23:34.982Z",
+ "games": [
+  {
+   "gameId": "823007",
+   "gameTimeUtc": "2026-09-15T23:45:00Z",
+   "home": "St. Louis Cardinals",
+   "away": "San Francisco Giants",
+   "probables": {
+    "home": "Andre Pallante",
+    "away": "Blade Tidwell"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4821,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.9091,
+     "count": 21
+    }
+   },
+   "weather": {
+    "tempF": 95.8,
+    "windMph": 7.3,
+    "gustMph": 11.4,
+    "precipProbability": 0.05,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -4,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Number Change",
+      "detail": "RF Jordan Walker changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "LF Bryan Torres changed number to 21.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Selected",
+      "detail": "San Francisco Giants selected the contract of LF Scott Bandura from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.021350000000000004
+    }
+   ],
+   "baseProbability": 0.558,
+   "brainProbability": 0.5621,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3029,
+    "inputs": {
+     "injuryGap": 0.42700000000000005,
+     "formWinRate": 0.09999999999999998
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6145,
+    "awayWinProbability": 0.3855,
+    "homeAmericanOdds": -180,
+    "awayAmericanOdds": 148,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34669955"
+   },
+   "anchoredProbability": 0.6016
+  },
+  {
+   "gameId": "822849",
+   "gameTimeUtc": "2026-09-16T00:05:00Z",
+   "home": "Texas Rangers",
+   "away": "Boston Red Sox",
+   "probables": {
+    "home": "Jacob deGrom",
+    "away": "Patrick Sandoval"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5709,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.7878,
+     "count": 14
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 1
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Texas Rangers activated RHP Nathan Eovaldi from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Texas Rangers activated 3B Josh Jung from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Texas Rangers recalled LF Alejandro Osuna from Round Rock Express.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Number Change",
+      "detail": "SS Ezequiel Duran changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "C Elias Díaz changed number to 21.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox placed 2B Anthony Seigler on the 10-day injured list. Right wrist inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox activated 1B Willson Contreras from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Number Change",
+      "detail": "LHP Jovani Morán changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "RHP Garrett Whitlock changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "LHP Raymond Burgos changed number to 21.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.010845
+    }
+   ],
+   "baseProbability": 0.4569,
+   "brainProbability": 0.4589,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.2249,
+    "inputs": {
+     "injuryGap": 0.21689999999999998,
+     "formWinRate": -0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.562,
+    "awayWinProbability": 0.438,
+    "homeAmericanOdds": -143,
+    "awayAmericanOdds": 118,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34669956"
+   },
+   "anchoredProbability": 0.5364
+  },
+  {
+   "gameId": "824143",
+   "gameTimeUtc": "2026-09-16T00:10:00Z",
+   "home": "Houston Astros",
+   "away": "Kansas City Royals",
+   "probables": {
+    "home": "Hunter Brown",
+    "away": "Michael Wacha"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4345,
+     "count": 5
+    },
+    "away": {
+     "burden": 0.6737,
+     "count": 11
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 1
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Number Change",
+      "detail": "LHP Josh Hader changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Houston Astros placed LF Taylor Trammell on the paternity list.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "DH Yordan Alvarez changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "LF Nelson Velázquez changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "SS Jeremy Peña changed number to 21.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Claimed Off Waivers",
+      "detail": "Kansas City Royals claimed RHP Spencer Bivens off waivers from San Francisco Giants.",
+      "tags": [
+       "trade"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Kansas City Royals recalled RHP Lucas Erceg from Omaha Storm Chasers.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Number Change",
+      "detail": "DH Salvador Perez changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Kansas City Royals activated 3B Maikel Garcia from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Number Change",
+      "detail": "RHP Seth Lugo changed number to 21.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.011959999999999998
+    }
+   ],
+   "baseProbability": 0.5444,
+   "brainProbability": 0.5467,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.2318,
+    "inputs": {
+     "injuryGap": 0.23919999999999997
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5997,
+    "awayWinProbability": 0.4003,
+    "homeAmericanOdds": -168,
+    "awayAmericanOdds": 139,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34669957"
+   },
+   "anchoredProbability": 0.5866
+  },
+  {
+   "gameId": "824307",
+   "gameTimeUtc": "2026-09-16T00:40:00Z",
+   "home": "Colorado Rockies",
+   "away": "San Diego Padres",
+   "probables": {
+    "home": "Kyle Freeland",
+    "away": "Walker Buehler"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5751,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.6401,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 10,
+     "streak": -8,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 9,
+     "lastTenGames": 10,
+     "streak": 8,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Colorado Rockies activated LHP Kyle Freeland from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Colorado Rockies recalled DH Braxton Fulford from Albuquerque Isotopes.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres activated 1B Ty France from the paternity list.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Number Change",
+      "detail": "RHP Mason Miller changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "SS Xander Bogaerts changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "C Luis Campusano changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "3B Manny Machado changed number to 21.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.003250000000000003
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.016
+    }
+   ],
+   "baseProbability": 0.3885,
+   "brainProbability": 0.3855,
+   "tier": "A",
+   "learn": {
+    "baseLogit": -0.5899,
+    "inputs": {
+     "injuryGap": 0.06500000000000006,
+     "formWinRate": -0.8
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3623,
+    "awayWinProbability": 0.6377,
+    "homeAmericanOdds": 164,
+    "awayAmericanOdds": -200,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34669958"
+   },
+   "anchoredProbability": 0.368
+  },
+  {
+   "gameId": "823980",
+   "gameTimeUtc": "2026-09-16T01:38:00Z",
+   "home": "Los Angeles Angels",
+   "away": "Seattle Mariners",
+   "probables": {
+    "home": "Ryan Johnson",
+    "away": "Logan Gilbert"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5983,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.6884,
+     "count": 10
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Number Change",
+      "detail": "CF Mike Trout changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "SS Zach Neto changed number to 21.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Number Change",
+      "detail": "SS J.P. Crawford changed number to 21.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "CF Julio Rodríguez changed number to 21.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.004504999999999998
+    }
+   ],
+   "baseProbability": 0.498,
+   "brainProbability": 0.498,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0105,
+    "inputs": {
+     "injuryGap": 0.09009999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3988,
+    "awayWinProbability": 0.6012,
+    "homeAmericanOdds": 140,
+    "awayAmericanOdds": -169,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34669959"
+   },
+   "anchoredProbability": 0.4232
+  },
+  {
+   "gameId": "825030",
+   "gameTimeUtc": "2026-09-16T01:40:00Z",
+   "home": "Arizona Diamondbacks",
+   "away": "Miami Marlins",
+   "probables": {
+    "home": "Michael Soroka",
+    "away": "Janson Junk"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4727,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.5534,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Arizona Diamondbacks placed 1B Tyler Locklear on the 60-day injured list. Fractured right thumb.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Arizona Diamondbacks selected the contract of 1B Pavin Smith from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled 1B Tyler Locklear from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Arizona Diamondbacks designated LF Lourdes Gurriel Jr. for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Arizona Diamondbacks recalled DH Jose Fernandez from Reno Aces.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Miami Marlins placed RF Owen Caissie on the 10-day injured list. Lumbar stress reaction.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Miami Marlins activated 2B Xavier Edwards from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0040349999999999995
+    }
+   ],
+   "baseProbability": 0.5405,
+   "brainProbability": 0.5405,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.2112,
+    "inputs": {
+     "injuryGap": 0.0807,
+     "formWinRate": 0.3
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5734,
+    "awayWinProbability": 0.4266,
+    "homeAmericanOdds": -150,
+    "awayAmericanOdds": 124,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34669960"
+   },
+   "anchoredProbability": 0.5652
+  }
+ ]
+}
