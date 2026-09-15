@@ -1,0 +1,22 @@
+{
+ "date": "2026-09-14",
+ "graded": [
+  {
+   "challengerProbability": 0.4382,
+   "challengerCorrect": false,
+   "gameId": "401872931",
+   "matchup": "Denver Broncos @ Kansas City Chiefs",
+   "capturedAt": "2026-09-14T23:40:42.233Z",
+   "baseProbability": 0.4179,
+   "brainProbability": 0.4383,
+   "homeWon": true,
+   "score": "10-31",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.5427,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5166,
+   "anchoredCorrect": true
+  }
+ ]
+}
