@@ -1,31 +1,22 @@
-import type { AccessState } from "@/lib/server/access";
 import { getDefaultPredictionDate, getPredictions } from "@/lib/server/mlbModel";
 import { getDefaultNflDate, getNflPredictions } from "@/lib/server/nflModel";
 import { getPlayerPicks, refreshRecentPlayerPickResults } from "@/lib/server/playerPicks";
 import { preservePregameSnapshots } from "@/lib/server/predictionSnapshots";
 import { recordModelRefresh } from "@/lib/server/modelRefresh";
 import type { Sport } from "@/lib/sports";
+import { refreshSocialPickResults } from "@/lib/server/social";
 import { hasValidBearer } from "@/lib/server/requestSecurity";
 
 export const maxDuration = 60;
-
-const SYSTEM_PRO_ACCESS: AccessState = {
-  authenticated: true,
-  isPro: true,
-  tier: "pro",
-  email: null,
-  userId: null,
-  stripeCustomerId: null,
-  subscriptionStatus: "system"
-};
 
 async function refreshSport(sport: Sport) {
   const date = sport === "mlb" ? getDefaultPredictionDate() : getDefaultNflDate();
   try {
     const gradedPlayerPicks = await refreshRecentPlayerPickResults(sport, date, 3);
     const slate = sport === "mlb" ? await getPredictions(date) : await getNflPredictions(date);
-    const players = await getPlayerPicks(sport, date, SYSTEM_PRO_ACCESS, slate);
+    const players = await getPlayerPicks(sport, date, slate);
     await preservePregameSnapshots(slate);
+    const gradedUserPicks = await refreshSocialPickResults(sport);
     await recordModelRefresh(sport, { status: "success", games: slate.predictions.length, playerPicks: players.picks.length });
     return { sport, ok: true, games: slate.predictions.length, playerPicks: players.picks.length, gradedPlayerPicks, modelVersion: slate.model_version };
   } catch (error) {

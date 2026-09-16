@@ -1,0 +1,27 @@
+name: Feature proposal
+description: Propose an improvement to the model or its surrounding experience.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem to solve
+      description: Who benefits, and what cannot they do today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Explain how it fits the existing architecture and keeps predictions free.
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Evidence and validation
+      description: For model work, describe the data source, pregame availability, chronological evaluation, and baseline comparison. For social features, consider privacy and abuse prevention.
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered

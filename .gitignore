@@ -1,2 +1,43 @@
-# Local test captures stay out of main; the Action commits them to the live-snapshots branch.
+# Local credentials: keep only deliberately empty/example templates in Git.
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+.npmrc
+.pypirc
+.netrc
+
+# Dependencies, local databases, caches, and build output.
+node_modules/
+.next/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.tsbuildinfo
+*.log
+*.db
+*.sqlite
+*.sqlite3
+.pytest_cache/
+.coverage
+coverage/
+/frontend/dist/
+/frontend/.wrangler/
+/frontend/out/
+/backend/models/
+/frontend/scripts/.brain-backtest-cache/
+
+# Local tool state and deployment links may contain account metadata.
+.claude/
+.vercel/
+.wrangler/
+/.codex/
+/.agents/
+.DS_Store
+Thumbs.db
+
+# Local captures stay out of code branches; the Action owns live-snapshots.
 /data/live-snapshots/

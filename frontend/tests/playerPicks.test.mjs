@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { applyPlayerPickAccess } from "../lib/server/playerPickAccess.ts";
+import { publicPlayerPicks, publicPlayerResults } from "../lib/server/playerPickAccess.ts";
 import { calculatePerformance, gradePlayerPick, isValidPickDate, mergePlayerPickResults, pickStatus } from "../lib/server/playerPickScoring.ts";
 import { compilePlayerPropQuotes, normalizePlayerName, playerPropKey } from "../lib/playerPropOdds.ts";
 
@@ -60,15 +60,24 @@ test("player picks grade only when a game is final", () => {
   assert.equal(gradePlayerPick("Over", 1.5, null, "postponed"), "void");
 });
 
-test("free access returns only ranks 6 through 10 and never leaks the top five", () => {
+test("guests receive the entire player board, including top five and ranks beyond ten", () => {
   const board = Array.from({ length: 40 }, (_, index) => pick(index + 1));
-  const free = applyPlayerPickAccess(board, false);
-  assert.deepEqual(free.map((item) => item.rank), [6, 7, 8, 9, 10]);
-  assert.equal(free.some((item) => item.rank <= 5), false);
-  assert.equal(applyPlayerPickAccess(board, true).length, 40);
+  const visible = publicPlayerPicks(board);
+  assert.deepEqual(visible, board);
+  assert.equal(visible.length, 40);
+  assert.equal(visible.filter((item) => item.isTopFive).length, 5);
+  assert.equal(visible.some((item) => item.is_locked), false);
 });
 
-test("performance keeps overall and premium top-five accuracy separate", () => {
+test("guest result history preserves top-five and lower-ranked results without altering stored rows", () => {
+  const board = Array.from({ length: 40 }, (_, index) => ({ ...pick(index + 1), is_locked: true }));
+  const visible = publicPlayerResults(board, 24);
+  assert.deepEqual(visible.map((item) => item.rank), Array.from({ length: 24 }, (_, index) => index + 1));
+  assert.equal(visible.some((item) => item.is_locked), false);
+  assert.equal(board.every((item) => item.is_locked), true);
+});
+
+test("performance keeps overall and top-five accuracy separate", () => {
   const results = [
     { ...pick(1), result: "correct" },
     { ...pick(2), result: "incorrect" },

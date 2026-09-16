@@ -3,7 +3,6 @@ import type { PlayerPick, PlayerPicksResponse, TeamPrediction, TodayPredictionsR
 import { americanToDecimal, playerPropKey, type PlayerPropQuote } from "@/lib/playerPropOdds";
 import { americanToPayout } from "@/lib/marketMath";
 import { fairOverProbability } from "@/lib/sportsbookPropParsing";
-import type { AccessState } from "@/lib/server/access";
 import { getSportsbookBoard, type SportsbookPropLine } from "@/lib/server/sportsbookProps";
 import { getNflRosterContexts } from "@/lib/server/nflRoster";
 import { evaluateMlbHitterEligibility, evaluateNflEligibility, type EligibilityVerdict } from "@/lib/server/pickEligibility";
@@ -12,9 +11,9 @@ import { getNflPredictions } from "@/lib/server/nflModel";
 import { getPlayerPropMarkets } from "@/lib/server/marketOdds";
 import { fetchEspnNflSeason, fetchEspnNflSummary } from "@/lib/server/espnNflFeed";
 import {
-  applyPlayerPickAccess,
-  applyResultAccess,
-  FREE_PLAYER_PICK_COUNT,
+  publicPlayerPicks,
+  publicPlayerResults,
+  SECONDARY_PLAYER_PICK_COUNT,
   MAX_PLAYER_PICK_COUNT,
   TOP_PLAYER_PICK_COUNT
 } from "@/lib/server/playerPickAccess";
@@ -575,7 +574,7 @@ async function getMlbPlayerPicks(date: string, slateOverride?: TodayPredictionsR
 function diversify(candidates: Candidate[]): Candidate[] {
   return diversifyBoard(
     candidates,
-    { top: TOP_PLAYER_PICK_COUNT, freePreview: FREE_PLAYER_PICK_COUNT, maximum: MAX_PLAYER_PICK_COUNT },
+    { top: TOP_PLAYER_PICK_COUNT, freePreview: SECONDARY_PLAYER_PICK_COUNT, maximum: MAX_PLAYER_PICK_COUNT },
     { headline: (pick) => pick.headline !== false }
   );
 }
@@ -971,7 +970,7 @@ export async function refreshRecentPlayerPickResults(
   return graded;
 }
 
-export async function getPlayerPicks(sport: Sport, date: string, access: AccessState, slateOverride?: TodayPredictionsResponse): Promise<PlayerPicksResponse> {
+export async function getPlayerPicks(sport: Sport, date: string, slateOverride?: TodayPredictionsResponse): Promise<PlayerPicksResponse> {
   const slate = slateOverride ?? (sport === "nfl" ? await getNflPredictions(date) : await getPredictions(date));
   let picks = await loadPlayerPickSnapshots(sport, date);
   if (!picks?.length) {
@@ -989,13 +988,13 @@ export async function getPlayerPicks(sport: Sport, date: string, access: AccessS
   const storedResults = await loadRecentPlayerPickResults(sport);
   const performanceSource = mergePlayerPickResults(storedResults ?? [], picks);
   return {
-    sport, date, updatedAt: new Date().toISOString(), isPro: access.isPro, tier: access.tier,
-    totalPicks: picks.length, topFiveCount: Math.min(TOP_PLAYER_PICK_COUNT, picks.length), freePreviewCount: FREE_PLAYER_PICK_COUNT,
+    sport, date, updatedAt: new Date().toISOString(),
+    totalPicks: picks.length, topFiveCount: Math.min(TOP_PLAYER_PICK_COUNT, picks.length),
     hasLiveGames: picks.some((pick) => pick.status === "live"), trackingAvailable: hasSupabaseAdminCredentials(), performance: calculatePerformance(performanceSource),
     slatePerformance: calculatePerformance(picks),
     liveSummary: summarizeLive(picks),
-    topFiveLive: access.isPro ? summarizeLive(picks.filter((pick) => pick.isTopFive)) : null,
+    topFiveLive: summarizeLive(picks.filter((pick) => pick.isTopFive)),
     lineProvider: picks.find((pick) => pick.lineSource === "sportsbook_consensus" && pick.sportsbook)?.sportsbook ?? null,
-    recentResults: applyResultAccess(performanceSource, access.isPro, 24), picks: applyPlayerPickAccess(picks, access.isPro)
+    recentResults: publicPlayerResults(performanceSource, 24), picks: publicPlayerPicks(picks)
   };
 }

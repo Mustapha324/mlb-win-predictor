@@ -1,0 +1,31 @@
+name: Bug report
+description: Report a reproducible problem in SportIQ.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not include credentials or private user data. Security issues belong in the private reporting process described in SECURITY.md."
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the actual and expected behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include sport, date, public game ID, route, and whether you were signed in when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Commit/version, browser, device, and local or hosted deployment. Do not paste environment-file contents.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redacted evidence
+      description: Sanitized logs, API status, screenshots, or failing test output.

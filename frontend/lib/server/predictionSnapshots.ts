@@ -1,5 +1,6 @@
 import "server-only";
 import type { TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
+import { syncSocialSlate } from "@/lib/server/social";
 import { confidenceTier } from "@/lib/server/brain/brainScoring";
 import { confidenceLabel, pickOutcome } from "@/lib/servingPolicy";
 import { createSupabaseAdminClient, hasSupabaseAdminCredentials } from "@/lib/supabase/admin";
@@ -70,7 +71,9 @@ export async function preservePregameSnapshots<T extends TodayPredictionsRespons
     home_score: prediction.home_score,
     final_at: new Date().toISOString()
   }).eq("sport", slate.sport).eq("game_id", prediction.gameId)));
-  return { ...slate, predictions: slate.predictions.map((prediction) => snapshots.has(prediction.gameId) ? applySnapshot(prediction, snapshots.get(prediction.gameId)!) : prediction) };
+  const preserved = { ...slate, predictions: slate.predictions.map((prediction) => snapshots.has(prediction.gameId) ? applySnapshot(prediction, snapshots.get(prediction.gameId)!) : prediction) };
+  await syncSocialSlate(preserved);
+  return preserved;
 }
 
 export async function preserveGameSnapshot(prediction: TeamPrediction): Promise<TeamPrediction> {

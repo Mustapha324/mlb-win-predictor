@@ -80,7 +80,6 @@ export type TodayPredictionsResponse = {
   games_trained: number;
   updated_at: string;
   live_updates: boolean;
-  access?: { authenticated: boolean; isPro: boolean; tier: "free" | "pro" | "friends_family" };
   predictions: TeamPrediction[];
 };
 
@@ -210,11 +209,8 @@ export type PlayerPicksResponse = {
   sport: Sport;
   date: string;
   updatedAt: string;
-  isPro: boolean;
-  tier: "free" | "pro" | "friends_family";
   totalPicks: number;
   topFiveCount: number;
-  freePreviewCount: number;
   hasLiveGames: boolean;
   trackingAvailable: boolean;
   performance: PlayerPickPerformance;
