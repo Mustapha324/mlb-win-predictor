@@ -1,6 +1,7 @@
 import "server-only";
 import type { TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
-import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { createSupabaseAdminClient, hasSupabaseAdminCredentials } from "@/lib/supabase/admin";
+import { syncSocialSlate } from "@/lib/server/social";
 
 type SnapshotRow = {
   game_id: string;
@@ -12,7 +13,7 @@ type SnapshotRow = {
 };
 
 function hasAdminConfig(): boolean {
-  return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  return hasSupabaseAdminCredentials();
 }
 
 function applySnapshot(prediction: TeamPrediction, snapshot: SnapshotRow): TeamPrediction {
@@ -67,7 +68,9 @@ export async function preservePregameSnapshots<T extends TodayPredictionsRespons
     home_score: prediction.home_score,
     final_at: new Date().toISOString()
   }).eq("sport", slate.sport).eq("game_id", prediction.gameId)));
-  return { ...slate, predictions: slate.predictions.map((prediction) => snapshots.has(prediction.gameId) ? applySnapshot(prediction, snapshots.get(prediction.gameId)!) : prediction) };
+  const preserved = { ...slate, predictions: slate.predictions.map((prediction) => snapshots.has(prediction.gameId) ? applySnapshot(prediction, snapshots.get(prediction.gameId)!) : prediction) };
+  await syncSocialSlate(preserved);
+  return preserved;
 }
 
 export async function preserveGameSnapshot(prediction: TeamPrediction): Promise<TeamPrediction> {

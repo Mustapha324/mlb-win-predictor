@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { TeamBadge } from "@/components/TeamBadge";
+import { UserPickControls } from "@/components/social/UserPickControls";
 import type { TeamPrediction } from "@/lib/api";
 
 function percent(value: number): string {
@@ -125,6 +126,7 @@ export function GameCard({ game }: { game: TeamPrediction }) {
           Full breakdown <span aria-hidden="true">→</span>
         </Link>
       </div>
+      <UserPickControls game={game} />
     </article>
   );
 }

@@ -1,11 +1,13 @@
 import Link from "next/link";
 import { getServerAccess } from "@/lib/server/access";
 import { signIn, signOut, signUp } from "@/app/account/actions";
+import { safeReturnPath } from "@/lib/authNavigation";
 
 export const metadata = { title: "Your SportIQ account" };
 
-export default async function AccountPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string }> }) {
+export default async function AccountPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string; next?: string }> }) {
   const [access, query] = await Promise.all([getServerAccess(), searchParams]);
+  const next = safeReturnPath(query.next);
   const configured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
   return (
     <main className="mx-auto max-w-5xl">
@@ -31,6 +33,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
           <article id="sign-in" className="sport-panel scroll-mt-28 p-6 sm:p-8">
             <p className="eyebrow">Welcome back</p><h2 className="mt-2 text-2xl font-black text-white">Log in</h2>
             <form action={signIn} className="mt-6 space-y-4">
+              <input type="hidden" name="next" value={next} />
               <label className="block text-xs font-bold text-neutral-300" htmlFor="sign-in-email">Email</label><input id="sign-in-email" name="email" type="email" autoComplete="email" required className="text-input" />
               <label className="block text-xs font-bold text-neutral-300" htmlFor="sign-in-password">Password</label><input id="sign-in-password" name="password" type="password" autoComplete="current-password" required className="text-input" />
               <button type="submit" className="primary-button w-full">Log in</button>
@@ -39,6 +42,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
           <article id="sign-up" className="sport-panel scroll-mt-28 p-6 sm:p-8">
             <p className="eyebrow">New to SportIQ</p><h2 className="mt-2 text-2xl font-black text-white">Create a free account</h2>
             <form action={signUp} className="mt-6 space-y-4">
+              <input type="hidden" name="next" value={next} />
               <label className="block text-xs font-bold text-neutral-300" htmlFor="sign-up-email">Email</label><input id="sign-up-email" name="email" type="email" autoComplete="email" required className="text-input" />
               <label className="block text-xs font-bold text-neutral-300" htmlFor="sign-up-password">Password</label><input id="sign-up-password" name="password" type="password" minLength={8} autoComplete="new-password" required className="text-input" />
               <button type="submit" className="primary-button w-full">Sign up</button>

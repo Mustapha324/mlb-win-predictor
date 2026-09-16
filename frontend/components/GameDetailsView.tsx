@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TeamBadge } from "@/components/TeamBadge";
+import { UserPickControls } from "@/components/social/UserPickControls";
 import { getErrorMessage, getGamePrediction, type TeamPrediction } from "@/lib/api";
 import { SPORTS, type Sport } from "@/lib/sports";
 
@@ -36,6 +37,7 @@ export function GameDetailsView({ id, sport }: { id: string; sport: Sport }) {
 
         {game.is_final && game.actual_winner ? <div className="mt-5 rounded-[22px] border border-white/[0.09] bg-white/[0.035] p-6"><p className="eyebrow">Verified final winner</p><div className="mt-2 flex flex-wrap items-center justify-between gap-3"><p className="text-2xl font-black text-white">{game.actual_winner}</p>{<span className={game.actual_winner === game.pregame_predicted_winner ? "text-emerald-300" : "text-rose-300"}>{game.actual_winner === game.pregame_predicted_winner ? "Pregame pick hit" : "Pregame pick missed"}</span>}</div></div> : null}
         {!game.is_final ? <div className="mt-5 rounded-[22px] border border-lime-300/15 bg-lime-300/[0.045] p-6"><p className="eyebrow">Live layer · never overwrites pregame</p>{game.live_market || game.live_favorite ? <div className="mt-2 flex items-center justify-between"><p className="text-xl font-black text-white">{game.live_market?.favorite ?? game.live_favorite}</p><p className="font-mono text-2xl font-black text-lime-300">{percent(game.live_market ? Math.max(game.live_market.homeWinProbability, game.live_market.awayWinProbability) : Math.max(game.live_home_win_probability ?? 0.5, game.live_away_win_probability ?? 0.5))}</p></div> : <div className="mt-3 flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-neutral-500">Live movement will appear when game data is available.</p></div>}</div> : null}
+        <UserPickControls game={game} />
       </section>
     </main>
   );
