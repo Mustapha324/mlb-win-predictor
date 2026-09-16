@@ -1,166 +1,228 @@
-# Sport IQ
+# SportIQ
 
-Sport IQ is a black/dark multi-sport prediction platform for MLB and NFL. It keeps every pregame prediction locked separately from live probability movement, optional sportsbook consensus, and the verified final winner.
+**Machine-learning sports predictions. Make your picks. Track your record. Compete with the model.**
 
-## Product features
+SportIQ is a free, MIT-licensed MLB and NFL prediction platform. Anyone can view game probabilities, player picks, explanations, historical results, and model performance without signing in. Optional Supabase accounts add public profiles, personal records, friends, and pick tailing.
 
-- MLB daily and NFL weekly modes with one shared interface
-- Separate chronological MLB and NFL models, metrics, history, teams, game detail, and final results
-- Immutable pregame prediction snapshots in Supabase; live updates cannot overwrite the original call
-- Live score-based win probabilities for Pro and optional live moneyline consensus through The Odds API
-- Up to 40 MLB/NFL Player Picks ranked by calibrated confidence and captured value, with a premium Top 5
-  - MLB: hits, total bases, home runs, RBIs, and pitcher strikeouts
-  - NFL: passing/rushing/receiving yards, receptions, and touchdowns when official leader feeds expose them
-- Secure Supabase email/password accounts and profiles
-- Stripe Checkout subscription prepared at $3.99/month, verified webhooks, and customer billing portal
-- Five one-time Friends & Family codes stored only as SHA-256 hashes and redeemed atomically in Postgres
-- Responsive, accessible true-black UI with mobile navigation, saved display preferences, legal pages, and Discord community access
+The model is the centerpiece: **model → game predictions → your picks → comparison with the model → friends → community**. There are no subscription tiers or paid prediction limits. Operators may incur hosting or optional data-provider costs.
 
-## Free and Pro
+> Before publishing an existing deployment's repository, complete the credential and history cleanup in [the transition audit](docs/open-source-transition.md). Deleting a file from the current branch does not erase its history.
 
-| Capability | Free | Pro ($3.99/month) |
-|---|---|---|
-| Team predictions | Half-slate preview; remaining cards redacted and blurred | Entire slate |
-| Pregame call | Visible on preview games | Visible on every game |
-| Live win probability | Not returned by the API | 30-second updates during live games |
-| Live market consensus | Not returned by the API | Available when `THE_ODDS_API_KEY` is configured |
-| Player Picks | Five samples from ranks 6–10 (never the premium Top 5) | Up to 40 with the Top 5, captured odds, confidence, supporting stats, and explanation |
-| History and final winners | Included | Included |
-| Billing management | N/A | Stripe customer portal |
+## Screenshots
 
-Entitlements are applied in server routes. Anonymous/free responses have live fields removed, locked team predictions redacted, and receive only Player Picks 6–10 before JSON reaches the browser.
+The existing dark analytics interface is retained. These are intentional screenshot placeholders; capture the final running application without personal data before replacing them.
 
-## Architecture
+| Capture | What to show |
+| --- | --- |
+| Games dashboard | MLB/NFL probabilities, model/market context, and guest access |
+| Profile / My Stats | Records, streaks, sport splits, and comparison on the same graded games |
+| Friends | Requests, friends' pregame picks, and tailing |
+| Mobile | Game cards and navigation at a narrow viewport |
+
+## Features
+
+- Public MLB daily and NFL weekly slates, game detail, pregame probabilities, live score-based estimates, previous results, and model methodology.
+- Separate model and market probabilities, transparent market anchoring when a valid pregame quote is available, and a model-only fallback.
+- MLB/NFL player picks with supporting statistics and explicit line/price sources; optional DFS alignment and market data.
+- Write-once model snapshots, separate from live movement and final scores.
+- Optional accounts with unique usernames, display names, preset avatars, favorite teams, join dates, and public pick records.
+- One personal winner selection per game; edits/removals are allowed only before the authoritative deadline. PostgreSQL enforces the lock.
+- Automatic win/loss/push/void grading, cached personal statistics, last ten decisions, streaks, sport splits, and model agreement comparisons.
+- Friend requests, acceptance/decline/removal, pregame friend picks, consensus, a pick activity feed, and independent tail snapshots with attribution.
+- Community/friend leaderboards for MLB, NFL, and overall records, requiring 20 decisive graded picks in the selected category.
+- Responsive dark UI, loading/empty/error states, and a useful public experience without optional credentials.
+
+## Architecture and stack
 
 ```text
-frontend/
-  app/                         Next.js App Router pages and server routes
-  components/                  Shared sport-neutral dashboard and cards
-  lib/server/mlbModel.ts       MLB chronological replay/model
-  lib/server/nflModel.ts       Production 15-season NFL model + current replay
-  lib/server/playerPicks.ts    MLB/NFL Player Picks ranking
-  lib/server/marketOdds.ts     Optional team and player-prop market consensus
-  lib/server/predictionSnapshots.ts  Immutable Supabase pregame writes
-  lib/server/entitlements.ts   Free/Pro server-side redaction
-  lib/supabase/                Cookie-aware and service-role clients
-backend/
-  app/services/                Existing MLB research pipeline
-  app/services/nfl/            Leakage-safe NFL team/player pipelines
-  scripts/build_nfl_dataset.py NFL research dataset and training entrypoint
-  scripts/train_nfl_history.py Production 15-season artifact trainer
-supabase/migrations/           Database, RLS, invite redemption, initial hashes
+Public sports feeds + versioned model artifacts
+                       |
+             Next.js server routes
+              /                 \
+     Public predictions      Supabase Auth + PostgreSQL
+            |                private account history
+      React interface        public social profiles
+                             locked picks, friends, cached stats
+
+Offline Python trainers --> frontend/data/*.json
 ```
 
-The production Next.js app is self-contained and continues to deploy on Vercel. The FastAPI backend is an offline/research pipeline and is not required by the deployed dashboard.
+| Area | Implementation |
+| --- | --- |
+| Deployed product | `frontend/`: Next.js 16 App Router, React 19, TypeScript, Tailwind CSS |
+| Server logic | `frontend/lib/server/`: models, context, picks, odds, snapshots, social operations |
+| Serving policy | `frontend/lib/servingPolicy.ts` and `marketMath.ts`: model/market combination and result status |
+| Database/auth | Supabase Auth, PostgreSQL, RLS, restricted RPC functions |
+| Research | `backend/`: Python, FastAPI, pandas, NumPy, scikit-learn, SQLAlchemy |
+| Hosting/jobs | Vercel deployment/daily refresh; GitHub Actions public pregame capture |
+| Tests | Node test runner, Python unittest, SQL/database verification |
+
+The deployed app is self-contained. It never imports or deploys the Python backend. See [docs/MAP.md](docs/MAP.md) for entry points and [CONTRIBUTING.md](CONTRIBUTING.md) for repository rules.
+
+## Prediction methodology
+
+### Production MLB model
+
+`frontend/lib/server/mlbModel.ts` loads `frontend/data/model-snapshot.json`. A portable logistic model uses standardized pregame features: Elo log-odds, season win-percentage difference, last-ten form, run differential per game, and home/away split difference. Team state is updated after processing completed games. Current probable-pitcher ERA/WHIP can add a bounded adjustment.
+
+The committed artifact covers 2006–2025 and records 47,113 completed regular-season games. Portable coefficients are fitted through 2024; 2025 is reserved for evaluation. Elo hyperparameters use the earlier validation season. `backend/scripts/build_recent_results_dataset.py` builds the dataset and artifact from MLB's public schedule/results endpoint.
+
+### Production NFL model
+
+`frontend/lib/server/nflModel.ts` loads `frontend/data/nfl-model-v2.json`, generated by `backend/scripts/train_nfl_history.py`. The trainer fits regularized logistic coefficients from pregame Elo strength, home field, record, recent form, scoring margin, and rest. Current schedules/results come from ESPN; historical training uses the nflverse `nfldata` schedule/results CSV.
+
+The committed artifact includes 3,906 non-tied regular/postseason games across 2011–2025. It stores season-entry checkpoints, including a 2025 checkpoint fitted on earlier seasons and a 2026 checkpoint fitted through 2025. It is not a neural network and does not use the separate research pipeline's player regressors.
+
+### Serving policy and market evidence
+
+For either sport, a valid pregame market quote changes the served probability to a **25% model / 75% market blend in logit space**, not a simple percentage average. The response retains separate model/market probabilities and labels the source. Without a valid quote the model stands alone. An in-play quote does not replace an original pregame snapshot. Moneylines can come from the public ESPN feed; The Odds API is an optional additional provider.
+
+The [NFL serving-layer study](docs/backtests/ensemble.md) reports the fixed blend at **739–345, 68.2%, log loss 0.6116 across 1,084 games from 2022–2025**, compared with closing market **732–352, 67.5%, log loss 0.6082**. Those are retrospective results using closing lines; they do not prove the same performance at earlier pick timestamps or for MLB. The study's fitted blend preferred a zero model share; the shipped fixed 25% share is a separate serving-policy choice. Read the study's uncertainty estimates rather than treating its hit rate as a guarantee.
+
+### Evaluation and limits
+
+These are stored base-model artifact results, not a new evaluation run for the free/social transition:
+
+| Base model | Holdout | Correct / games | Accuracy | Brier score | Log loss |
+| --- | --- | --- | --- | --- | --- |
+| MLB `diamond-elo-v4` | 2025 | 1,373 / 2,434 | 56.4092% | 0.244003 | 0.680956 |
+| NFL `nfl-history-logit-v2` | 2025 | 176 / 271 | 64.94464944649446% | 0.2221697932941546 | 0.6340074339886882 |
+
+Values come directly from the committed JSON artifacts. The NFL artifact evaluation differs slightly from the later serving-layer replay; they are distinct reports, not interchangeable claims. Base-model evaluations do not independently validate every current pitcher adjustment, live probability estimate, or player market.
+
+Game Brain serves **shadow** matchup context: injuries, form, weather, venue, team context, news, and bounded experimental adjustments. Its endpoint does not alter the published game prediction. Scoring weights and experiments are recorded in `docs/backtests/`; changes require walk-forward backtesting against the configured baseline and an append-only decision.
+
+Player picks use projections/ranking heuristics from public season/recent statistics, matchup context, capped confidence, and count-market calculations where applicable. ESPN republishes sportsbook player lines; NFL price lookup is best-effort and can remain pending if the upstream provider refuses a request. NFL eligibility checks current roster/depth/injury context, with conservative box-score fallback when unavailable. Preseason box scores are excluded from regular-season form. Model-estimated lines are labeled when a real line is unavailable. A confidence label is not proof of independent statistical calibration for every market.
+
+The offline research modules separately implement scikit-learn logistic regression with imputation/scaling and probability calibration; NFL player research uses histogram gradient boosting regression. Their chronological outer holdouts do not imply that every internal calibration fold is time-series cross-validation. These research estimators are not deployed as the portable models above.
+
+## Data pipeline and jobs
+
+1. Server routes fetch MLB/ESPN schedules and completed results, replay team state, and score a slate. Optional market quotes inform the serving policy.
+2. Supabase preserves the original model call with an insert-only upsert. Later finals update only result columns; live movement cannot rewrite the original call.
+3. Social registration uses the trusted sports pipeline and preserved model call. Authenticated pick writes store the user's selection and a model snapshot; browser-supplied deadlines/probabilities/user IDs are not authoritative.
+4. `/api/cron/daily-refresh`, protected by `CRON_SECRET`, runs daily at **09:05 UTC** through `frontend/vercel.json`. It refreshes state/player picks and retries grading pending user games. This is state replay, not daily retraining of the larger offline models.
+5. `.github/workflows/live-capture.yml` captures public pregame evidence every two hours across configured US game windows. It writes to the `live-snapshots` data branch, never the application branch.
+
+Unresolved or missing results stay pending for retry. Postponed/cancelled games are voided; completed ties are pushes. Grading is bounded to batches and is not guaranteed to occur immediately after a game ends. Prediction reads can also register final results through the snapshot synchronization hook.
+
+## Accounts, privacy, and social rules
+
+Sign-in is required only for account actions; prediction viewing does not redirect guests to login. Historical `profiles` and billing columns remain private. The social migration adds `social_profiles`, `social_games`, `user_picks`, `friendships`, and `social_stats`. Existing users keep their Supabase identity and opt into a public username/profile. Avatars are preset icons; arbitrary image uploads are not implemented.
+
+Public profile JSON contains only intended public fields/statistics, never email, authentication tokens, billing fields, or Supabase user IDs. Pick identifiers are returned when necessary for tailing.
+
+- Owners and accepted friends can see submitted picks before a game. Others see them after lock. Community consensus counts locked picks; friend consensus can include eligible pregame submissions.
+- PostgreSQL serializes game registration and pick writes, checks its clock, and rejects late creation/editing/deletion. Once the earliest authoritative start is reached, a later reschedule does not reopen picks.
+- Tailing copies a friend's selection and attribution at that moment. Later source edits/deletion do not change the copy.
+- Wins/losses form the win-rate denominator; pushes/voids are separate. A zero-game rate is unavailable, not 0%.
+- Model comparisons use saved model calls on the user's own graded games, not an unrelated overall model sample.
+- Statistics refresh on mutations/grading and are cached in `social_stats`. Leaderboard ordering is win percentage, graded sample size, then username, with at least 20 decisive graded picks per category.
+- The feed is derived from friends' picks. General posting, messaging, comments, and synthetic daily-summary events are not implemented.
+
+`/api/social` read views are `me`, `profile`, `picks`, `friends`, `feed`, `leaderboard`, `search`, and `game`; write actions are `profile`, `pick`, `deletePick`, `tail`, and `friend`. The API validates sessions/origin and restricted database functions independently enforce ownership/deadlines.
 
 ## Local development
 
-Requirements: Node.js 22.13+ and npm.
+Requirements: **Node.js 22.13+** and npm. Python 3.10+ is needed only for offline training/backend tests. Public prediction-only development needs no credentials, but it does need network access to the public sports feeds.
 
-```bash
-cd frontend
-npm install
-copy .env.example .env.local
+```sh
+git clone https://github.com/Mustapha324/mlb-win-predictor.git
+cd mlb-win-predictor/frontend
+npm ci
+```
+
+Copy `.env.example` to `.env.local` (`Copy-Item .env.example .env.local` in PowerShell, or `cp .env.example .env.local` on macOS/Linux), then:
+
+```sh
 npm run dev
 ```
 
-Open <http://localhost:3000>. With no external credentials the live MLB/NFL public-data experience still loads, while accounts, durable snapshots, billing, and sportsbook consensus show their safe unconfigured states.
+Open [localhost:3000](http://localhost:3000). Leave optional keys blank until setting up their services. If the repository is still private, cloning requires access or your own fork.
 
-Production checks:
+### Environment variables
 
-```bash
-cd frontend
+Use [frontend/.env.example](frontend/.env.example). Never commit a populated environment file.
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_APP_URL` | Public authentication base URL; local default `http://localhost:3000` |
+| `NEXT_PUBLIC_SUPABASE_URL` | Optional Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase publishable key or supported legacy anon key; intentionally public |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only secret (`sb_secret_…`) or supported legacy service-role key; publishable keys are invalid here |
+| `CRON_SECRET` | Server-only bearer token authorizing daily refresh |
+| `THE_ODDS_API_KEY` | Optional server-only paid odds provider key |
+| `THE_ODDS_API_BASE_URL` | Optional provider base URL; default in the example |
+| `ODDS_REGIONS` | Optional market region, default `us` |
+| `DFS_BOARDS` | Set `off` to disable paid per-event DFS board requests; example default is `off` |
+| `DFS_BOARD_MAX_EVENTS` | Maximum DFS events per sport, default 16 |
+| `SPORTSBOOK_PROPS` | Set `off` to disable the public sportsbook player-prop board |
+| `BRAIN` | Set `off` to disable the shadow Game Brain endpoint |
+
+`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, and `STRIPE_PRO_PRICE_ID` are no longer used. Remove them from local/hosted environments after completing the billing shutdown checklist.
+
+### Database setup
+
+Start with a local or staging Supabase project. Apply these migrations **in order** through your Supabase migration workflow or SQL editor; existing installations apply only migrations not already recorded/applied:
+
+1. `202608160001_sport_iq_accounts_pro.sql` — historical accounts, snapshots, private billing schema.
+2. `202608170001_player_pick_snapshots.sql` — player-pick persistence.
+3. `202608240001_player_pick_market_odds.sql` — captured market fields.
+4. `202609140001_free_social_platform.sql` — social profiles/picks/friends/stats, restricted RPCs, and deactivation of client entitlement mutation.
+
+The original migration name is historical; it does not restore a paywall in the current app. Never delete or rewrite applied migrations. Back up existing databases before upgrades. Validate migrations and authorization with anonymous and two authenticated users in a disposable database before production rollout.
+
+Configure the public Supabase URL/publishable key and server-only secret. Set the Auth Site URL and allow the relevant `/auth/callback` URLs for local/staging/production. Keep production email confirmation enabled and configure email delivery as needed. Without database setup, predictions still work and social controls show an unavailable/setup state.
+
+### Checks
+
+From `frontend/`:
+
+```sh
+npm test
 npm run lint
 npx tsc --noEmit
 npm run build
 ```
 
-## Environment variables
+From the repository root:
 
-Copy `frontend/.env.example` to `frontend/.env.local`. Never commit the populated file.
-
-| Variable | Required for | Visibility |
-|---|---|---|
-| `NEXT_PUBLIC_APP_URL` | Auth redirects and Stripe return URLs | Public |
-| `CRON_SECRET` | Authorizes the daily model/picks refresh | Server secret |
-| `NEXT_PUBLIC_SUPABASE_URL` | Accounts and database | Public |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Browser/server user session | Public |
-| `SUPABASE_SERVICE_ROLE_KEY` | Webhooks and immutable snapshot writes; use an `sb_secret_` key or legacy `service_role` JWT, never a publishable key | Server secret |
-| `STRIPE_SECRET_KEY` | Checkout and customer portal | Server secret |
-| `STRIPE_WEBHOOK_SECRET` | Signature verification | Server secret |
-| `STRIPE_PRO_PRICE_ID` | $3.99/month recurring price | Server config |
-| `THE_ODDS_API_KEY` | Live bookmaker consensus | Server secret, optional |
-| `THE_ODDS_API_BASE_URL` | Odds provider base URL | Server config, optional |
-| `ODDS_REGIONS` | Market region (default `us`) | Server config, optional |
-
-## Daily model and picks refresh
-
-`frontend/vercel.json` schedules `/api/cron/daily-refresh` every day at 09:05 UTC. The secured job replays completed results, refreshes current MLB/NFL state and player features, produces up to 40 Player Picks, preserves immutable pregame snapshots, and records its status in `model_refresh_runs`. Set `CRON_SECRET` in Vercel so only the scheduler can invoke the route.
-
-Sport IQ retrains the larger offline research models when a new validated historical dataset is published; the deployed inference state and current-player features update daily without mixing future results into earlier predictions.
-
-## Supabase setup
-
-1. Create a Supabase project.
-2. Open the SQL Editor and run the files in `supabase/migrations/` in timestamp order, including the player-pick snapshot and market-odds migrations.
-3. Copy the project URL, anon key, and service role key into local/Vercel environment variables.
-4. In Authentication → URL Configuration, set the Site URL to the deployed URL and add `https://YOUR_DOMAIN/auth/callback` as a redirect URL.
-5. Keep email confirmation enabled for production.
-
-The migration creates profiles, favorite teams, saved predictions, immutable prediction snapshots, hashed promo codes, row-level security, and a security-definer redemption function. Users cannot update their own access tier.
-
-## Stripe setup summary
-
-Create one recurring monthly Stripe Price for **$3.99 USD**, then set its `price_...` value as `STRIPE_PRO_PRICE_ID`. Add a webhook endpoint at:
-
-```text
-https://YOUR_DOMAIN/api/webhooks/stripe
+```sh
+python -m unittest discover -s backend/tests -v
 ```
 
-Subscribe it to `checkout.session.completed`, `customer.subscription.updated`, and `customer.subscription.deleted`. Put its `whsec_...` signing secret in `STRIPE_WEBHOOK_SECRET`. Detailed dashboard steps are included in the implementation handoff.
+Use a running server to verify UI/routes and a disposable PostgreSQL/Supabase database to verify migrations and authorization. A build alone is not end-to-end evidence. Model changes also require `npm run backtest` and an experiment-ledger decision.
 
-## Live odds
+### Offline research and artifact regeneration
 
-Set `THE_ODDS_API_KEY` to enable de-vigged consensus from available US moneyline books and event-level player-prop markets. For props, Sport IQ selects the most widely posted line, blends the no-vig market probability into confidence, and saves the best captured payout for the selected side. Without a key, the clearly labeled conservative model line remains available.
-
-## NFL training pipeline
-
-The production runtime uses `frontend/data/nfl-model-v2.json`, trained chronologically on **15 complete seasons (2011–2025)**. It learns calibrated weights for franchise strength, home field, record, recent form, scoring margin, and rest. The 2025 season is held out for the published evaluation, then included when creating the 2026 season-entry checkpoint.
-
-Regenerate the compact production artifact from the public nflverse schedule/results source after a completed season:
-
-```bash
-cd backend
-python scripts/train_nfl_history.py --end-season 2025 --seasons 15
-```
-
-The richer research pipeline accepts normalized team and player game files:
-
-- Team-game CSV: `game_id, season, week, gameday, team, opponent, home, won, points_for, points_against`; optional pass/rush yards, turnovers, sacks, third-down rate, red-zone rate, QB EPA, injuries, and weather columns are supported.
-- Player-game CSV: `game_id, season, week, gameday, player_id, player_name, position, team, opponent`; include passing/rushing/receiving yards, touchdowns, interceptions, completions, attempts, targets, and receptions.
-
-Run:
-
-```bash
-cd backend
+```sh
+# From backend/: optional research API, never deployed with the product
+python -m venv .venv
+# Activate .venv for your shell, then:
 pip install -r requirements.txt
-python scripts/build_nfl_dataset.py \
-  --team-games path/to/team_games.csv \
-  --player-games path/to/player_games.csv \
-  --start-season 2011 \
-  --end-season 2025
-```
+uvicorn app.main:app --reload
 
-The builder refuses to train when any of the 15 seasons is missing. It uses shifted rolling windows for recent form and season performance, shifted player-vs-opponent history, strength of schedule, rest, home/away splits, point differential, and head-to-head records. The latest season is held out chronologically. It writes calibrated win probabilities plus accuracy, Brier score, log loss, player-projection MAE, artifacts, and feature lists under `backend/models/nfl/`.
+# From backend/: regenerate the NFL artifact after completed seasons
+python scripts/train_nfl_history.py --end-season 2025 --seasons 15
 
-## MLB data refresh
-
-The portable MLB snapshot is produced from completed seasons, with the current season replayed live:
-
-```bash
+# From the repository root: rebuild MLB data/artifact
 python backend/scripts/build_recent_results_dataset.py --start-season 2006 --end-season 2025
 ```
 
-## Data and trademarks
+Training commands fetch data and overwrite generated artifacts. Run them intentionally, inspect evaluation output, and follow the backtest protocol before proposing changes. See [backend/README.md](backend/README.md) for richer research inputs.
 
-Schedules, scores, player statistics, team information, and probable pitchers come from public MLB and ESPN endpoints. Historical NFL model training uses the nflverse `nfldata` schedules/results dataset under its CC BY 4.0 license; the source URL is recorded in the generated artifact. Sports data and trademarks remain the property of their respective owners. Sport IQ is independent and uses original text-and-color identifiers. Predictions and player picks are informational—not betting advice.
+## Deployment
+
+Deploy `frontend/` as the Vercel project root with the Next.js preset and Node.js 22.13+. Run the checks first. Configure each environment, apply the database migration to staging, validate social flows, then promote the same code with the production database upgrade. Preserve the cron configuration and set a new `CRON_SECRET`.
+
+Keep `backend/` offline. Do not deploy the legacy `frontend/dist/` or `.wrangler/` build experiment. Scope live-capture writes to its data branch. Removing billing code does not cancel existing Stripe subscriptions; follow [the manual transition/publication checklist](docs/open-source-transition.md).
+
+## Contributing and security
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, branch conventions, testing, and model expectations. Report vulnerabilities privately as described in [SECURITY.md](SECURITY.md). Never paste credentials into issues or pull requests.
+
+## License, data, and disclaimer
+
+SportIQ's software uses the [MIT License](LICENSE). Upstream data, feeds, images, team names, and trademarks retain their ownership and terms; this software license does not grant redistribution rights to them. Historical NFL training records its nflverse source in the artifact. Review upstream terms before operating a public deployment or redistributing data.
+
+SportIQ is an independent analytics project. Predictions are uncertain educational/entertainment estimates, not betting or financial advice. Historical performance does not guarantee future results. Wager placement, deposits, and payments are not part of the application.

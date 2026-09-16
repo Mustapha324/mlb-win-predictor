@@ -120,14 +120,14 @@ begin
   select public.social_record(p_user) || jsonb_build_object(
     'total',count(*),'mlb',public.social_record(p_user,'mlb'),'nfl',public.social_record(p_user,'nfl'),
     'last10',public.social_record(p_user,null,10),'currentStreak',v_current,'bestStreak',v_best,
-    'agreementPercentage',public.social_percentage(count(*) filter(where selection=model_selection),count(*) filter(where selection<>model_selection)),
+    'agreementPercentage',public.social_percentage(count(*) filter(where selection=model_selection and result in ('WIN','LOSS')),count(*) filter(where selection<>model_selection and result in ('WIN','LOSS'))),
     'modelWinPercentage',public.social_percentage(count(*) filter(where model_correct=true),count(*) filter(where model_correct=false)),
     'agreeWinPercentage',public.social_percentage(count(*) filter(where selection=model_selection and result='WIN'),count(*) filter(where selection=model_selection and result='LOSS')),
     'disagreeWinPercentage',public.social_percentage(count(*) filter(where selection<>model_selection and result='WIN'),count(*) filter(where selection<>model_selection and result='LOSS')),
     'tails',coalesce((select jsonb_agg(t) from (
       select tailed_username as username,count(*) filter(where result='WIN') as wins,count(*) filter(where result='LOSS') as losses,
         public.social_percentage(count(*) filter(where result='WIN'),count(*) filter(where result='LOSS')) as "winPercentage"
-      from public.user_picks where user_id=p_user and tailed_username is not null group by tailed_username order by count(*) desc
+      from public.user_picks where user_id=p_user and tailed_username is not null and result in ('WIN','LOSS') group by tailed_username order by count(*) desc
     ) t),'[]'::jsonb)) into v_stats from public.user_picks where user_id=p_user;
   insert into public.social_stats(user_id,stats) values(p_user,v_stats)
     on conflict(user_id) do update set stats=excluded.stats,updated_at=clock_timestamp();
@@ -150,7 +150,7 @@ language sql stable security definer set search_path = public as $$
   from public.social_profiles p left join public.social_stats s using(user_id) where p.user_id=p_user
 $$;
 
-create function public.social_pick_dto(p public.user_picks) returns jsonb
+create function public.social_pick_dto(p public.user_picks,p_viewer uuid default auth.uid()) returns jsonb
 language sql stable security definer set search_path = public as $$
   select jsonb_build_object('id',p.id,'username',u.username,'displayName',u.display_name,'avatar',u.avatar,
     'sport',p.sport,'gameId',p.game_id,'homeTeam',g.home_team,'awayTeam',g.away_team,'selection',p.selection,
@@ -158,7 +158,7 @@ language sql stable security definer set search_path = public as $$
     'startsAt',least(p.starts_at,g.starts_at),'createdAt',p.created_at,'updatedAt',p.updated_at,
     'locked',least(p.starts_at,g.starts_at)<=clock_timestamp() or g.status<>'scheduled',
     'result',p.result,'correct',case when p.result='WIN' then true when p.result='LOSS' then false else null end,
-    'tailedFrom',p.tailed_username,'sourcePickId',p.source_pick_id,'tailedAt',p.tailed_at,'isOwn',coalesce(p.user_id=auth.uid(),false))
+    'tailedFrom',p.tailed_username,'sourcePickId',p.source_pick_id,'tailedAt',p.tailed_at,'isOwn',coalesce(p.user_id=p_viewer,false))
   from public.social_profiles u,public.social_games g where u.user_id=p.user_id and g.sport=p.sport and g.game_id=p.game_id
 $$;
 
@@ -186,17 +186,18 @@ begin
     graded_at=clock_timestamp()
   where sport=v_game.sport and game_id=v_game.game_id and result='PENDING';
   get diagnostics v_count = row_count;
-  for v_user in select distinct user_id from public.user_picks where sport=v_game.sport and game_id=v_game.game_id loop
+  for v_user in select distinct user_id from public.user_picks where sport=v_game.sport and game_id=v_game.game_id order by user_id loop
     perform public.social_refresh_stats(v_user);
   end loop;
   return v_count;
 end $$;
 
-create function public.social_write(p_action text,p_payload jsonb default '{}'::jsonb) returns jsonb
+create function public.social_write(p_action text,p_payload jsonb default '{}'::jsonb,p_actor uuid default null) returns jsonb
 language plpgsql security definer set search_path = public as $$
-declare v_user uuid:=auth.uid(); v_other uuid; v_game public.social_games%rowtype; v_source public.user_picks%rowtype;
+declare v_user uuid:=case when auth.role()='service_role' then p_actor else auth.uid() end; v_other uuid; v_game public.social_games%rowtype; v_source public.user_picks%rowtype;
   v_pick public.user_picks%rowtype; v_selection text; v_sport text; v_game_id text; v_username text; v_operation text;
 begin
+  if p_actor is not null and coalesce(auth.role(),'')<>'service_role' then raise exception 'You cannot act for another account.' using errcode='28000'; end if;
   if v_user is null then raise exception 'Sign in to use account features.' using errcode='28000'; end if;
   if p_action='profile' then
     v_username:=lower(trim(p_payload->>'username'));
@@ -227,6 +228,10 @@ begin
     return public.social_profile_dto(v_other);
   end if;
   if p_action not in ('pick','deletePick','tail') then raise exception 'Unknown account action.'; end if;
+  -- Pick mutations must come through the server after a fresh authoritative
+  -- pipeline lookup. Calling this RPC directly cannot reuse a stale game row or
+  -- bypass that lookup. The actor is set from auth.getUser(), never request JSON.
+  if coalesce(auth.role(),'')<>'service_role' then raise exception 'Submit picks through SportIQ so game availability can be verified.' using errcode='42501'; end if;
   if p_action='tail' then
     select * into v_source from public.user_picks where id=(p_payload->>'pickId')::uuid;
     if v_source.id is null or not public.social_are_friends(v_user,v_source.user_id) then raise exception 'Only current friends can tail a pick.'; end if;
@@ -259,7 +264,7 @@ begin
     tailed_from=excluded.tailed_from,tailed_username=excluded.tailed_username,source_pick_id=excluded.source_pick_id,tailed_at=excluded.tailed_at
   returning * into v_pick;
   perform public.social_refresh_stats(v_user);
-  return public.social_pick_dto(v_pick);
+  return public.social_pick_dto(v_pick,v_user);
 exception when unique_violation then raise exception 'That username is already taken.';
 end $$;
 
@@ -320,7 +325,7 @@ begin
   raise exception 'Unknown social view.';
 end $$;
 
-revoke all on function public.social_percentage(bigint,bigint),public.social_record(uuid,text,integer),public.social_refresh_stats(uuid),public.social_are_friends(uuid,uuid),public.social_profile_dto(uuid),public.social_pick_dto(public.user_picks),public.social_register_game(jsonb),public.social_write(text,jsonb),public.social_read(text,jsonb) from public,anon,authenticated;
+revoke all on function public.social_percentage(bigint,bigint),public.social_record(uuid,text,integer),public.social_refresh_stats(uuid),public.social_are_friends(uuid,uuid),public.social_profile_dto(uuid),public.social_pick_dto(public.user_picks,uuid),public.social_register_game(jsonb),public.social_write(text,jsonb,uuid),public.social_read(text,jsonb) from public,anon,authenticated;
 grant execute on function public.social_read(text,jsonb) to anon,authenticated;
-grant execute on function public.social_write(text,jsonb) to authenticated;
+grant execute on function public.social_write(text,jsonb,uuid) to authenticated,service_role;
 grant execute on function public.social_register_game(jsonb) to service_role;

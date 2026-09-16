@@ -18,7 +18,7 @@ async function refreshSport(sport: Sport) {
     await preservePregameSnapshots(slate);
     const gradedUserPicks = await refreshSocialPickResults(sport);
     await recordModelRefresh(sport, { status: "success", games: slate.predictions.length, playerPicks: players.picks.length });
-    return { sport, ok: true, games: slate.predictions.length, playerPicks: players.picks.length, gradedPlayerPicks, modelVersion: slate.model_version };
+    return { sport, ok: true, games: slate.predictions.length, playerPicks: players.picks.length, gradedPlayerPicks, gradedUserPicks, modelVersion: slate.model_version };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown refresh error";
     await recordModelRefresh(sport, { status: "failed", games: 0, playerPicks: 0, error: message });

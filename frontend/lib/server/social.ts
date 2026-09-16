@@ -7,7 +7,8 @@ import { createSupabaseAdminClient, hasSupabaseAdminCredentials } from "@/lib/su
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export class SocialError extends Error {
-  constructor(message: string, public status = 400) { super(message); }
+  status: number;
+  constructor(message: string, status = 400) { super(message); this.status = status; }
 }
 
 const SETUP_MESSAGE = "Social features are unavailable. Configure Supabase and apply the social database migration. Predictions remain available.";
@@ -100,7 +101,13 @@ export async function writeSocial(action: string, payload: Record<string, unknow
     if (typeof sport !== "string" || !isSport(sport) || typeof gameId !== "string") throw new SocialError("Choose a supported sport and game.");
     await authoritativeGame(sport, gameId);
   }
-  const { data, error } = await client.rpc("social_write", { p_action: action, p_payload: payload });
+  // Only this verified server path may submit picks. The database rejects
+  // direct browser RPC pick writes, even against previously registered games.
+  const pickMutation = ["pick", "deletePick", "tail"].includes(action);
+  const writer = pickMutation ? createSupabaseAdminClient() : client;
+  const { data, error } = await writer.rpc("social_write", {
+    p_action: action, p_payload: payload, ...(pickMutation ? { p_actor: user.id } : {})
+  });
   if (error) throw socialDatabaseError(error);
   return data;
 }
