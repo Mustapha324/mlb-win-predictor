@@ -29,6 +29,8 @@ Backend research (from `backend/`, in a venv): `uvicorn app.main:app --reload`; 
 - Chronology is sacred: no future information may leak into earlier predictions — pregame-only features, shifted windows, frozen holdouts.
 - Every factor or weight change goes through the lab: `npm run backtest` against the in-config baseline, holdout non-degradation required, decision appended to `docs/backtests/experiments.md`. That ledger is append-only history — rejected ideas stay recorded so they aren't retried.
 - `DEFAULT_BRAIN_WEIGHTS` in brainScoring.ts are tuner output — never hand-tweak them inside a feature PR.
+- `MARKET_ANCHOR_MODEL_WEIGHT` in lib/marketMath.ts (the served model-vs-market blend) is likewise lab output: change it only with a fresh `npm run backtest -- nfl --ensemble` run and a ledger entry. The served number is the anchor; the model alone is shown beside it, never instead of it, when a pregame line exists.
+- Player picks are built on real sportsbook lines (sportsbookProps.ts) and gated by eligibility rules (pickEligibility.ts): a game the book prices only yields its listed props, headline slots need a price no heavier than -160, and NFL backups/inactive/injured players are refused before any projection runs.
 - Grading compatibility: the "Anytime touchdown" → "Rush+Rec TDs" alias in playerPicks.ts must survive while pre-rename rows exist in Supabase.
 
 ## Entitlement & security invariants
@@ -36,7 +38,7 @@ Backend research (from `backend/`, in a venv): `uvicorn app.main:app --reload`; 
 - Free/Pro redaction happens server-side (entitlements.ts, playerPickAccess.ts) before JSON leaves a route. Never move gating, live fields, or the premium Top 5 into client code.
 - Pregame snapshots are write-once (`ignoreDuplicates` upsert in predictionSnapshots.ts); the finals pass may update only the final-result columns. Never widen either.
 - The Supabase service-role key is read only in `lib/supabase/admin.ts`; new admin operations import that client rather than reading the env var.
-- Modules under `lib/server/` start with `import "server-only"` — new ones do too.
+- Modules under `lib/server/` start with `import "server-only"` — new ones do too, unless they are pure rule modules exercised by `npm test` (pickEligibility.ts, playerPickScoring.ts, propBoardCatalog.ts, brain/brainScoring.ts), which must not import it and must reach other pure modules through relative `.ts` paths, since the Node test runner has no `@/` alias.
 - Tier changes flow only through the Stripe webhook or the invite-redemption SQL function; RLS lets users update `display_name` and nothing else.
 
 ## Env & secrets

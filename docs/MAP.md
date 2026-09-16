@@ -49,10 +49,15 @@ docs/                — game-brain-plan.md + backtests/ experiment ledgers (hot
 | NFL win model | frontend/lib/server/nflModel.ts | reads data/nfl-model-v2.json; regenerate via backend/scripts/train_nfl_history.py |
 | brain factors & weights | frontend/lib/server/brain/brainScoring.ts | DEFAULT_BRAIN_WEIGHTS are backtest-lab output, not hand-tweaks; MAX_BRAIN_LOGIT caps influence |
 | player picks | frontend/lib/server/playerPicks.ts, playerPickScoring.ts | keep the "Anytime touchdown"→"Rush+Rec TDs" alias while pre-rename Supabase rows exist |
-| DFS board pinning | frontend/lib/server/dfsBoards.ts, propBoardCatalog.ts | us_dfs standard lines sit in main market keys; demons/goblins in `_alternate` |
+| served game probability (market anchor) | frontend/lib/servingPolicy.ts, lib/marketMath.ts | MARKET_ANCHOR_MODEL_WEIGHT is lab output (docs/backtests/ensemble.md), not a hand-tweak; model-only when no pregame line |
+| real sportsbook prop lines | frontend/lib/server/sportsbookProps.ts, lib/sportsbookPropParsing.ts, lib/server/espnScoreboard.ts | ESPN republishes DraftKings lines keyed by ESPN athlete id (MLB matches by name); DraftKings prices are best-effort; SPORTSBOOK_PROPS=off kill switch |
+| NFL starters-only pick gating | frontend/lib/server/nflRoster.ts, lib/nflRosterParsing.ts, lib/server/pickEligibility.ts | roster group decides status (offense/defense/specialTeam = active); depth-chart receivers live in wr1–wr3 slots |
+| MLB pick eligibility | frontend/lib/server/pickEligibility.ts, playerPicks.ts (active rosters, lineups) | stats use playerPool=ALL now; eligibility rules, not the stat pool, keep part-timers out |
+| live pick pace / top-5 tracker | frontend/lib/server/playerPickScoring.ts (livePace, summarizeLive), components/PlayerPicksSection.tsx | pace is recomputed per request from box scores; only status/actual/result are stored |
+| DFS board pinning | frontend/lib/server/dfsBoards.ts, propBoardCatalog.ts | us_dfs standard lines sit in main market keys; demons/goblins in `_alternate`; only used when no sportsbook line exists |
 | free/Pro gating | frontend/lib/server/entitlements.ts, playerPickAccess.ts, access.ts | redaction is server-side; never move gating into client code |
 | pregame snapshots | frontend/lib/server/predictionSnapshots.ts | insert-only upsert; finals update writes only actual_winner/scores/final_at |
-| live market odds | frontend/lib/server/marketOdds.ts | optional — missing THE_ODDS_API_KEY means model-only, not an error |
+| live market odds | frontend/lib/server/marketOdds.ts, espnScoreboard.ts | Odds API consensus when keyed, else ESPN's DraftKings moneyline (no key); an empty map means "no line", never an error |
 | daily refresh cron | frontend/app/api/cron/daily-refresh/route.ts, lib/server/modelRefresh.ts | CRON_SECRET bearer required; status recorded in model_refresh_runs |
 | billing | frontend/app/pro/actions.ts, app/api/webhooks/stripe/route.ts, lib/stripe.ts | the webhook is the only pro-granting path; signature-verified |
 | DB schema | supabase/migrations/ | append new timestamped files, run in order; RLS lives here |
@@ -83,7 +88,8 @@ docs/                — game-brain-plan.md + backtests/ experiment ledgers (hot
 - Free/Pro redaction happens in server routes before JSON leaves. [grep: applyPredictionEntitlements → frontend/app/api/predictions/today/route.ts; applyGameEntitlement → frontend/app/api/games/[id]/route.ts]
 - The daily-refresh route rejects requests without the CRON_SECRET bearer. [grep: hasValidBearer → frontend/app/api/cron/daily-refresh/route.ts]
 - The service-role key's value is read in exactly one file; everywhere else only presence-checks it. [grep: SUPABASE_SERVICE_ROLE_KEY → 4 files, value read only in frontend/lib/supabase/admin.ts]
-- Server domain modules are guarded against client bundling. [grep: "server-only" → 17 files under frontend/lib]
+- Server domain modules are guarded against client bundling. [grep: "server-only" → 20 files under frontend/lib]
+- Pure, unit-tested modules (marketMath, servingPolicy, sportsbookPropParsing, nflRosterParsing, pickEligibility, playerPickScoring, propBoardCatalog, brainScoring) never import "server-only" and never fetch. [grep: node --test → package.json "test"]
 - Users cannot self-upgrade: authenticated role may update only profiles.display_name; tier changes flow through the Stripe webhook (admin client) or the security-definer invite redemption. [grep: grant update (display_name) → supabase/migrations/202608160001_sport_iq_accounts_pro.sql]
 - Invite codes exist only as SHA-256 hashes, redeemed atomically in Postgres. [grep: sha256 → 1 hit in supabase/migrations/202608160001_sport_iq_accounts_pro.sql]
 - frontend never imports backend — the deployed app is self-contained. [grep: from ".*backend → 0 hits in frontend/]
@@ -96,4 +102,6 @@ docs/                — game-brain-plan.md + backtests/ experiment ledgers (hot
 - frontend/.env.local is tracked on main with real-looking values — treat everything in it as compromised; never park new secrets there.
 - lib/api.ts, despite the name, calls same-origin Next routes (BACKEND_BASE_URL defaults to ""); NEXT_PUBLIC_API_BASE_URL can point it at FastAPI but production doesn't use it.
 - proxy.ts is Next 16's renamed middleware (Supabase session-cookie refresh), not a network proxy.
-- docs/backtests/*.html and *.json are generated outputs; only the .md ledgers are hand-written history.
+- docs/backtests/*.html and *.json are generated outputs; only the .md ledgers are hand-written history — except docs/backtests/ensemble.md, which `npm run backtest -- nfl --ensemble` regenerates.
+- Pure lib modules that need runtime imports use relative `.ts` paths (tsconfig `allowImportingTsExtensions`): `node --test` has no `@/` alias and `server-only` throws outside Next, so a pure module that reaches for either breaks the test suite.
+- The NFL ensemble lab needs per-season v2 checkpoints in frontend/scripts/.brain-backtest-cache/nfl-v2/ (gitignored); regenerate them with backend/scripts/train_nfl_history.py per season before re-running it.

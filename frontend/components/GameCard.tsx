@@ -35,7 +35,14 @@ export function GameCard({ game }: { game: TeamPrediction }) {
   const gameStatusLabel = !finished && game.inning ? game.inning : game.status;
   const firstReason = game.factors[0] ?? `${pick.name} has the stronger overall profile`;
   const secondReason = game.factors[1] ?? "The remaining inputs are closely balanced";
-  const reasonSummary = `Before the game, the model gave ${pick.name} a ${percent(pickProbability)} win probability; ${firstReason}. ${secondReason}, with the call rated ${game.confidence.toLowerCase()} rather than a certainty.`;
+  const marketPick = game.market_home_win_probability === null || game.market_home_win_probability === undefined
+    ? null
+    : homeIsPick ? game.market_home_win_probability : 1 - game.market_home_win_probability;
+  const marketNote = marketPick === null ? "" : ` The pregame sportsbook line priced ${pick.name} at ${percent(marketPick)}, and the served number is anchored to that line because the market has out-predicted every model variant in backtests.`;
+  const reasonSummary = `Before the game, the model gave ${pick.name} a ${percent(pickProbability)} win probability; ${firstReason}. ${secondReason}, with the call rated ${game.confidence.toLowerCase()} rather than a certainty.${marketNote}`;
+  const inProgress = !finished && isInProgress(game.status);
+  const pickLiveLabel = !inProgress || locked ? null : game.pick_leading === true ? "Pick leading" : game.pick_leading === false ? "Pick trailing" : game.home_score !== null && game.away_score !== null ? "Tied" : null;
+  const pickLiveTone = game.pick_leading === true ? "border-emerald-300/25 bg-emerald-300/10 text-emerald-200" : game.pick_leading === false ? "border-amber-300/25 bg-amber-300/10 text-amber-200" : "border-white/10 bg-white/5 text-neutral-300";
   const statusTone = /live|progress|delay/i.test(game.status)
     ? "border-amber-300/25 bg-amber-300/10 text-amber-200"
     : finished
@@ -50,7 +57,10 @@ export function GameCard({ game }: { game: TeamPrediction }) {
           <p className="text-sm font-bold text-white">{timeLabel(game.game_time_utc)}</p>
           <p className="mt-0.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-neutral-600">{game.venue ?? "Venue TBD"}</p>
         </div>
-        <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${statusTone}`}>{gameStatusLabel}</span>
+        <div className="flex flex-col items-end gap-1.5">
+          <span className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] ${statusTone}`}>{gameStatusLabel}</span>
+          {pickLiveLabel ? <span className={`rounded-full border px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.12em] ${pickLiveTone}`}>{pickLiveLabel}</span> : null}
+        </div>
       </header>
 
       <div className="relative mt-5 space-y-5">
@@ -88,7 +98,7 @@ export function GameCard({ game }: { game: TeamPrediction }) {
           </div>
           <div className="text-right">
             <p className={`font-mono text-xl font-black ${game.sport === "nfl" ? "text-lime-300" : "text-cyan-300"}`}>{percent(pickProbability)}</p>
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-neutral-500">{game.confidence}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-neutral-500">{game.confidence}{game.prediction_tier ? ` · Tier ${game.prediction_tier}` : ""}</p>
           </div>
         </div>
         <p className="mt-3 line-clamp-1 text-xs text-neutral-500">{game.factors[0] ?? "Balanced matchup"}</p>
@@ -97,7 +107,7 @@ export function GameCard({ game }: { game: TeamPrediction }) {
 
       {finished && game.actual_winner ? (
         <div className="relative mt-4 flex items-center justify-between gap-4 rounded-2xl border border-white/[0.09] bg-white/[0.04] p-4">
-          <div><p className="text-[9px] font-black uppercase tracking-[0.16em] text-neutral-600">Final winner</p><p className="mt-1 text-sm font-black text-white">{game.actual_winner}</p></div>
+          <div><p className="text-[9px] font-black uppercase tracking-[0.16em] text-neutral-600">Final winner</p><p className="mt-1 text-sm font-black text-white">{game.actual_winner}</p>{game.home_score !== null && game.away_score !== null ? <p className="mt-0.5 font-mono text-[11px] text-neutral-400">{game.awayTeam.abbreviation} {game.away_score} · {game.homeTeam.abbreviation} {game.home_score}</p> : null}</div>
           {<span className={`rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.11em] ${game.actual_winner === game.pregame_predicted_winner ? "bg-emerald-300/10 text-emerald-200" : "bg-rose-300/10 text-rose-200"}`}>{game.actual_winner === game.pregame_predicted_winner ? "Pick hit" : "Pick missed"}</span>}
         </div>
       ) : null}

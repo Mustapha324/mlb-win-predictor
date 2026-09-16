@@ -6,6 +6,8 @@ import {
   type PlayerPropQuote,
   type RawPropBookmaker
 } from "@/lib/playerPropOdds";
+import type { MoneylineQuote } from "@/lib/marketMath";
+import { getEspnMoneylines } from "@/lib/server/espnScoreboard";
 
 type OddsOutcome = { name?: string; price?: number };
 type OddsMarket = { key?: string; outcomes?: OddsOutcome[] };
@@ -18,16 +20,9 @@ type OddsEvent = {
   bookmakers?: OddsBookmaker[];
 };
 
-export type MarketConsensus = {
-  homeWinProbability: number;
-  awayWinProbability: number;
-  homeAmericanOdds: number;
-  awayAmericanOdds: number;
-  favorite: string;
-  source: string;
-  books: number;
-  updatedAt: string;
-};
+export type MarketConsensus = MoneylineQuote;
+
+export type MarketGameRef = { gameId: string; homeTeam: string; awayTeam: string; gameTimeUtc?: string | null };
 
 const SPORT_KEYS: Record<Sport, string> = {
   mlb: "baseball_mlb",
@@ -148,13 +143,22 @@ function consensusFor(event: OddsEvent, homeTeam: string, awayTeam: string): Mar
 }
 
 /**
- * Fetches live moneyline consensus when THE_ODDS_API_KEY is configured.
- * A missing key is intentionally non-fatal so the prediction product still works.
+ * Pregame moneylines for the slate. Multi-book consensus from The Odds API
+ * when THE_ODDS_API_KEY is configured; every game still missing a line then
+ * falls back to the DraftKings moneyline ESPN publishes on its scoreboard,
+ * which needs no key. Failures are non-fatal: an empty map means "no line".
  */
-export async function getMarketConsensus(
-  sport: Sport,
-  games: Array<{ gameId: string; homeTeam: string; awayTeam: string }>
-): Promise<Map<string, MarketConsensus>> {
+export async function getMarketConsensus(sport: Sport, games: MarketGameRef[], slateDate?: string): Promise<Map<string, MarketConsensus>> {
+  if (games.length === 0) return new Map();
+  const result = await oddsApiConsensus(sport, games);
+  const missing = games.filter((game) => !result.has(game.gameId));
+  if (missing.length === 0) return result;
+  const fallbackDate = slateDate ?? missing.find((game) => game.gameTimeUtc)?.gameTimeUtc?.slice(0, 10) ?? new Date().toISOString().slice(0, 10);
+  for (const [gameId, quote] of await getEspnMoneylines(sport, missing, fallbackDate)) result.set(gameId, quote);
+  return result;
+}
+
+async function oddsApiConsensus(sport: Sport, games: MarketGameRef[]): Promise<Map<string, MarketConsensus>> {
   const apiKey = process.env.THE_ODDS_API_KEY;
   if (!apiKey || games.length === 0) return new Map();
 

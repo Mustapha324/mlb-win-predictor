@@ -24,6 +24,7 @@
  *
  * Usage:
  *   node --experimental-strip-types scripts/brain-backtest.mjs [mlb|nfl|all] [--experiment] [--frozen] [--refresh]
+ *   node --experimental-strip-types scripts/brain-backtest.mjs nfl --ensemble [--v2-dir=<dir with nfl-v2-<season>.json>]
  */
 
 import fs from "node:fs";
@@ -54,6 +55,8 @@ const TUNE_ONE = process.argv.find((arg) => arg.startsWith("--tune-one="))?.slic
 const TRIAL = process.argv.find((arg) => arg.startsWith("--trial="))?.slice(8) ?? null; // "key:weight" — frozen run with one extra factor fixed
 const MARKET = process.argv.includes("--market"); // NFL: closing-line benchmark, blend fit, CLV (nflverse games.csv)
 const TIERS = process.argv.includes("--tiers"); // confidence-tier / selective-prediction analysis on frozen predictions
+const ENSEMBLE = process.argv.includes("--ensemble"); // NFL: production v2 logistic vs brain stack vs closing market; blends fit leave-one-season-out; paired bootstrap
+const V2_DIR = process.argv.find((arg) => arg.startsWith("--v2-dir="))?.slice(9) ?? path.join(CACHE_DIR, "nfl-v2"); // per-season nfl-model-v2 artifacts from train_nfl_history.py --end-season S
 const SPORT_ARG = process.argv.find((arg) => ["mlb", "nfl", "all"].includes(arg)) ?? "all";
 const TODAY = "2026-08-24";
 const NFL_HFA = Number((process.argv.find((arg) => arg.startsWith("--hfa=")) ?? "--hfa=28").slice(6)); // 28 Elo ~ modern-era home edge; swept on validation 2026-08-24
@@ -182,6 +185,7 @@ async function nflSeasonGames(seasonYear) {
         date: event.date.slice(0, 10),
         timeUtc: event.date,
         week: event.week?.number ?? 0,
+        neutralSite: competition?.neutralSite ?? false,
         homeId: home.id,
         awayId: away.id,
         homeName: home.team?.displayName ?? home.id,
@@ -1463,6 +1467,181 @@ function nflGithubReplayer() {
   };
 }
 
+/**
+ * Deployed NFL model v2 ("nfl-history-logit-v2", nflModel.ts): per-season
+ * checkpoint ratings + logistic coefficients trained on prior seasons only
+ * (regenerated per season with backend/scripts/train_nfl_history.py so every
+ * replayed season is out-of-sample), Elo K=22 / HFA 48 with the log margin
+ * multiplier, and the 7-feature logistic clamped to [0.12, 0.88]. Team state
+ * restarts empty each season exactly as production does.
+ */
+function nflV2Replayer(artifact, season) {
+  const checkpoint = artifact.checkpoints?.[String(season)];
+  if (!checkpoint) throw new Error(`artifact has no checkpoint for ${season}`);
+  const ALIASES = { OAK: "LV", STL: "LA", LAR: "LA", SD: "LAC", WSH: "WAS" };
+  const key = (abbr) => ALIASES[abbr] ?? abbr;
+  const ratings = new Map(Object.entries(checkpoint.ratings));
+  const coefficients = checkpoint.coefficients;
+  const teams = new Map();
+  const stateOf = (id) => teams.get(id) ?? teams.set(id, { games: 0, wins: 0, pointDiff: 0, recent: [], lastGameAt: null }).get(id);
+  const rate = (n, d, fallback = 0.5) => (d ? n / d : fallback);
+  const clamp = (value, lower, upper) => Math.max(lower, Math.min(upper, value));
+  const restDays = (last, at) => (last ? clamp((Date.parse(at) - Date.parse(last)) / 86400000, 0, 21) : 7);
+  const eloProbability = (game) => {
+    const advantage = game.neutralSite ? 0 : 48;
+    return 1 / (1 + 10 ** (-((ratings.get(key(game.homeAbbr)) ?? 1500) + advantage - (ratings.get(key(game.awayAbbr)) ?? 1500)) / 400));
+  };
+  return {
+    probability(game) {
+      const home = stateOf(key(game.homeAbbr));
+      const away = stateOf(key(game.awayAbbr));
+      const homeRating = ratings.get(key(game.homeAbbr)) ?? 1500;
+      const awayRating = ratings.get(key(game.awayAbbr)) ?? 1500;
+      const sum = (values) => values.reduce((total, value) => total + value, 0);
+      const features = [
+        1,
+        clamp((homeRating - awayRating) / 400, -2.5, 2.5),
+        game.neutralSite ? 0 : 1,
+        rate(home.wins, home.games) - rate(away.wins, away.games),
+        rate(sum(home.recent), home.recent.length) - rate(sum(away.recent), away.recent.length),
+        clamp(rate(home.pointDiff, home.games, 0) - rate(away.pointDiff, away.games, 0), -28, 28) / 14,
+        clamp((restDays(home.lastGameAt, game.timeUtc) - restDays(away.lastGameAt, game.timeUtc)) / 7, -2, 2)
+      ];
+      const logit = features.reduce((total, value, index) => total + value * (coefficients[index] ?? 0), 0);
+      return clamp(1 / (1 + Math.exp(-logit)), 0.12, 0.88);
+    },
+    update(game) {
+      const homeKey = key(game.homeAbbr);
+      const awayKey = key(game.awayAbbr);
+      const homeWon = Number(game.homeWon);
+      const multiplier = Math.min(1.8, 1 + Math.log1p(game.margin) / 4.5);
+      const change = 22 * multiplier * (homeWon - eloProbability(game));
+      ratings.set(homeKey, (ratings.get(homeKey) ?? 1500) + change);
+      ratings.set(awayKey, (ratings.get(awayKey) ?? 1500) - change);
+      const home = stateOf(homeKey);
+      const away = stateOf(awayKey);
+      home.games += 1; home.wins += homeWon; home.pointDiff += game.homeScore - game.awayScore; home.recent = [...home.recent.slice(-4), homeWon]; home.lastGameAt = game.timeUtc;
+      away.games += 1; away.wins += 1 - homeWon; away.pointDiff += game.awayScore - game.homeScore; away.recent = [...away.recent.slice(-4), 1 - homeWon]; away.lastGameAt = game.timeUtc;
+    }
+  };
+}
+
+const logitOf = (p) => Math.log(Math.max(0.02, Math.min(0.98, p)) / (1 - Math.max(0.02, Math.min(0.98, p))));
+const sigmoid = (x) => 1 / (1 + Math.exp(-x));
+/** Logit-average of [weight, probability] parts (weights normalised). */
+function blendProbability(parts) {
+  const total = parts.reduce((sum, [weight]) => sum + weight, 0) || 1;
+  return sigmoid(parts.reduce((sum, [weight, p]) => sum + (weight / total) * logitOf(p), 0));
+}
+function ensembleStats(rows, key) {
+  const subset = rows.filter((row) => row[key] !== null && row[key] !== undefined);
+  if (!subset.length) return null;
+  const wins = subset.filter((row) => (row[key] >= 0.5) === row.homeWon).length;
+  return { games: subset.length, wins, accuracy: wins / subset.length, logLoss: subset.reduce((sum, row) => sum + logLoss(row[key], row.homeWon), 0) / subset.length };
+}
+/** Weight on keyA (0..1 grid) that minimises mean log loss of the keyA/keyB logit blend. */
+function fitBlendWeight(rows, keyA, keyB) {
+  let best = { w: 0, logLoss: Infinity };
+  for (let w = 0; w <= 1.0001; w += 0.05) {
+    const ll = rows.reduce((sum, row) => sum + logLoss(blendProbability([[w, row[keyA]], [1 - w, row[keyB]]]), row.homeWon), 0) / rows.length;
+    if (ll < best.logLoss - 1e-9) best = { w: Number(w.toFixed(2)), logLoss: ll };
+  }
+  return best;
+}
+/** Paired bootstrap of per-game log-loss and accuracy differences (A minus B); negative log-loss diff favours A. */
+function pairedBootstrap(rows, keyA, keyB, samples = 3000, seed = 7) {
+  const subset = rows.filter((row) => row[keyA] != null && row[keyB] != null);
+  const diffs = subset.map((row) => logLoss(row[keyA], row.homeWon) - logLoss(row[keyB], row.homeWon));
+  const accDiffs = subset.map((row) => Number((row[keyA] >= 0.5) === row.homeWon) - Number((row[keyB] >= 0.5) === row.homeWon));
+  let state = seed;
+  const random = () => { state = (state * 1103515245 + 12345) % 2147483648; return state / 2147483648; };
+  const means = []; const accMeans = [];
+  for (let sample = 0; sample < samples; sample += 1) {
+    let sum = 0; let accSum = 0;
+    for (let i = 0; i < diffs.length; i += 1) { const j = Math.floor(random() * diffs.length); sum += diffs[j]; accSum += accDiffs[j]; }
+    means.push(sum / diffs.length); accMeans.push(accSum / diffs.length);
+  }
+  means.sort((a, b) => a - b); accMeans.sort((a, b) => a - b);
+  const quantile = (values, p) => values[Math.min(values.length - 1, Math.floor(p * values.length))];
+  const mean = (values) => values.reduce((a, b) => a + b, 0) / (values.length || 1);
+  return { games: subset.length, logLossDiff: mean(diffs), low: quantile(means, 0.025), high: quantile(means, 0.975), pBetter: means.filter((m) => m < 0).length / means.length, accDiff: mean(accDiffs), accLow: quantile(accMeans, 0.025), accHigh: quantile(accMeans, 0.975) };
+}
+
+function writeEnsembleReport(rows, seasonsWithV2) {
+  const pct = (value) => `${(value * 100).toFixed(1)}%`;
+  const fmt = (stats) => (stats ? `${stats.wins}-${stats.games - stats.wins} · ${pct(stats.accuracy)} · ${stats.logLoss.toFixed(4)}` : "—");
+  const seasons = [...new Set(rows.map((row) => row.season))].toSorted();
+  const withV2 = rows.filter((row) => row.v2 != null);
+  const lines = [
+    "# NFL serving-layer lab — production v2 vs brain stack vs closing market",
+    "",
+    `Generated ${new Date().toISOString().slice(0, 10)} by \`npm run backtest -- nfl --ensemble\`. Every column is out-of-sample: v2 is replayed from per-season checkpoints trained only on earlier seasons (${seasonsWithV2.join(", ")}); the brain stack runs frozen at shipped weights on the MOV-Elo baseline; the market is the nflverse closing moneyline (vig removed). Blend weights are fit leave-one-season-out on log-loss, so each season's blended number never saw that season.`,
+    "",
+    "Columns: W-L · accuracy · log-loss (lower is better).",
+    "",
+    "## Single models by season",
+    "",
+    "| season | games | v2 (production) | MOV-Elo | brain-lite (record factors) | brain (full) | closing market |",
+    "|---|---|---|---|---|---|---|"
+  ];
+  const addRow = (label, subset) => lines.push(`| ${label} | ${subset.length} | ${fmt(ensembleStats(subset, "v2"))} | ${fmt(ensembleStats(subset, "movElo"))} | ${fmt(ensembleStats(subset, "lite"))} | ${fmt(ensembleStats(subset, "brain"))} | ${fmt(ensembleStats(subset, "market"))} |`);
+  for (const season of seasons) addRow(String(season), withV2.filter((row) => row.season === season));
+  addRow("**all**", withV2);
+  lines.push("", "## Leave-one-season-out blends", "");
+  lines.push("For each season the blend weight is fit on the other seasons only (grid 0..1 by 0.05 on the logit average), then applied frozen.", "");
+  lines.push("| season | games | fitted w(v2) vs brain | v2⊕brain (LOSO) | 50/50 v2⊕brain | fitted w(v2) vs lite | v2⊕lite (LOSO) | market | w(model) vs market | ens⊕market (LOSO) |");
+  lines.push("|---|---|---|---|---|---|---|---|---|---|");
+  const enriched = [];
+  for (const season of seasons) {
+    const held = withV2.filter((row) => row.season === season);
+    const others = withV2.filter((row) => row.season !== season);
+    const wBrain = fitBlendWeight(others, "v2", "brain");
+    const wLite = fitBlendWeight(others, "v2", "lite");
+    const othersMarket = others.filter((row) => row.market != null).map((row) => ({ ...row, ens: blendProbability([[wBrain.w, row.v2], [1 - wBrain.w, row.brain]]) }));
+    const wMarket = othersMarket.length ? fitBlendWeight(othersMarket, "ens", "market") : { w: 0 };
+    for (const row of held) {
+      const ens = blendProbability([[wBrain.w, row.v2], [1 - wBrain.w, row.brain]]);
+      enriched.push({
+        ...row,
+        ens,
+        ens50: blendProbability([[0.5, row.v2], [0.5, row.brain]]),
+        ensLite: blendProbability([[wLite.w, row.v2], [1 - wLite.w, row.lite]]),
+        anchored: row.market == null ? null : blendProbability([[wMarket.w, ens], [1 - wMarket.w, row.market]]),
+        anchored25: row.market == null ? null : blendProbability([[0.25, ens], [0.75, row.market]]),
+        fittedW: wBrain.w, fittedWLite: wLite.w, fittedWMarket: wMarket.w
+      });
+    }
+    const seasonRows = enriched.filter((row) => row.season === season);
+    lines.push(`| ${season} | ${seasonRows.length} | ${wBrain.w.toFixed(2)} | ${fmt(ensembleStats(seasonRows, "ens"))} | ${fmt(ensembleStats(seasonRows, "ens50"))} | ${wLite.w.toFixed(2)} | ${fmt(ensembleStats(seasonRows, "ensLite"))} | ${fmt(ensembleStats(seasonRows, "market"))} | ${wMarket.w.toFixed(2)} | ${fmt(ensembleStats(seasonRows, "anchored"))} |`);
+  }
+  lines.push(`| **all** | ${enriched.length} | — | ${fmt(ensembleStats(enriched, "ens"))} | ${fmt(ensembleStats(enriched, "ens50"))} | — | ${fmt(ensembleStats(enriched, "ensLite"))} | ${fmt(ensembleStats(enriched, "market"))} | — | ${fmt(ensembleStats(enriched, "anchored"))} |`);
+  lines.push("", "Fixed 25% model / 75% market anchor (no fitting): " + fmt(ensembleStats(enriched, "anchored25")) + " over " + enriched.filter((row) => row.anchored25 != null).length + " games with a closing line.", "");
+  lines.push("## Paired bootstrap (3,000 resamples, per-game differences)", "");
+  lines.push("Δ log-loss is A − B (negative favours A) with a 95% interval; Δ accuracy likewise; P(A better) is the share of resamples where A had lower log-loss.", "");
+  lines.push("| comparison (A vs B) | window | games | Δ log-loss [95%] | Δ accuracy [95%] | P(A better) |");
+  lines.push("|---|---|---|---|---|---|");
+  const comparisons = [["ens", "v2"], ["ens", "brain"], ["ens50", "v2"], ["ensLite", "v2"], ["market", "ens"], ["market", "v2"], ["anchored", "market"], ["anchored", "ens"], ["anchored25", "market"]];
+  const labels = { ens: "v2⊕brain (LOSO w)", ens50: "50/50 v2⊕brain", ensLite: "v2⊕brain-lite (LOSO w)", v2: "v2 production", brain: "brain full", market: "closing market", anchored: "ens⊕market (LOSO w)", anchored25: "25/75 ens⊕market" };
+  for (const [a, b] of comparisons) {
+    for (const [window, subset] of [["all seasons", enriched], ["2025 holdout", enriched.filter((row) => row.season === 2025)]]) {
+      const boot = pairedBootstrap(subset, a, b);
+      if (!boot.games) continue;
+      lines.push(`| ${labels[a]} vs ${labels[b]} | ${window} | ${boot.games} | ${boot.logLossDiff.toFixed(4)} [${boot.low.toFixed(4)}, ${boot.high.toFixed(4)}] | ${(100 * boot.accDiff).toFixed(1)}pp [${(100 * boot.accLow).toFixed(1)}, ${(100 * boot.accHigh).toFixed(1)}] | ${(100 * boot.pBetter).toFixed(0)}% |`);
+    }
+  }
+  const wAll = fitBlendWeight(withV2, "v2", "brain");
+  const ensAll = withV2.filter((row) => row.market != null).map((row) => ({ ...row, ens: blendProbability([[wAll.w, row.v2], [1 - wAll.w, row.brain]]) }));
+  const wMarketAll = ensAll.length ? fitBlendWeight(ensAll, "ens", "market") : { w: 0 };
+  lines.push("", "## Weights fit on all four seasons (for shipping)", "", `- v2 weight in the v2⊕brain logit blend: **${wAll.w.toFixed(2)}** (brain ${(1 - wAll.w).toFixed(2)})`, `- model weight in the ens⊕market logit blend: **${wMarketAll.w.toFixed(2)}** (market ${(1 - wMarketAll.w).toFixed(2)})`, "");
+  const disagree = enriched.filter((row) => row.market != null && (row.ens >= 0.5) !== (row.market >= 0.5));
+  lines.push(`- Model-vs-market disagreements: ${disagree.length} of ${enriched.filter((row) => row.market != null).length} games; ensemble right ${disagree.filter((row) => (row.ens >= 0.5) === row.homeWon).length}, market right ${disagree.filter((row) => (row.market >= 0.5) === row.homeWon).length}.`);
+  const edges = enriched.filter((row) => row.market != null && Math.abs(row.ens - row.market) >= 0.05);
+  lines.push(`- Ensemble edges of 5+ points vs the market: ${edges.length} games; the ensemble side won ${edges.filter((row) => (row.ens >= row.market) === row.homeWon).length} (${edges.length ? pct(edges.filter((row) => (row.ens >= row.market) === row.homeWon).length / edges.length) : "—"}).`);
+  fs.writeFileSync(path.join(OUT_DIR, "ensemble.md"), lines.join("\n") + "\n");
+  console.log(lines.join("\n"));
+  console.log("ensemble report written to docs/backtests/ensemble.md");
+}
+
 function runFaceoff(sport, games) {
   const github = sport === "mlb" ? mlbGithubReplayer() : nflGithubReplayer();
   const elo = sport === "mlb" ? makeElo(K_OVERRIDE ?? 4, 24) : makeElo(K_OVERRIDE ?? 20, NFL_HFA);
@@ -1699,6 +1878,45 @@ for (const sport of sports) {
     const edges = holdout.filter((row) => Math.abs(row.model - row.market) >= 0.05);
     const edgeRight = edges.filter((row) => (row.model >= row.market) === row.homeWon).length;
     console.log(`[nfl] model-vs-market edges >=5pp on holdout: ${edges.length}; model side right ${edgeRight} (${edges.length ? (100 * edgeRight / edges.length).toFixed(1) : 0}%)`);
+    continue;
+  }
+  if (sport === "nfl" && ENSEMBLE) {
+    const marketIndex = await nflMarketLines();
+    const artifacts = new Map();
+    for (const season of [2022, 2023, 2024, 2025]) {
+      const file = path.join(V2_DIR, `nfl-v2-${season}.json`);
+      if (fs.existsSync(file)) artifacts.set(season, JSON.parse(fs.readFileSync(file, "utf8")));
+    }
+    if (!artifacts.size) throw new Error(`no per-season v2 artifacts in ${V2_DIR}; generate with backend/scripts/train_nfl_history.py --end-season <S> --seasons 15 --output ${V2_DIR}/nfl-v2-<S>.json`);
+    const shippedActive = [...BASE_TUNABLES.nfl, ...Object.keys(DEFAULT_BRAIN_WEIGHTS.nfl).filter((k) => DEFAULT_BRAIN_WEIGHTS.nfl[k] > 0 && !BASE_TUNABLES.nfl.includes(k) && !["injuryGap", "qbOut"].includes(k))];
+    const liteActive = ["formWinRate", "restDay", "pythag", "divisionDamp", "lateSeasonDamp"];
+    const frozen = (active) => simulate({
+      sport, batches: batchesFor(sport, games, PHASES[sport]),
+      initialWeights: weightsWith(sport, active), tunable: {}, tuneIn: new Set(),
+      closeMargin: 3, trailingWindow: 96, elo: makeElo(K_OVERRIDE ?? 20, NFL_HFA)
+    });
+    const full = frozen(shippedActive);
+    const lite = frozen(liteActive);
+    const rows = [];
+    let replayer = null;
+    let replaySeason = null;
+    full.record.forEach((row, index) => {
+      const game = full.recordGames[index];
+      if (game.season !== replaySeason) {
+        replaySeason = game.season;
+        replayer = artifacts.has(game.season) ? nflV2Replayer(artifacts.get(game.season), game.season) : null;
+      }
+      const v2 = replayer ? replayer.probability(game) : null;
+      replayer?.update(game);
+      rows.push({
+        season: game.season, week: game.week, phase: row.phase, homeWon: row.homeWon,
+        v2, brain: applyTemperature(row.brainProbability, "nfl"), lite: applyTemperature(lite.record[index].brainProbability, "nfl"),
+        movElo: applyTemperature(row.baseProbability, "nfl"),
+        market: marketIndex.get(marketKeyFor(game))?.marketHome ?? null
+      });
+    });
+    console.log(`[nfl] ENSEMBLE rows ${rows.length}; with v2 ${rows.filter((row) => row.v2 != null).length}; with market ${rows.filter((row) => row.market != null).length}`);
+    writeEnsembleReport(rows, [...artifacts.keys()]);
     continue;
   }
   if (TIERS) {

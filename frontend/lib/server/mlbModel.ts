@@ -1,5 +1,6 @@
 import modelSnapshotJson from "@/data/model-snapshot.json";
 import { getMarketConsensus, type MarketConsensus } from "@/lib/server/marketOdds";
+import { pickOutcome, serveProbability, withMarketFactor } from "@/lib/servingPolicy";
 
 const MLB_API = "https://statsapi.mlb.com/api/v1";
 const REGULAR_SEASON_START_MONTH_DAY = "03-01";
@@ -134,6 +135,12 @@ export type WebPrediction = {
   factors: string[];
   away_score: number | null;
   home_score: number | null;
+  model_home_win_probability: number | null;
+  market_home_win_probability: number | null;
+  market_delta: number | null;
+  prediction_tier: "A" | "B" | "C" | null;
+  pick_result: "hit" | "miss" | null;
+  pick_leading: boolean | null;
 };
 
 export type TodayPredictions = {
@@ -426,6 +433,19 @@ export async function getPredictions(dateValue = easternToday()): Promise<TodayP
   const pitcherPairs = await Promise.all([...pitcherIds].map(async (id) => [id, await fetchPitcherStats(id, season)] as const));
   const pitchers = new Map(pitcherPairs);
 
+  // Pregame sportsbook lines first: the served probability is anchored to them (see lib/servingPolicy.ts).
+  const market = await getMarketConsensus(
+    "mlb",
+    rawGames.flatMap((game) => {
+      const homeName = game.teams?.home?.team?.name;
+      const awayName = game.teams?.away?.team?.name;
+      return game.gamePk && homeName && awayName
+        ? [{ gameId: String(game.gamePk), homeTeam: homeName, awayTeam: awayName, gameTimeUtc: game.gameDate ?? null }]
+        : [];
+    }),
+    dateValue
+  );
+
   const predictions: WebPrediction[] = [];
   for (const game of rawGames) {
     const away = game.teams?.away;
@@ -440,10 +460,12 @@ export async function getPredictions(dateValue = easternToday()): Promise<TodayP
       pitchers.get(home.probablePitcher?.id ?? -1) ?? null,
       pitchers.get(away.probablePitcher?.id ?? -1) ?? null
     );
-    const homeProbability = Number(adjusted.probability.toFixed(4));
-    const awayProbability = Number((1 - homeProbability).toFixed(4));
-    const winner = homeProbability >= 0.5 ? home.team.name : away.team.name;
     const final = isFinalStatus(game.status);
+    const quote = market.get(String(game.gamePk)) ?? null;
+    const served = serveProbability("mlb", adjusted.probability, final || isLiveStatus(game.status) ? null : quote?.homeWinProbability ?? null, snapshot.version);
+    const homeProbability = served.homeWinProbability;
+    const awayProbability = served.awayWinProbability;
+    const winner = homeProbability >= 0.5 ? home.team.name : away.team.name;
     const liveHomeProbability = inGameHomeProbability(game, homeProbability);
     const liveAwayProbability = liveHomeProbability === null ? null : Number((1 - liveHomeProbability).toFixed(4));
     const liveHomeRounded = liveHomeProbability === null ? null : Number(liveHomeProbability.toFixed(4));
@@ -453,7 +475,7 @@ export async function getPredictions(dateValue = easternToday()): Promise<TodayP
     const confidenceValue = Math.max(homeProbability, awayProbability);
     const factors = getFactorLabels(features, home.team.name, away.team.name);
     if (adjusted.factor) factors.push(adjusted.factor);
-    predictions.push({
+    const prediction: WebPrediction = {
       sport: "mlb",
       game_id: String(game.gamePk),
       gameId: String(game.gamePk),
@@ -484,27 +506,22 @@ export async function getPredictions(dateValue = easternToday()): Promise<TodayP
       live_favorite: liveHomeRounded === null ? null : liveHomeRounded >= 0.5 ? home.team.name : away.team.name,
       live_probability_source: final ? "Final score" : liveHomeRounded === null ? null : "In-game score model",
       live_updated_at: liveHomeRounded === null ? null : new Date().toISOString(),
-      live_market: null,
+      live_market: quote,
       actual_winner: actualWinner,
       is_final: final,
-      prediction_source: snapshot.version,
+      prediction_source: served.source,
       confidence: confidenceValue >= 0.62 ? "Strong" : confidenceValue >= 0.56 ? "Edge" : "Lean",
-      factors,
+      factors: withMarketFactor(factors, served, quote),
       away_score: away.score ?? null,
-      home_score: home.score ?? null
-    });
-  }
-
-  const market = await getMarketConsensus(
-    "mlb",
-    predictions.map((prediction) => ({
-      gameId: prediction.gameId,
-      homeTeam: prediction.home_team,
-      awayTeam: prediction.away_team
-    }))
-  );
-  for (const prediction of predictions) {
-    prediction.live_market = market.get(prediction.gameId) ?? null;
+      home_score: home.score ?? null,
+      model_home_win_probability: served.modelHomeWinProbability,
+      market_home_win_probability: served.marketHomeWinProbability,
+      market_delta: served.marketDelta,
+      prediction_tier: served.tier,
+      pick_result: null,
+      pick_leading: null
+    };
+    predictions.push({ ...prediction, ...pickOutcome(prediction) });
   }
 
   predictions.sort((a, b) => (a.game_time_utc ?? "").localeCompare(b.game_time_utc ?? ""));

@@ -83,6 +83,11 @@ export function Dashboard({ sport }: { sport: Sport }) {
     ? availableGames.reduce((sum, game) => sum + Math.max(game.pregame_home_win_probability, game.pregame_away_win_probability), 0) / availableGames.length
     : 0;
   const strongEdges = availableGames.filter((game) => game.confidence === "Strong").length;
+  const liveGames = availableGames.filter((game) => !game.is_final && isActive(game.status));
+  const picksLeading = liveGames.filter((game) => game.pick_leading === true).length;
+  const picksTrailing = liveGames.filter((game) => game.pick_leading === false).length;
+  const hits = availableGames.filter((game) => game.pick_result === "hit").length;
+  const misses = availableGames.filter((game) => game.pick_result === "miss").length;
   const accent = sport === "nfl" ? "text-lime-300" : "text-cyan-300";
 
   return (
@@ -123,7 +128,8 @@ export function Dashboard({ sport }: { sport: Sport }) {
 
       <p className="sr-only" aria-live="polite">{refreshing ? "Refreshing live predictions" : error ? error : data ? `${data.predictions.length} team predictions loaded` : "Loading predictions"}</p>
 
-      {data && !loading ? <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">{[["Games", String(data.predictions.length)],["Avg. model confidence", averageConfidence ? `${Math.round(averageConfidence * 100)}%` : "—"],["Strong picks", String(strongEdges)],["Live updates", preferences.liveRefresh ? "On" : "Paused"]].map(([label,value]) => <div key={label} className="rounded-2xl border border-white/[0.07] bg-white/[0.022] px-4 py-3"><p className="eyebrow">{label}</p><p className="mt-1 font-mono text-xl font-black text-white">{value}</p></div>)}</section> : null}
+      {data && !loading ? <section className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">{[["Games", String(data.predictions.length)],["Avg. model confidence", averageConfidence ? `${Math.round(averageConfidence * 100)}%` : "—"],["Strong picks", String(strongEdges)],["Record this slate", hits + misses > 0 ? `${hits}-${misses}` : "—"]].map(([label,value]) => <div key={label} className="rounded-2xl border border-white/[0.07] bg-white/[0.022] px-4 py-3"><p className="eyebrow">{label}</p><p className="mt-1 font-mono text-xl font-black text-white">{value}</p></div>)}</section> : null}
+      {data && !loading && liveGames.length > 0 ? <section className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 rounded-2xl border border-rose-300/15 bg-rose-300/[0.04] px-4 py-3 text-xs font-bold" aria-label="Live game tracker"><span className="text-rose-200">● {liveGames.length} live now</span><span className="text-emerald-200">{picksLeading} pick{picksLeading === 1 ? "" : "s"} leading</span><span className="text-amber-200">{picksTrailing} trailing</span><span className="text-neutral-500">{liveGames.length - picksLeading - picksTrailing} tied or waiting</span>{refreshing ? <span className="ml-auto text-neutral-500">Updating…</span> : <span className="ml-auto text-neutral-600">{preferences.liveRefresh ? "Refreshes every 30s" : "Live refresh off in settings"}</span>}</section> : null}
 
       <PlayerPicksSection sport={sport} date={date} />
 

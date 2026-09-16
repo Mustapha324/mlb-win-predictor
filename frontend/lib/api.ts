@@ -57,6 +57,18 @@ export type TeamPrediction = {
   factors: string[];
   home_score: number | null;
   away_score: number | null;
+  /** Raw model probability before the market anchor (null when locked). */
+  model_home_win_probability?: number | null;
+  /** No-vig sportsbook probability the served number was anchored to; null when no pregame line existed. */
+  market_home_win_probability?: number | null;
+  /** Model minus market on the home side; null without a line. */
+  market_delta?: number | null;
+  /** Selective-prediction tier of the served probability: A = strongest. */
+  prediction_tier?: "A" | "B" | "C" | null;
+  /** Graded once the game is final. */
+  pick_result?: "hit" | "miss" | null;
+  /** While live: whether the picked side currently leads (null when tied or unknown). */
+  pick_leading?: boolean | null;
 };
 
 export type TodayPredictionsResponse = {
@@ -154,6 +166,30 @@ export type PlayerPick = {
   resultUpdatedAt: string | null;
   isTopFive: boolean;
   is_locked: boolean;
+  /** Live pace while the game is in progress; settled once graded. Absent on older snapshots. */
+  live?: LivePaceInfo | null;
+};
+
+export type LivePaceInfo = {
+  current: number | null;
+  line: number;
+  progress: number;
+  projected: number | null;
+  state: "pending" | "cleared" | "on_pace" | "behind" | "busted" | "final";
+  label: string;
+};
+
+export type LiveSummary = {
+  total: number;
+  scheduled: number;
+  live: number;
+  final: number;
+  cleared: number;
+  onPace: number;
+  behind: number;
+  busted: number;
+  correct: number;
+  incorrect: number;
 };
 
 export type PlayerPickPerformance = {
@@ -176,7 +212,16 @@ export type PlayerPicksResponse = {
   totalPicks: number;
   topFiveCount: number;
   hasLiveGames: boolean;
+  trackingAvailable: boolean;
   performance: PlayerPickPerformance;
+  /** Today's slate only: graded record so far. */
+  slatePerformance?: PlayerPickPerformance;
+  /** Live strip counts across the whole board (all tiers). */
+  liveSummary?: LiveSummary | null;
+  /** Live strip counts for the premium top five (Pro only; null for free). */
+  topFiveLive?: LiveSummary | null;
+  /** Whether today's board came from real sportsbook lines. */
+  lineProvider?: string | null;
   recentResults: PlayerPick[];
   picks: PlayerPick[];
 };
