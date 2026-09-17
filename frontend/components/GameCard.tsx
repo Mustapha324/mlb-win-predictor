@@ -41,7 +41,7 @@ export function GameCard({ game }: { game: TeamPrediction }) {
   const marketNote = marketPick === null ? "" : ` The pregame sportsbook line priced ${pick.name} at ${percent(marketPick)}, and the served number is anchored to that line because the market has out-predicted every model variant in backtests.`;
   const reasonSummary = `Before the game, the model gave ${pick.name} a ${percent(pickProbability)} win probability; ${firstReason}. ${secondReason}, with the call rated ${game.confidence.toLowerCase()} rather than a certainty.${marketNote}`;
   const inProgress = !finished && isInProgress(game.status);
-  const pickLiveLabel = !inProgress || locked ? null : game.pick_leading === true ? "Pick leading" : game.pick_leading === false ? "Pick trailing" : game.home_score !== null && game.away_score !== null ? "Tied" : null;
+  const pickLiveLabel = !inProgress ? null : game.pick_leading === true ? "Pick leading" : game.pick_leading === false ? "Pick trailing" : game.home_score !== null && game.away_score !== null ? "Tied" : null;
   const pickLiveTone = game.pick_leading === true ? "border-emerald-300/25 bg-emerald-300/10 text-emerald-200" : game.pick_leading === false ? "border-amber-300/25 bg-amber-300/10 text-amber-200" : "border-white/10 bg-white/5 text-neutral-300";
   const statusTone = /live|progress|delay/i.test(game.status)
     ? "border-amber-300/25 bg-amber-300/10 text-amber-200"

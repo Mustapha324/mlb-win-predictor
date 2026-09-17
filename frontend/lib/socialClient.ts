@@ -1,7 +1,18 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 import type { SocialResponse } from "@/lib/social";
+
+let currentTime = 0;
+let clockTimer: ReturnType<typeof setInterval> | null = null;
+const clockListeners = new Set<() => void>();
+function updateClock() { currentTime = Date.now(); clockListeners.forEach((listener) => listener()); }
+function subscribeClock(listener: () => void) {
+  clockListeners.add(listener);
+  if (!clockTimer) { clockTimer = setInterval(updateClock, 1000); queueMicrotask(updateClock); }
+  return () => { clockListeners.delete(listener); if (!clockListeners.size && clockTimer) { clearInterval(clockTimer); clockTimer = null; } };
+}
+export function useSocialClock() { return useSyncExternalStore(subscribeClock, () => currentTime, () => 0); }
 
 export class SocialError extends Error {
   status: number;

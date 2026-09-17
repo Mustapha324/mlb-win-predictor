@@ -9,12 +9,13 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "backtest": "node --experimental-strip-types scripts/brain-backtest.mjs",
-    "capture": "node --experimental-strip-types scripts/capture-live.mjs"
+    "capture": "node --experimental-strip-types scripts/capture-live.mjs",
+    "test:ui": "playwright test"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
-    "next": "^16.3.1",
+    "next": "^16.3.5",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },
@@ -22,6 +23,7 @@
     "@electric-sql/pglite": "^0.5.8",
     "@eslint/js": "9.39.4",
     "@next/eslint-plugin-next": "^16.3.1",
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "4.2.1",
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",

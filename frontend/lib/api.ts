@@ -218,7 +218,7 @@ export type PlayerPicksResponse = {
   slatePerformance?: PlayerPickPerformance;
   /** Live strip counts across the whole board (all tiers). */
   liveSummary?: LiveSummary | null;
-  /** Live strip counts for the premium top five (Pro only; null for free). */
+  /** Live strip counts for the top five ranked picks. */
   topFiveLive?: LiveSummary | null;
   /** Whether today's board came from real sportsbook lines. */
   lineProvider?: string | null;

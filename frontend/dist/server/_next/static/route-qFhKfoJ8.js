@@ -1,1 +1,0 @@
-import{a as e}from"./mlbModel-CaUjcrOs.js";async function t(t){let n=Number(new URL(t.url).searchParams.get(`limit`)??60);try{return Response.json(await e(Number.isFinite(n)?n:60),{headers:{"Cache-Control":`public, max-age=900`}})}catch(e){let t=e instanceof Error?e.message:`Unable to load prediction history.`;return Response.json({error:t},{status:503})}}export{t as GET};

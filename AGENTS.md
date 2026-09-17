@@ -33,18 +33,19 @@ Backend research (from `backend/`, in a venv): `uvicorn app.main:app --reload`; 
 - Player picks are built on real sportsbook lines (sportsbookProps.ts) and gated by eligibility rules (pickEligibility.ts): a game the book prices only yields its listed props, headline slots need a price no heavier than -160, and NFL backups/inactive/injured players are refused before any projection runs.
 - Grading compatibility: the "Anytime touchdown" → "Rush+Rec TDs" alias in playerPicks.ts must survive while pre-rename rows exist in Supabase.
 
-## Entitlement & security invariants
+## Public access & security invariants
 
-- Free/Pro redaction happens server-side (entitlements.ts, playerPickAccess.ts) before JSON leaves a route. Never move gating, live fields, or the premium Top 5 into client code.
+- All predictions, live fields, explanations, and ranked player picks are public. Accounts are only for personal/social actions; never restore subscription gating.
 - Pregame snapshots are write-once (`ignoreDuplicates` upsert in predictionSnapshots.ts); the finals pass may update only the final-result columns. Never widen either.
 - The Supabase service-role key is read only in `lib/supabase/admin.ts`; new admin operations import that client rather than reading the env var.
 - Modules under `lib/server/` start with `import "server-only"` — new ones do too, unless they are pure rule modules exercised by `npm test` (pickEligibility.ts, playerPickScoring.ts, propBoardCatalog.ts, brain/brainScoring.ts), which must not import it and must reach other pure modules through relative `.ts` paths, since the Node test runner has no `@/` alias.
-- Tier changes flow only through the Stripe webhook or the invite-redemption SQL function; RLS lets users update `display_name` and nothing else.
+- Public profiles use explicit social DTOs, never the historical account/billing table. Browser roles have no direct social-table mutation grants. Verified server pick writes and SQL RPCs enforce ownership, authoritative deadlines, friendship checks, and immutable pick-time model snapshots.
+- Historical billing columns and migrations remain for compatibility; Stripe routes and invite redemption are inactive.
 
 ## Env & secrets
 
 - The variable list lives in `frontend/.env.example`. Every key is optional at dev time — absent keys must degrade to labeled safe states, never crash.
-- Never commit a populated `.env.local`. Known debt: one is currently tracked on main — treat its values as compromised, do not add to it; untracking + rotation is a pending chore.
+- Never commit a populated `.env.local` or generated deployment artifacts. Historical exposure requires rotation and the publication checklist in `docs/open-source-transition.md`; untracking alone does not remove history.
 - DFS board fetches cost paid Odds-API credits per event: `DFS_BOARDS=off` is the kill switch, `DFS_BOARD_MAX_EVENTS` the throttle.
 
 ## Generated files — never hand-edit
