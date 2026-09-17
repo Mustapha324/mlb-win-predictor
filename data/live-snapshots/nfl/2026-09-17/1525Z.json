@@ -1,0 +1,127 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-17",
+ "capturedAt": "2026-09-17T15:25:37.100Z",
+ "games": [
+  {
+   "gameId": "401872932",
+   "gameTimeUtc": "2026-09-18T00:15Z",
+   "home": "Buffalo Bills",
+   "away": "Detroit Lions",
+   "injuries": {
+    "home": {
+     "burden": 0.9955,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Phidarian Mathis",
+       "position": "DT",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Zane Durant",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Tyrell Shavers",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Dorian Strong",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Shane Buechele",
+       "position": "QB",
+       "status": "il_long",
+       "detail": "Practice Squad"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.997,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Christian Mahogany",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Blake Miller",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brian Branch",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Damone Clark",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Kerby Joseph",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 1,
+     "streak": 1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 1,
+     "streak": 1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [],
+   "baseProbability": 0.6049,
+   "brainProbability": 0.6049,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.6175,
+    "inputs": {}
+   },
+   "market": {
+    "homeWinProbability": 0.675,
+    "awayWinProbability": 0.325,
+    "homeAmericanOdds": -238,
+    "awayAmericanOdds": 195,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118219"
+   },
+   "anchoredProbability": 0.6581
+  }
+ ]
+}
