@@ -28,7 +28,11 @@ export function Navbar() {
       }
     }
     void loadAccount();
-    return () => controller.abort();
+    window.addEventListener("sportiq:profile-updated", loadAccount);
+    return () => {
+      controller.abort();
+      window.removeEventListener("sportiq:profile-updated", loadAccount);
+    };
   }, [pathname]);
   const sport = sportFromPath(pathname);
   const config = SPORTS[sport];

@@ -1,1 +1,0 @@
-function e(){return Response.json({status:`ok`,service:`Diamond Dugout`})}export{e as GET};

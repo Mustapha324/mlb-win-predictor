@@ -38,13 +38,22 @@ npm run build
 
 For UI/API changes, start the development server, walk the affected flow, and inspect the returned JSON. For authentication/social changes, test with a local or staging Supabase project and at least two users: ownership, friendship transitions, late picks, edits/deletes after lock, tail snapshots, grading, and public response privacy. Never run destructive tests against production.
 
+The deterministic browser suite uses mocked social responses and real UI components. Start `npm run dev -- --port 3100` in one terminal, then in another terminal in `frontend/` run:
+
+```sh
+npx playwright install chromium
+npm run test:ui
+```
+
+Set `SPORTIQ_TEST_URL` to test a different local port. On Windows, an installed Edge browser can be used by setting `PLAYWRIGHT_CHANNEL=msedge` instead of downloading Chromium. These tests cover the UI contract; they do not validate hosted Supabase authentication or email delivery.
+
 From the repository root, the dependency-free backend training safeguards run with:
 
 ```sh
 python -m unittest discover -s backend/tests -v
 ```
 
-Validate migrations in timestamp order against a disposable Supabase database. Static SQL checks are useful but are not proof that PostgreSQL policies and RPC grants execute correctly.
+`npm test` executes migrations in timestamp order in an isolated PGlite PostgreSQL database with simulated Supabase auth roles. It verifies RPC authorization, table grants, pick deadlines, snapshots, grading and statistics. Also validate against a disposable Supabase project before production: the embedded harness does not exercise the hosted auth gateway, email delivery or the retired invite extension.
 
 For every model factor/weight change, also run `npm run backtest` against the configured baseline, require holdout non-degradation, and append the outcome to [docs/backtests/experiments.md](docs/backtests/experiments.md). That ledger is append-only, including rejected experiments. Do not hand-tune `DEFAULT_BRAIN_WEIGHTS` in a feature PR. Generated training artifacts must come from their trainer, not manual edits.
 

@@ -12,13 +12,13 @@ async function loadModule(path, providers) {
   const { outputText } = ts.transpileModule(source, {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 }
   });
-  const module = { exports: {} };
+  const loadedModule = { exports: {} };
   const requireProvider = (name) => {
     assert.ok(Object.hasOwn(providers, name), `Unexpected dependency: ${name}`);
     return providers[name];
   };
-  new Function("require", "module", "exports", outputText)(requireProvider, module, module.exports);
-  return module.exports;
+  new Function("require", "module", "exports", outputText)(requireProvider, loadedModule, loadedModule.exports);
+  return loadedModule.exports;
 }
 
 const validators = {

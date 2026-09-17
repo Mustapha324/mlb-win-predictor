@@ -27,6 +27,7 @@ export async function readSocial(view: string, params: Record<string, string>) {
   if (!client) throw new SocialError(SETUP_MESSAGE, 503);
   const { data, error } = await client.rpc("social_read", { p_view: view, p_params: params });
   if (error) throw socialDatabaseError(error);
+  if (view === "profile" && !data) throw new SocialError("This profile does not exist.", 404);
   return data;
 }
 
@@ -64,7 +65,7 @@ async function authoritativeGame(sport: Sport, gameId: string): Promise<TeamPred
     ? await (await import("@/lib/server/mlbModel")).getGamePrediction(gameId)
     : await (await import("@/lib/server/nflModel")).getNflGamePrediction(gameId);
   if (!prediction || prediction.sport !== sport || prediction.gameId !== gameId) throw new SocialError("This game is no longer available.", 404);
-  if (!prediction.game_time_utc) throw new SocialError("Picks are unavailable until an official game start is published.", 409);
+  if (!isPickOpen(prediction.game_time_utc, prediction.status) || prediction.is_final) throw new SocialError("This game has started or is unavailable. Picks are locked.", 409);
   // Match the immutable model call shown by existing prediction routes.
   const { data: snapshot, error } = await createSupabaseAdminClient().from("prediction_snapshots")
     .select("pregame_predicted_winner,pregame_home_win_probability,pregame_away_win_probability,model_version")

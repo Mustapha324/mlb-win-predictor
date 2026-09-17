@@ -10,7 +10,11 @@ The model is the centerpiece: **model → game predictions → your picks → co
 
 ## Screenshots
 
-The existing dark analytics interface is retained. These are intentional screenshot placeholders; capture the final running application without personal data before replacing them.
+The existing dark analytics interface is retained. This capture shows the running public app with all credentials disabled.
+
+![Public SportIQ games dashboard](docs/screenshots/games.png)
+
+Additional screenshot checklist (use consenting test accounts):
 
 | Capture | What to show |
 | --- | --- |
@@ -108,7 +112,7 @@ Unresolved or missing results stay pending for retry. Postponed/cancelled games 
 
 ## Accounts, privacy, and social rules
 
-Sign-in is required only for account actions; prediction viewing does not redirect guests to login. Historical `profiles` and billing columns remain private. The social migration adds `social_profiles`, `social_games`, `user_picks`, `friendships`, and `social_stats`. Existing users keep their Supabase identity and opt into a public username/profile. Avatars are preset icons; arbitrary image uploads are not implemented.
+Sign-in is required only for account actions; prediction viewing does not redirect guests to login. Historical `profiles` and billing columns remain private. The social migration adds `social_profiles`, `social_games`, `user_picks`, `friendships`, and `social_stats`. Existing and new accounts receive a random default public username, which they can customize in My Profile; emails and internal account IDs are never used as public names. Avatars are preset icons; arbitrary image uploads are not implemented.
 
 Public profile JSON contains only intended public fields/statistics, never email, authentication tokens, billing fields, or Supabase user IDs. Pick identifiers are returned when necessary for tailing.
 
@@ -169,6 +173,8 @@ Start with a local or staging Supabase project. Apply these migrations **in orde
 2. `202608170001_player_pick_snapshots.sql` — player-pick persistence.
 3. `202608240001_player_pick_market_odds.sql` — captured market fields.
 4. `202609140001_free_social_platform.sql` — social profiles/picks/friends/stats, restricted RPCs, and deactivation of client entitlement mutation.
+5. `202609160001_social_profile_defaults.sql` — private-data-free profile defaults/backfill and guest My Picks authentication.
+6. `202609160002_social_tail_identity_and_cache.sql` — tail records survive username changes; deleted accounts have no profile links; repeated finals reuse cached statistics.
 
 The original migration name is historical; it does not restore a paywall in the current app. Never delete or rewrite applied migrations. Back up existing databases before upgrades. Validate migrations and authorization with anonymous and two authenticated users in a disposable database before production rollout.
 
@@ -191,7 +197,7 @@ From the repository root:
 python -m unittest discover -s backend/tests -v
 ```
 
-Use a running server to verify UI/routes and a disposable PostgreSQL/Supabase database to verify migrations and authorization. A build alone is not end-to-end evidence. Model changes also require `npm run backtest` and an experiment-ledger decision.
+`npm test` executes migrations and security/locking/grading scenarios in an isolated PostgreSQL engine (PGlite), with Supabase JWT settings simulated. The retired pgcrypto invite extension is excluded from that harness. Use a running server to verify UI/routes and a staging Supabase project to check hosted authentication/email delivery and migration permissions. A build alone is not end-to-end evidence. Model changes also require `npm run backtest` and an experiment-ledger decision.
 
 ### Offline research and artifact regeneration
 

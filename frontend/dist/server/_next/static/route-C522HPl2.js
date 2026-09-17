@@ -1,1 +1,0 @@
-import{i as e,t}from"./mlbModel-CaUjcrOs.js";async function n(n){let r=new URL(n.url).searchParams.get(`date`)??t();try{return Response.json(await e(r),{headers:{"Cache-Control":`public, max-age=300`}})}catch(e){let t=e instanceof Error?e.message:`Unable to load MLB predictions.`;return Response.json({error:t},{status:503})}}export{n as GET};

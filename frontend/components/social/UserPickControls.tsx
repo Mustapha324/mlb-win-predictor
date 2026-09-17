@@ -1,24 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { TeamPrediction } from "@/lib/api";
 import { isPickOpen, type SocialGame } from "@/lib/social";
-import { SocialError, socialRequest, useSocialResource } from "@/lib/socialClient";
+import { SocialError, socialRequest, useSocialClock, useSocialResource } from "@/lib/socialClient";
 import { PickList } from "@/components/social/PickList";
 
 export function UserPickControls({ game }: { game: TeamPrediction }) {
   const [expanded, setExpanded] = useState(false);
-  const [now, setNow] = useState(0);
+  const now = useSocialClock();
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [needsLogin, setNeedsLogin] = useState(false);
   const resource = useSocialResource<SocialGame>(expanded ? `view=game&sport=${game.sport}&gameId=${encodeURIComponent(game.game_id)}` : null);
-  useEffect(() => {
-    const tick = () => setNow(Date.now());
-    tick(); const timer = window.setInterval(tick, 1000);
-    return () => window.clearInterval(timer);
-  }, []);
   const open = now > 0 && isPickOpen(game.game_time_utc, game.status, now) && !game.is_final;
   async function choose(selection: string) {
     setBusy(true); setNotice(""); setNeedsLogin(false);

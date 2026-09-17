@@ -17,15 +17,15 @@ export default function SettingsPage() {
         <div className="space-y-5">
           <section className="sport-panel p-5 sm:p-7" aria-labelledby="account-settings-heading">
             <p className="eyebrow">Account</p>
-            <h2 id="account-settings-heading" className="mt-2 text-xl font-black text-white">Membership & access</h2>
-            <p className="mt-3 text-sm leading-6 text-neutral-400">Sign in, redeem a Friends & Family code, view your access level, or manage an existing plan.</p>
+            <h2 id="account-settings-heading" className="mt-2 text-xl font-black text-white">Profile & preferences</h2>
+            <p className="mt-3 text-sm leading-6 text-neutral-400">Sign in, edit your public profile, and track your picks and friends. All predictions are free.</p>
             <Link href="/account" className="primary-button mt-5 w-full sm:w-auto">Open account</Link>
           </section>
 
           <section className="sport-panel border-indigo-300/15 p-5 sm:p-7" aria-labelledby="community-settings-heading">
             <p className="eyebrow">Community</p>
             <h2 id="community-settings-heading" className="mt-2 text-xl font-black text-white">Join the Sport IQ Discord</h2>
-            <p className="mt-3 text-sm leading-6 text-neutral-400">Share feedback, discuss picks, and hear about product updates. Never post passwords, invite codes, or payment details.</p>
+            <p className="mt-3 text-sm leading-6 text-neutral-400">Share feedback, discuss picks, and hear about product updates. Never post passwords or private account information.</p>
             <a href="https://discord.gg/zJnduXrDv" target="_blank" rel="noopener noreferrer" className="secondary-button mt-5 w-full border-indigo-300/25 text-indigo-200 sm:w-auto">Join Discord ↗</a>
           </section>
         </div>

@@ -1,1 +1,0 @@
-import{n as e}from"./mlbModel-CaUjcrOs.js";async function t(t,n){try{let{id:t}=await n.params,r=await e(t);return r?Response.json(r):Response.json({error:`Game not found.`},{status:404})}catch(e){let t=e instanceof Error?e.message:`Unable to load the game.`;return Response.json({error:t},{status:503})}}export{t as GET};

@@ -8,7 +8,7 @@ export type SocialStats = PickRecord & {
   total: number; currentStreak: string; bestStreak: number; last10: PickRecord;
   mlb: PickRecord; nfl: PickRecord; modelWinPercentage: number | null;
   agreementPercentage: number | null; agreeWinPercentage: number | null; disagreeWinPercentage: number | null;
-  tails: Array<{ username: string; wins: number; losses: number; winPercentage: number | null }>;
+  tails: Array<{ username: string; profileUsername: string | null; wins: number; losses: number; winPercentage: number | null }>;
 };
 export type SocialProfile = {
   username: string; displayName: string; avatar: string; favoriteMlb: string | null; favoriteNfl: string | null;
