@@ -1,0 +1,127 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-17",
+ "capturedAt": "2026-09-17T23:21:38.067Z",
+ "games": [
+  {
+   "gameId": "401872932",
+   "gameTimeUtc": "2026-09-18T00:15Z",
+   "home": "Buffalo Bills",
+   "away": "Detroit Lions",
+   "injuries": {
+    "home": {
+     "burden": 0.999,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Skyler Bell",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jude Bowry",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ty Johnson",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ar'maj Reed-Adams",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jalon Kilgore",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9978,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Christian Mahogany",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Blake Miller",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Keith Abney II",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ahmed Hassanein",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ennis Rakestraw Jr.",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 1,
+     "streak": 1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 1,
+     "streak": 1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [],
+   "baseProbability": 0.6049,
+   "brainProbability": 0.6049,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.6175,
+    "inputs": {}
+   },
+   "market": {
+    "homeWinProbability": 0.675,
+    "awayWinProbability": 0.325,
+    "homeAmericanOdds": -238,
+    "awayAmericanOdds": 195,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118219"
+   },
+   "anchoredProbability": 0.6581
+  }
+ ]
+}
