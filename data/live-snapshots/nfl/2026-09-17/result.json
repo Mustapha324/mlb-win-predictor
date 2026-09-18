@@ -1,0 +1,22 @@
+{
+ "date": "2026-09-17",
+ "graded": [
+  {
+   "challengerProbability": 0.6049,
+   "challengerCorrect": true,
+   "gameId": "401872932",
+   "matchup": "Detroit Lions @ Buffalo Bills",
+   "capturedAt": "2026-09-17T23:21:38.067Z",
+   "baseProbability": 0.6049,
+   "brainProbability": 0.6049,
+   "homeWon": true,
+   "score": "31-41",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.675,
+   "marketCorrect": true,
+   "anchoredProbability": 0.6581,
+   "anchoredCorrect": true
+  }
+ ]
+}
