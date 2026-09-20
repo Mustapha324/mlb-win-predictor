@@ -1,0 +1,267 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-19",
+ "capturedAt": "2026-09-20T00:37:25.926Z",
+ "games": [
+  {
+   "gameId": "823899",
+   "gameTimeUtc": "2026-09-20T01:10:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "San Francisco Giants",
+   "probables": {
+    "home": "Tarik Skubal",
+    "away": "Yunior Marte"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6859,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.9169,
+     "count": 22
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Number Change",
+      "detail": "3B Enrique Hernández changed number to 8.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "SS Mookie Betts changed number to 50.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "LHP Tarik Skubal changed number to 29.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated LHP Kris Bubic from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Los Angeles Dodgers designated LF Ryan Ward for assignment.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants activated LF Victor Bericoto from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed RHP Logan Webb on the 15-day injured list retroactive to September 15, 2026. Right middle finger blister.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed 2B Nate Furman on the 10-day injured list retroactive to September 16, 2026. Right oblique strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Francisco Giants recalled RHP Duncan Davitt from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants activated LHP Sam Hentges from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.011550000000000005
+    }
+   ],
+   "baseProbability": 0.6247,
+   "brainProbability": 0.6268,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.6625,
+    "inputs": {
+     "injuryGap": 0.2310000000000001,
+     "formWinRate": 0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7706,
+    "awayWinProbability": 0.2294,
+    "homeAmericanOdds": -414,
+    "awayAmericanOdds": 317,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34689965"
+   },
+   "anchoredProbability": 0.7385
+  },
+  {
+   "gameId": "823976",
+   "gameTimeUtc": "2026-09-20T01:38:00Z",
+   "home": "Los Angeles Angels",
+   "away": "Minnesota Twins",
+   "probables": {
+    "home": "Reid Detmers",
+    "away": "Joe Ryan"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.6458,
+     "count": 9
+    },
+    "away": {
+     "burden": 0.6239,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels activated RHP Sam Bachman from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Number Change",
+      "detail": "CF Mike Trout changed number to 27.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels placed LHP Samy Natera Jr. on the 15-day injured list retroactive to September 13, 2026. Left forearm inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Number Change",
+      "detail": "SS Zach Neto changed number to 9.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels placed 2B Kyren Paris on the 10-day injured list retroactive to September 15, 2026. Right index finger fracture.",
+      "tags": [
+       "injury"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Number Change",
+      "detail": "C Victor Caratini changed number to 37.",
+      "tags": []
+     },
+     {
+      "type": "Number Change",
+      "detail": "RF Austin Martin changed number to 16.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Minnesota Twins placed SS Kaelen Culpepper on the 10-day injured list. Left hamstring strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Minnesota Twins activated RF Austin Martin.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Number Change",
+      "detail": "DH Josh Bell changed number to 56.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0010950000000000016
+    }
+   ],
+   "baseProbability": 0.5078,
+   "brainProbability": 0.5078,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0408,
+    "inputs": {
+     "injuryGap": -0.02190000000000003,
+     "formWinRate": 0.09999999999999998
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5333,
+    "awayWinProbability": 0.4667,
+    "homeAmericanOdds": -126,
+    "awayAmericanOdds": 105,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34689966"
+   },
+   "anchoredProbability": 0.5269
+  }
+ ]
+}
