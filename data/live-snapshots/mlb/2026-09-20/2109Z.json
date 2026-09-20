@@ -1,0 +1,213 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-20",
+ "capturedAt": "2026-09-20T21:09:36.291Z",
+ "games": [
+  {
+   "gameId": "824546",
+   "gameTimeUtc": "2026-09-20T18:10:00Z",
+   "home": "Chicago White Sox",
+   "away": "Detroit Tigers",
+   "probables": {
+    "home": "Davis Martin",
+    "away": "Troy Melton"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5534,
+     "count": 7
+    },
+    "away": {
+     "burden": 0.7449,
+     "count": 12
+    }
+   },
+   "weather": {
+    "tempF": 64.9,
+    "windMph": 7.6,
+    "gustMph": 15,
+    "precipProbability": 0.76,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated RHP Huascar Brazobán from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Recalled",
+      "detail": "Detroit Tigers recalled RHP Ty Madden from Toledo Mud Hens.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.009575
+    },
+    {
+     "kind": "weather",
+     "homeLogit": 0.012
+    }
+   ],
+   "baseProbability": 0.5131,
+   "brainProbability": 0.5173,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0683,
+    "inputs": {
+     "injuryGap": 0.1915,
+     "formWinRate": -0.29999999999999993,
+     "weatherHome": 0.2
+    }
+   },
+   "market": null,
+   "anchoredProbability": null
+  },
+  {
+   "gameId": "824789",
+   "gameTimeUtc": "2026-09-20T23:20:00Z",
+   "home": "Baltimore Orioles",
+   "away": "Milwaukee Brewers",
+   "probables": {
+    "home": "Brandon Young",
+    "away": "Jacob Misiorowski"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7242,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.4401,
+     "count": 6
+    }
+   },
+   "weather": {
+    "tempF": 74.4,
+    "windMph": 1.5,
+    "gustMph": 5.1,
+    "precipProbability": 0.28,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Baltimore Orioles recalled LHP Cade Povich from Norfolk Tides.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated CF Christian Franklin from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Retired",
+      "detail": "1B Trey Mancini retired.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated RHP Félix Bautista from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles transferred RF Tyler O'Neill from the 10-day injured list to the 60-day injured list. Right shoulder inflammation.",
+      "tags": [
+       "injury"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Milwaukee Brewers designated LHP Rob Zastryzny for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Milwaukee Brewers recalled LHP Colton Gordon from Nashville Sounds.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.014204999999999999
+    }
+   ],
+   "baseProbability": 0.4369,
+   "brainProbability": 0.4342,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.3298,
+    "inputs": {
+     "injuryGap": -0.28409999999999996,
+     "formWinRate": -0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3468,
+    "awayWinProbability": 0.6532,
+    "homeAmericanOdds": 176,
+    "awayAmericanOdds": -215,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34694645"
+   },
+   "anchoredProbability": 0.3679
+  }
+ ]
+}

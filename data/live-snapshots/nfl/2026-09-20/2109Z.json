@@ -1,0 +1,130 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-20",
+ "capturedAt": "2026-09-20T21:09:36.859Z",
+ "games": [
+  {
+   "gameId": "401872945",
+   "gameTimeUtc": "2026-09-21T00:20Z",
+   "home": "Kansas City Chiefs",
+   "away": "Indianapolis Colts",
+   "injuries": {
+    "home": {
+     "burden": 0.9868,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Jeff Caldwell",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Ethan Downs",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "John Michael Gyllenborg",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jimmy Holiday",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Cooper McDonald",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9948,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Ashton Dulin",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cam Taylor-Britt",
+       "position": "CB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Will Mallory",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Sean McKeon",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Cameron Mitchell",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 1,
+     "streak": 1,
+     "restDays": 4
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 1,
+     "streak": -1,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [],
+   "baseProbability": 0.5764,
+   "brainProbability": 0.5764,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.4465,
+    "inputs": {
+     "formWinRate": 1,
+     "restDay": -2
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6958,
+    "awayWinProbability": 0.3042,
+    "homeAmericanOdds": -265,
+    "awayAmericanOdds": 215,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118260"
+   },
+   "anchoredProbability": 0.6676
+  }
+ ]
+}
