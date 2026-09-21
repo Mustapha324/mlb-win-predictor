@@ -1,0 +1,369 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-21",
+ "capturedAt": "2026-09-21T20:46:39.564Z",
+ "games": [
+  {
+   "gameId": "824787",
+   "gameTimeUtc": "2026-09-21T22:35:00Z",
+   "home": "Baltimore Orioles",
+   "away": "Toronto Blue Jays",
+   "probables": {
+    "home": "Shane Baz",
+    "away": "Trey Yesavage"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7242,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.7659,
+     "count": 13
+    }
+   },
+   "weather": {
+    "tempF": 67,
+    "windMph": 6.4,
+    "gustMph": 11.4,
+    "precipProbability": 0.35,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Baltimore Orioles recalled LHP Cade Povich from Norfolk Tides.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated CF Christian Franklin from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Retired",
+      "detail": "1B Trey Mancini retired.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated RHP Félix Bautista from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles transferred RF Tyler O'Neill from the 10-day injured list to the 60-day injured list. Right shoulder inflammation.",
+      "tags": [
+       "injury"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Toronto Blue Jays designated RHP Michael Lorenzen for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Toronto Blue Jays selected the contract of RHP José Rodríguez from Buffalo Bisons.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Toronto Blue Jays activated RHP Trey Yesavage from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Toronto Blue Jays designated LHP Joe Mantiply for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Toronto Blue Jays recalled RHP Chad Dallas from Buffalo Bisons.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0020850000000000035
+    }
+   ],
+   "baseProbability": 0.5139,
+   "brainProbability": 0.5139,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0722,
+    "inputs": {
+     "injuryGap": 0.04170000000000007,
+     "formWinRate": 0.09999999999999998
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5,
+    "awayWinProbability": 0.5,
+    "homeAmericanOdds": -110,
+    "awayAmericanOdds": -110,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34700179"
+   },
+   "anchoredProbability": 0.5035
+  },
+  {
+   "gameId": "824221",
+   "gameTimeUtc": "2026-09-21T22:40:00Z",
+   "home": "Detroit Tigers",
+   "away": "Washington Nationals",
+   "probables": {
+    "home": "River Ryan",
+    "away": "DJ Herz"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7449,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.5181,
+     "count": 7
+    }
+   },
+   "weather": {
+    "tempF": 59.7,
+    "windMph": 8.8,
+    "gustMph": 18.1,
+    "precipProbability": 0.02,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Detroit Tigers recalled RHP River Ryan from Toledo Mud Hens.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Released",
+      "detail": "Washington Nationals released RHP Cole Henry.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Washington Nationals activated LHP DJ Herz from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.011340000000000001
+    }
+   ],
+   "baseProbability": 0.5605,
+   "brainProbability": 0.5583,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3159,
+    "inputs": {
+     "injuryGap": -0.2268
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5452,
+    "awayWinProbability": 0.4548,
+    "homeAmericanOdds": -133,
+    "awayAmericanOdds": 110,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34700180"
+   },
+   "anchoredProbability": 0.5485
+  },
+  {
+   "gameId": "823169",
+   "gameTimeUtc": "2026-09-22T01:45:00Z",
+   "home": "San Francisco Giants",
+   "away": "Minnesota Twins",
+   "probables": {
+    "home": "Blade Tidwell",
+    "away": "Zebby Matthews"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.9169,
+     "count": 22
+    },
+    "away": {
+     "burden": 0.6239,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants activated LF Victor Bericoto from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed RHP Logan Webb on the 15-day injured list retroactive to September 15, 2026. Right middle finger blister.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed 2B Nate Furman on the 10-day injured list retroactive to September 16, 2026. Right oblique strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Francisco Giants recalled RHP Duncan Davitt from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants activated LHP Sam Hentges from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Minnesota Twins placed LF Trevor Larnach on the 10-day injured list retroactive to September 15, 2026. Left wrist sprain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Minnesota Twins recalled RF Alan Roden from St. Paul Saints.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Minnesota Twins designated C Alex Jackson for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Minnesota Twins selected the contract of 1B Aaron Sabato from St. Paul Saints.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.014650000000000003
+    }
+   ],
+   "baseProbability": 0.5262,
+   "brainProbability": 0.5234,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1363,
+    "inputs": {
+     "injuryGap": -0.29300000000000004,
+     "formWinRate": -0.10000000000000003
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4709,
+    "awayWinProbability": 0.5291,
+    "homeAmericanOdds": 103,
+    "awayAmericanOdds": -124,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34700181"
+   },
+   "anchoredProbability": 0.484
+  }
+ ]
+}
