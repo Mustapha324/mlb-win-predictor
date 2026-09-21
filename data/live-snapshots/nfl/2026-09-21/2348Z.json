@@ -1,0 +1,135 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-21",
+ "capturedAt": "2026-09-21T23:48:29.234Z",
+ "games": [
+  {
+   "gameId": "401872947",
+   "gameTimeUtc": "2026-09-22T00:15Z",
+   "home": "Los Angeles Rams",
+   "away": "New York Giants",
+   "injuries": {
+    "home": {
+     "burden": 0.999,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "CJ Daniels",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Bill Murray",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Puka Nacua",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ty Simpson",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jordan Whittington",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9992,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "J.C. Davis",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Thomas Fidone II",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Darius Alexander",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Deonte Banks",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Bobby Jamison-Travis",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 0,
+     "lastTenGames": 1,
+     "streak": -1,
+     "restDays": 9
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 1,
+     "streak": 1,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.05
+    }
+   ],
+   "baseProbability": 0.6354,
+   "brainProbability": 0.6433,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.8051,
+    "inputs": {
+     "formWinRate": -1,
+     "restDay": 3
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.718,
+    "awayWinProbability": 0.282,
+    "homeAmericanOdds": -298,
+    "awayAmericanOdds": 240,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118089"
+   },
+   "anchoredProbability": 0.7002
+  }
+ ]
+}

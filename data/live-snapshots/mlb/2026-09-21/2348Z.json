@@ -1,0 +1,137 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-21",
+ "capturedAt": "2026-09-21T23:48:28.665Z",
+ "games": [
+  {
+   "gameId": "823169",
+   "gameTimeUtc": "2026-09-22T01:45:00Z",
+   "home": "San Francisco Giants",
+   "away": "Minnesota Twins",
+   "probables": {
+    "home": "Blade Tidwell",
+    "away": "Zebby Matthews"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.9268,
+     "count": 23
+    },
+    "away": {
+     "burden": 0.6239,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants activated LF Victor Bericoto from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed RHP Logan Webb on the 15-day injured list retroactive to September 15, 2026. Right middle finger blister.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed 2B Nate Furman on the 10-day injured list retroactive to September 16, 2026. Right oblique strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Francisco Giants recalled RHP Duncan Davitt from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants activated LHP Sam Hentges from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Minnesota Twins placed LF Trevor Larnach on the 10-day injured list retroactive to September 15, 2026. Left wrist sprain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Minnesota Twins recalled RF Alan Roden from St. Paul Saints.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Minnesota Twins designated C Alex Jackson for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Minnesota Twins selected the contract of 1B Aaron Sabato from St. Paul Saints.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.015144999999999999
+    }
+   ],
+   "baseProbability": 0.5262,
+   "brainProbability": 0.5233,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1363,
+    "inputs": {
+     "injuryGap": -0.30289999999999995,
+     "formWinRate": -0.10000000000000003
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4687,
+    "awayWinProbability": 0.5313,
+    "homeAmericanOdds": 104,
+    "awayAmericanOdds": -125,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34700181"
+   },
+   "anchoredProbability": 0.4823
+  }
+ ]
+}
