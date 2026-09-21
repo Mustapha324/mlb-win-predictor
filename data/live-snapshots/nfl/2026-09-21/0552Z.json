@@ -1,0 +1,140 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-21",
+ "capturedAt": "2026-09-21T05:52:54.142Z",
+ "games": [
+  {
+   "gameId": "401872947",
+   "gameTimeUtc": "2026-09-22T00:15Z",
+   "home": "Los Angeles Rams",
+   "away": "New York Giants",
+   "injuries": {
+    "home": {
+     "burden": 0.9955,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Jordan Whittington",
+       "position": "WR",
+       "status": "doubtful",
+       "detail": "Doubtful"
+      },
+      {
+       "playerName": "Kamren Kinchens",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Matthew Caldwell",
+       "position": "QB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Justin Dedich",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Myles Garrett",
+       "position": "DE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.996,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Paulson Adebo",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Calvin Austin III",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jarrick Bernard-Converse",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Korie Black",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Thaddeus Dixon",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 0,
+     "lastTenGames": 1,
+     "streak": -1,
+     "restDays": 9
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 1,
+     "streak": 1,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": 0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": 0.05
+    }
+   ],
+   "baseProbability": 0.6354,
+   "brainProbability": 0.6892,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.8051,
+    "inputs": {
+     "qbOut": 1,
+     "formWinRate": -1,
+     "restDay": 3
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7221,
+    "awayWinProbability": 0.2779,
+    "homeAmericanOdds": -305,
+    "awayAmericanOdds": 245,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118089"
+   },
+   "anchoredProbability": 0.7141
+  }
+ ]
+}

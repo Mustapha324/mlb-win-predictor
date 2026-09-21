@@ -1,0 +1,314 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-21",
+ "capturedAt": "2026-09-21T05:52:53.841Z",
+ "games": [
+  {
+   "gameId": "824787",
+   "gameTimeUtc": "2026-09-21T22:35:00Z",
+   "home": "Baltimore Orioles",
+   "away": "Toronto Blue Jays",
+   "probables": {
+    "home": "Shane Baz",
+    "away": "Trey Yesavage"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.7242,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.786,
+     "count": 14
+    }
+   },
+   "weather": {
+    "tempF": 63.7,
+    "windMph": 6.6,
+    "gustMph": 18.8,
+    "precipProbability": 0.34,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Baltimore Orioles recalled LHP Cade Povich from Norfolk Tides.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated RHP Félix Bautista from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles transferred RF Tyler O'Neill from the 10-day injured list to the 60-day injured list. Right shoulder inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Retired",
+      "detail": "1B Trey Mancini retired.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles activated CF Christian Franklin from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "Toronto Blue Jays designated RHP Michael Lorenzen for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Selected",
+      "detail": "Toronto Blue Jays selected the contract of RHP José Rodríguez from Buffalo Bisons.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.003090000000000004
+    }
+   ],
+   "baseProbability": 0.5139,
+   "brainProbability": 0.5139,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0722,
+    "inputs": {
+     "injuryGap": 0.06180000000000008,
+     "formWinRate": 0.09999999999999998
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5022,
+    "awayWinProbability": 0.4978,
+    "homeAmericanOdds": -111,
+    "awayAmericanOdds": -109,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34700179"
+   },
+   "anchoredProbability": 0.5051
+  },
+  {
+   "gameId": "824221",
+   "gameTimeUtc": "2026-09-21T22:40:00Z",
+   "home": "Detroit Tigers",
+   "away": "Washington Nationals",
+   "probables": {
+    "home": "River Ryan",
+    "away": "DJ Herz"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.7449,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.564,
+     "count": 8
+    }
+   },
+   "weather": {
+    "tempF": 62.3,
+    "windMph": 9.8,
+    "gustMph": 18.8,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.009045000000000003
+    }
+   ],
+   "baseProbability": 0.5605,
+   "brainProbability": 0.5587,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3159,
+    "inputs": {
+     "injuryGap": -0.18090000000000006
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5819,
+    "awayWinProbability": 0.4181,
+    "homeAmericanOdds": -155,
+    "awayAmericanOdds": 129,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34700180"
+   },
+   "anchoredProbability": 0.5761
+  },
+  {
+   "gameId": "823169",
+   "gameTimeUtc": "2026-09-22T01:45:00Z",
+   "home": "San Francisco Giants",
+   "away": "Minnesota Twins",
+   "probables": {
+    "home": "Blade Tidwell",
+    "away": "Zebby Matthews"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.9169,
+     "count": 22
+    },
+    "away": {
+     "burden": 0.6239,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants activated LF Victor Bericoto from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed RHP Logan Webb on the 15-day injured list retroactive to September 15, 2026. Right middle finger blister.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed 2B Nate Furman on the 10-day injured list retroactive to September 16, 2026. Right oblique strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Francisco Giants recalled RHP Duncan Davitt from Sacramento River Cats.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Francisco Giants placed LHP Reiver Sanmartin on the 15-day injured list retroactive to September 17, 2026. Right oblique strain.",
+      "tags": [
+       "injury"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Minnesota Twins placed LF Trevor Larnach on the 10-day injured list retroactive to September 15, 2026. Left wrist sprain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Minnesota Twins recalled RF Alan Roden from St. Paul Saints.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.014650000000000003
+    }
+   ],
+   "baseProbability": 0.5262,
+   "brainProbability": 0.5234,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1363,
+    "inputs": {
+     "injuryGap": -0.29300000000000004,
+     "formWinRate": -0.10000000000000003
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4826,
+    "awayWinProbability": 0.5174,
+    "homeAmericanOdds": -102,
+    "awayAmericanOdds": -118,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34700181"
+   },
+   "anchoredProbability": 0.4928
+  }
+ ]
+}
