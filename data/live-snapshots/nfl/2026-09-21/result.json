@@ -1,0 +1,22 @@
+{
+ "date": "2026-09-21",
+ "graded": [
+  {
+   "challengerProbability": 0.6392,
+   "challengerCorrect": true,
+   "gameId": "401872947",
+   "matchup": "New York Giants @ Los Angeles Rams",
+   "capturedAt": "2026-09-21T23:48:29.234Z",
+   "baseProbability": 0.6354,
+   "brainProbability": 0.6433,
+   "homeWon": true,
+   "score": "6-28",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.718,
+   "marketCorrect": true,
+   "anchoredProbability": 0.7002,
+   "anchoredCorrect": true
+  }
+ ]
+}

@@ -1,0 +1,56 @@
+{
+ "date": "2026-09-21",
+ "graded": [
+  {
+   "challengerProbability": 0.5189,
+   "challengerCorrect": true,
+   "gameId": "824787",
+   "matchup": "Toronto Blue Jays @ Baltimore Orioles",
+   "capturedAt": "2026-09-21T20:46:39.564Z",
+   "baseProbability": 0.5139,
+   "brainProbability": 0.5139,
+   "homeWon": true,
+   "score": "3-4",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5035,
+   "anchoredCorrect": true
+  },
+  {
+   "challengerProbability": 0.5751,
+   "challengerCorrect": true,
+   "gameId": "824221",
+   "matchup": "Washington Nationals @ Detroit Tigers",
+   "capturedAt": "2026-09-21T20:46:39.564Z",
+   "baseProbability": 0.5605,
+   "brainProbability": 0.5583,
+   "homeWon": true,
+   "score": "2-9",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5452,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5485,
+   "anchoredCorrect": true
+  },
+  {
+   "challengerProbability": 0.5294,
+   "challengerCorrect": true,
+   "gameId": "823169",
+   "matchup": "Minnesota Twins @ San Francisco Giants",
+   "capturedAt": "2026-09-21T23:48:28.665Z",
+   "baseProbability": 0.5262,
+   "brainProbability": 0.5233,
+   "homeWon": true,
+   "score": "2-5",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.4687,
+   "marketCorrect": false,
+   "anchoredProbability": 0.4823,
+   "anchoredCorrect": false
+  }
+ ]
+}
