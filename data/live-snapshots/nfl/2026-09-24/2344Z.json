@@ -1,0 +1,145 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-24",
+ "capturedAt": "2026-09-24T23:44:56.947Z",
+ "games": [
+  {
+   "gameId": "401872948",
+   "gameTimeUtc": "2026-09-25T00:15Z",
+   "home": "Green Bay Packers",
+   "away": "Atlanta Falcons",
+   "injuries": {
+    "home": {
+     "burden": 0.9987,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Zach Bako-Bewele",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Aaron Banks",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Josh Jacobs",
+       "position": "RB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Jayden Reed",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Warren Brinson",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9995,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Ethan Onianwa",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cooper Rush",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jack Strand",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Malcolm DeWalt IV",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Samson Ebukam",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Jordan Love",
+     "value": 0.978
+    },
+    "away": {
+     "starterName": "Cooper Rush",
+     "value": -1.373
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": 1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 2,
+     "streak": -2,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.0425
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.11755
+    }
+   ],
+   "baseProbability": 0.6073,
+   "brainProbability": 0.6332,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.6319,
+    "inputs": {
+     "formWinRate": 0.5,
+     "qbValue": 2.351
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.669,
+    "awayWinProbability": 0.331,
+    "homeAmericanOdds": -230,
+    "awayAmericanOdds": 190,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118180"
+   },
+   "anchoredProbability": 0.6602
+  }
+ ]
+}

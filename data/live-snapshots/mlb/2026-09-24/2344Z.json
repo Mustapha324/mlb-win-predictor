@@ -1,0 +1,341 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-24",
+ "capturedAt": "2026-09-24T23:44:55.852Z",
+ "games": [
+  {
+   "gameId": "824950",
+   "gameTimeUtc": "2026-09-25T01:40:00Z",
+   "home": "Athletics",
+   "away": "Houston Astros",
+   "probables": {
+    "home": "Mason Barnett",
+    "away": "Peter Lambert"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7439,
+     "count": 12
+    },
+    "away": {
+     "burden": 0.6329,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Athletics activated 3B Joshua Kuroda-Grauer from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Athletics placed 3B Max Muncy on the 10-day injured list. Left knee chondromalacia.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Athletics transferred RHP J.T. Ginn from the 15-day injured list to the 60-day injured list. Right elbow impingement.",
+      "tags": [
+       "injury"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Houston Astros placed CF Jake Meyers on the 60-day injured list.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Houston Astros placed RHP Cristian Javier on the 15-day injured list.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Houston Astros placed CF Brice Matthews on the 10-day injured list. Left knee inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Houston Astros recalled CF Lucas Spence from Sugar Land Space Cowboys.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Houston Astros selected the contract of LHP Josh Hendrickson from Sugar Land Space Cowboys.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.005549999999999999
+    }
+   ],
+   "baseProbability": 0.4532,
+   "brainProbability": 0.4521,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.2443,
+    "inputs": {
+     "injuryGap": -0.11099999999999999
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3874,
+    "awayWinProbability": 0.6126,
+    "homeAmericanOdds": 147,
+    "awayAmericanOdds": -178,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34714631"
+   },
+   "anchoredProbability": 0.4033
+  },
+  {
+   "gameId": "823087",
+   "gameTimeUtc": "2026-09-25T01:40:00Z",
+   "home": "Seattle Mariners",
+   "away": "Los Angeles Angels",
+   "probables": {
+    "home": "Bryan Woo",
+    "away": "Grayson Rodriguez"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.7253,
+     "count": 11
+    },
+    "away": {
+     "burden": 0.6763,
+     "count": 10
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": -3,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Seattle Mariners placed SS Brock Rodden on the 10-day injured list retroactive to September 23, 2026. Left patella tendon inflammation.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Seattle Mariners recalled 3B Leo Rivas from Tacoma Rainiers.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Angels placed RHP Ben Joyce on the 15-day injured list retroactive to September 21, 2026. Right shoulder impingement.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Angels recalled RHP Trevor Martin from Salt Lake Bees.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.002449999999999997
+    }
+   ],
+   "baseProbability": 0.5672,
+   "brainProbability": 0.5672,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3517,
+    "inputs": {
+     "injuryGap": -0.04899999999999993,
+     "formWinRate": 0.09999999999999998
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6347,
+    "awayWinProbability": 0.3653,
+    "homeAmericanOdds": -197,
+    "awayAmericanOdds": 162,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34714640"
+   },
+   "anchoredProbability": 0.6182
+  },
+  {
+   "gameId": "823895",
+   "gameTimeUtc": "2026-09-25T02:10:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "San Diego Padres",
+   "probables": {
+    "home": "Tyler Glasnow",
+    "away": "Nick Pivetta"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5578,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.6023,
+     "count": 8
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 0
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 0
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated CF Andy Pages from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated RHP Roki Sasaki from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Released",
+      "detail": "Los Angeles Dodgers released LF Ryan Ward.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated LHP Tarik Skubal from the bereavement list.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated TWP Shohei Ohtani from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Designated for Assignment",
+      "detail": "San Diego Padres designated RHP Alek Jacob for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres activated RHP Jason Adam from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.002224999999999999
+    }
+   ],
+   "baseProbability": 0.5548,
+   "brainProbability": 0.5548,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.2862,
+    "inputs": {
+     "injuryGap": 0.044499999999999984,
+     "formWinRate": -0.10000000000000009
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6048,
+    "awayWinProbability": 0.3952,
+    "homeAmericanOdds": -172,
+    "awayAmericanOdds": 142,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34714641"
+   },
+   "anchoredProbability": 0.5925
+  }
+ ]
+}
