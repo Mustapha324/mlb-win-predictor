@@ -1,0 +1,150 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-24",
+ "capturedAt": "2026-09-24T05:50:30.254Z",
+ "games": [
+  {
+   "gameId": "401872948",
+   "gameTimeUtc": "2026-09-25T00:15Z",
+   "home": "Green Bay Packers",
+   "away": "Atlanta Falcons",
+   "injuries": {
+    "home": {
+     "burden": 0.9986,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Zach Bako-Bewele",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Aaron Banks",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Josh Jacobs",
+       "position": "RB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Jayden Reed",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Warren Brinson",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9924,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Samson Ebukam",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "James Pearce Jr.",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Keshawn Banks",
+       "position": "DE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "JD Bertrand",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Beaux Collins",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Jordan Love",
+     "value": 0.978
+    },
+    "away": {
+     "starterName": "Cooper Rush",
+     "value": -1.373
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": 1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 2,
+     "streak": -2,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": -0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": 0.0425
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.11755
+    }
+   ],
+   "baseProbability": 0.6073,
+   "brainProbability": 0.5756,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.6319,
+    "inputs": {
+     "qbOut": -1,
+     "formWinRate": 0.5,
+     "qbValue": 2.351
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6806,
+    "awayWinProbability": 0.3194,
+    "homeAmericanOdds": -245,
+    "awayAmericanOdds": 200,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118180"
+   },
+   "anchoredProbability": 0.6556
+  }
+ ]
+}
