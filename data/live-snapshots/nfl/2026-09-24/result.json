@@ -1,0 +1,22 @@
+{
+ "date": "2026-09-24",
+ "graded": [
+  {
+   "challengerProbability": 0.633,
+   "challengerCorrect": false,
+   "gameId": "401872948",
+   "matchup": "Atlanta Falcons @ Green Bay Packers",
+   "capturedAt": "2026-09-24T23:44:56.947Z",
+   "baseProbability": 0.6073,
+   "brainProbability": 0.6332,
+   "homeWon": false,
+   "score": "35-14",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.669,
+   "marketCorrect": false,
+   "anchoredProbability": 0.6602,
+   "anchoredCorrect": false
+  }
+ ]
+}
