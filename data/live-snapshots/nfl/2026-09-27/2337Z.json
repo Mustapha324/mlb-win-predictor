@@ -1,0 +1,145 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-27",
+ "capturedAt": "2026-09-27T23:37:33.973Z",
+ "games": [
+  {
+   "gameId": "401872962",
+   "gameTimeUtc": "2026-09-28T00:20Z",
+   "home": "Denver Broncos",
+   "away": "Los Angeles Rams",
+   "injuries": {
+    "home": {
+     "burden": 0.999,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Dallen Bentley",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kage Casey",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Sam Ehlinger",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Lil'Jordan Humphrey",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Marvin Mims Jr.",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.999,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Tutu Atwell",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "CJ Daniels",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Bill Murray",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Puka Nacua",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ty Simpson",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Bo Nix",
+     "value": 0.484
+    },
+    "away": {
+     "starterName": "Matthew Stafford",
+     "value": 2.101
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": 1,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": 1,
+     "restDays": 4
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.09
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.08085
+    }
+   ],
+   "baseProbability": 0.5221,
+   "brainProbability": 0.5237,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1283,
+    "inputs": {
+     "restDay": 2,
+     "qbValue": -1.617
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4957,
+    "awayWinProbability": 0.5043,
+    "homeAmericanOdds": -108,
+    "awayAmericanOdds": -112,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118276"
+   },
+   "anchoredProbability": 0.5027
+  }
+ ]
+}
