@@ -1,0 +1,715 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-27",
+ "capturedAt": "2026-09-27T19:57:25.976Z",
+ "games": [
+  {
+   "gameId": "401872958",
+   "gameTimeUtc": "2026-09-27T20:05Z",
+   "home": "San Francisco 49ers",
+   "away": "Arizona Cardinals",
+   "injuries": {
+    "home": {
+     "burden": 0.9996,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Brandon Aiyuk",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Enrique Cruz Jr.",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kurtis Rourke",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tatum Bethune",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Nick Bosa",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9993,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Carson Beck",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Josh Fryar",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Reggie Virgil",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Andrew Billings",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Dadrion Taylor-Demerson",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Brock Purdy",
+     "value": 3.636
+    },
+    "away": {
+     "starterName": "Jacoby Brissett",
+     "value": -0.952
+    }
+   },
+   "weather": {
+    "tempF": 67.4,
+    "windMph": 7,
+    "gustMph": 8.3,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 2,
+     "streak": 2,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": -1,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.0425
+    },
+    {
+     "kind": "division",
+     "homeLogit": -0.2339423125749373
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.2
+    }
+   ],
+   "baseProbability": 0.7129,
+   "brainProbability": 0.7141,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 1.3187,
+    "inputs": {
+     "formWinRate": 0.5,
+     "divisionDamp": -0.8664530095368048,
+     "qbValue": 4
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7659,
+    "awayWinProbability": 0.2341,
+    "homeAmericanOdds": -395,
+    "awayAmericanOdds": 310,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118047"
+   },
+   "anchoredProbability": 0.7536
+  },
+  {
+   "gameId": "401872959",
+   "gameTimeUtc": "2026-09-27T20:05Z",
+   "home": "Tampa Bay Buccaneers",
+   "away": "Minnesota Vikings",
+   "injuries": {
+    "home": {
+     "burden": 0.9971,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Luke Haggard",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Billy Schrauth",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Rueben Bain Jr.",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ayden Garnes",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Rakeem Nunez-Roches",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9994,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Jeshaun Jones",
+       "position": "WR",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "J.J. McCarthy",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Caleb Tiernan",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jakobe Thomas",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tavierre Thomas",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Baker Mayfield",
+     "value": 0.034
+    },
+    "away": {
+     "starterName": "Carson Wentz",
+     "value": 1.207
+    }
+   },
+   "weather": {
+    "tempF": 84.3,
+    "windMph": 6.1,
+    "gustMph": 7.4,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 0,
+     "lastTenGames": 2,
+     "streak": -2,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 2,
+     "streak": 2,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": -0.085
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.05865000000000001
+    }
+   ],
+   "baseProbability": 0.392,
+   "brainProbability": 0.3687,
+   "tier": "A",
+   "learn": {
+    "baseLogit": -0.6364,
+    "inputs": {
+     "formWinRate": -1,
+     "qbValue": -1.173
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4957,
+    "awayWinProbability": 0.5043,
+    "homeAmericanOdds": -108,
+    "awayAmericanOdds": -112,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118145"
+   },
+   "anchoredProbability": 0.4632
+  },
+  {
+   "gameId": "401872960",
+   "gameTimeUtc": "2026-09-27T20:25Z",
+   "home": "Dallas Cowboys",
+   "away": "Baltimore Ravens",
+   "injuries": {
+    "home": {
+     "burden": 0.9984,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Camden Brown",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ajani Cornelius",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Emari Demercado",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cobie Durant",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Malik Hooker",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9989,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Joe Fagnano",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Elijah Sarratt",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ronnie Stanley",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Carl Jones",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Aeneas Peebles",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Dak Prescott",
+     "value": 1.207
+    },
+    "away": {
+     "starterName": "Lamar Jackson",
+     "value": 3.93
+    }
+   },
+   "weather": {
+    "tempF": 92.6,
+    "windMph": 8,
+    "gustMph": 10.1,
+    "precipProbability": 0.01,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": 1,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": -1,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.13615
+    }
+   ],
+   "baseProbability": 0.4856,
+   "brainProbability": 0.4622,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0835,
+    "inputs": {
+     "qbValue": -2.723
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3962,
+    "awayWinProbability": 0.6038,
+    "homeAmericanOdds": 142,
+    "awayAmericanOdds": -170,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118119"
+   },
+   "anchoredProbability": 0.4124
+  },
+  {
+   "gameId": "401872961",
+   "gameTimeUtc": "2026-09-27T20:25Z",
+   "home": "New Orleans Saints",
+   "away": "Las Vegas Raiders",
+   "injuries": {
+    "home": {
+     "burden": 0.9994,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Barion Brown",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brock Rechsteiner",
+       "position": "WR",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Treyton Welch",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Zach Wilson",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Martin Emerson Jr.",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9986,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Bryce Cabeldue",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Aidan O'Connell",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Dalton Johnson",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Darrell Luter Jr.",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "JJ Pegues",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Tyler Shough",
+     "value": 1.056
+    },
+    "away": {
+     "starterName": "Kirk Cousins",
+     "value": 0.938
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": 1,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 2,
+     "streak": 2,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": -0.0425
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.0059
+    }
+   ],
+   "baseProbability": 0.5869,
+   "brainProbability": 0.5808,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.5094,
+    "inputs": {
+     "formWinRate": -0.5,
+     "qbValue": 0.118
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6309,
+    "awayWinProbability": 0.3691,
+    "homeAmericanOdds": -192,
+    "awayAmericanOdds": 160,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118012"
+   },
+   "anchoredProbability": 0.6186
+  },
+  {
+   "gameId": "401872962",
+   "gameTimeUtc": "2026-09-28T00:20Z",
+   "home": "Denver Broncos",
+   "away": "Los Angeles Rams",
+   "injuries": {
+    "home": {
+     "burden": 0.987,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Jonathon Cooper",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Levelle Bailey",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jonah Coleman",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Frank Crum",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Michael Deiter",
+       "position": "C",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9925,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Puka Nacua",
+       "position": "WR",
+       "status": "doubtful",
+       "detail": "Doubtful"
+      },
+      {
+       "playerName": "Kamren Kinchens",
+       "position": "S",
+       "status": "doubtful",
+       "detail": "Doubtful"
+      },
+      {
+       "playerName": "Matthew Caldwell",
+       "position": "QB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Justin Dedich",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Myles Garrett",
+       "position": "DE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Bo Nix",
+     "value": 0.484
+    },
+    "away": {
+     "starterName": "Matthew Stafford",
+     "value": 2.101
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": 1,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": 1,
+     "restDays": 4
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.09
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.08085
+    }
+   ],
+   "baseProbability": 0.5221,
+   "brainProbability": 0.5237,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1283,
+    "inputs": {
+     "restDay": 2,
+     "qbValue": -1.617
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4573,
+    "awayWinProbability": 0.5427,
+    "homeAmericanOdds": 110,
+    "awayAmericanOdds": -130,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118276"
+   },
+   "anchoredProbability": 0.4739
+  }
+ ]
+}

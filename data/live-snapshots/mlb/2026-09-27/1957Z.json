@@ -1,0 +1,132 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-27",
+ "capturedAt": "2026-09-27T19:57:24.694Z",
+ "games": [
+  {
+   "gameId": "823490",
+   "gameTimeUtc": "2026-09-27T17:05:00Z",
+   "home": "New York Yankees",
+   "away": "Baltimore Orioles",
+   "probables": {
+    "home": "Elmer Rodríguez",
+    "away": "Shane Baz"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.5379,
+     "count": 7
+    },
+    "away": {
+     "burden": 0.7593,
+     "count": 12
+    }
+   },
+   "weather": {
+    "tempF": 62.9,
+    "windMph": 15.4,
+    "gustMph": 29.5,
+    "precipProbability": 0.43,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 1
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 1
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees activated RHP Brendan Beck.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees placed RHP Clarke Schmidt on the 15-day injured list retroactive to September 21, 2026. Right bicep neuritis.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees activated RHP Brendan Beck.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees reassigned RHP Brendan Beck to the minor leagues.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "New York Yankees recalled RHP Bradley Hanner from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Baltimore Orioles transferred RHP Kyle Bradish from the 15-day injured list to the 60-day injured list. Lower abdominal discomfort.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Selected",
+      "detail": "Baltimore Orioles selected the contract of RHP Albert Suárez from Norfolk Tides.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.011069999999999997
+    },
+    {
+     "kind": "weather",
+     "homeLogit": 0.012
+    }
+   ],
+   "baseProbability": 0.5796,
+   "brainProbability": 0.5839,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.4177,
+    "inputs": {
+     "injuryGap": 0.22139999999999993,
+     "formWinRate": -0.09999999999999998,
+     "weatherHome": 0.2
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5217,
+    "awayWinProbability": 0.4783,
+    "homeAmericanOdds": -120,
+    "awayAmericanOdds": 100,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34731665"
+   },
+   "anchoredProbability": 0.5374
+  }
+ ]
+}
