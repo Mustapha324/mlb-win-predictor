@@ -1,0 +1,150 @@
+{
+ "sport": "nfl",
+ "date": "2026-09-28",
+ "capturedAt": "2026-09-28T06:18:06.547Z",
+ "games": [
+  {
+   "gameId": "401872963",
+   "gameTimeUtc": "2026-09-29T00:15Z",
+   "home": "Chicago Bears",
+   "away": "Philadelphia Eagles",
+   "injuries": {
+    "home": {
+     "burden": 0.9965,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Caleb Williams",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brittain Brown",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Coby Bryant",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Tony Fields II",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Dallis Flowers",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9974,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Hollywood Brown",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Dallas Goedert",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Fred Johnson",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jakorian Bennett",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Grant Calcaterra",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Caleb Williams",
+     "value": 0.914
+    },
+    "away": {
+     "starterName": "Jalen Hurts",
+     "value": 1.608
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 2,
+     "streak": -1,
+     "restDays": 7
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 2,
+     "streak": 2,
+     "restDays": 7
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": -0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.0425
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.0347
+    }
+   ],
+   "baseProbability": 0.5155,
+   "brainProbability": 0.4552,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.0898,
+    "inputs": {
+     "qbOut": -1,
+     "formWinRate": -0.5,
+     "qbValue": -0.694
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3631,
+    "awayWinProbability": 0.6369,
+    "homeAmericanOdds": 164,
+    "awayAmericanOdds": -198,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118030"
+   },
+   "anchoredProbability": 0.3855
+  }
+ ]
+}
