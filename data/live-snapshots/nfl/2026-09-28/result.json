@@ -1,0 +1,22 @@
+{
+ "date": "2026-09-28",
+ "graded": [
+  {
+   "challengerProbability": 0.5032,
+   "challengerCorrect": true,
+   "gameId": "401872963",
+   "matchup": "Philadelphia Eagles @ Chicago Bears",
+   "capturedAt": "2026-09-28T23:40:48.651Z",
+   "baseProbability": 0.5155,
+   "brainProbability": 0.5021,
+   "homeWon": true,
+   "score": "7-27",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.3631,
+   "marketCorrect": false,
+   "anchoredProbability": 0.3967,
+   "anchoredCorrect": false
+  }
+ ]
+}
