@@ -1,0 +1,73 @@
+{
+ "date": "2026-09-29",
+ "graded": [
+  {
+   "challengerProbability": 0.5317,
+   "challengerCorrect": true,
+   "gameId": "849845",
+   "matchup": "Philadelphia Phillies @ Atlanta Braves",
+   "capturedAt": "2026-09-29T16:47:07.983Z",
+   "baseProbability": 0.5257,
+   "brainProbability": 0.5245,
+   "homeWon": true,
+   "score": "3-5",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.6291,
+   "marketCorrect": true,
+   "anchoredProbability": 0.6037,
+   "anchoredCorrect": true
+  },
+  {
+   "challengerProbability": 0.5178,
+   "challengerCorrect": false,
+   "gameId": "849849",
+   "matchup": "Chicago White Sox @ Houston Astros",
+   "capturedAt": "2026-09-29T16:47:07.983Z",
+   "baseProbability": 0.515,
+   "brainProbability": 0.515,
+   "homeWon": false,
+   "score": "6-3",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.527,
+   "marketCorrect": false,
+   "anchoredProbability": 0.524,
+   "anchoredCorrect": false
+  },
+  {
+   "challengerProbability": 0.5681,
+   "challengerCorrect": true,
+   "gameId": "849851",
+   "matchup": "Boston Red Sox @ New York Yankees",
+   "capturedAt": "2026-09-29T21:15:16.550Z",
+   "baseProbability": 0.5409,
+   "brainProbability": 0.5465,
+   "homeWon": true,
+   "score": "0-9",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5568,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5542,
+   "anchoredCorrect": true
+  },
+  {
+   "challengerProbability": 0.5328,
+   "challengerCorrect": true,
+   "gameId": "849843",
+   "matchup": "Chicago Cubs @ San Diego Padres",
+   "capturedAt": "2026-09-29T21:15:16.550Z",
+   "baseProbability": 0.5231,
+   "brainProbability": 0.5241,
+   "homeWon": true,
+   "score": "0-8",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5291,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5279,
+   "anchoredCorrect": true
+  }
+ ]
+}

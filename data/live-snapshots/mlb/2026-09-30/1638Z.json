@@ -1,0 +1,559 @@
+{
+ "sport": "mlb",
+ "date": "2026-09-30",
+ "capturedAt": "2026-09-30T16:38:47.055Z",
+ "games": [
+  {
+   "gameId": "849841",
+   "gameTimeUtc": "2026-09-30T18:00:00Z",
+   "home": "Atlanta Braves",
+   "away": "Philadelphia Phillies",
+   "probables": {
+    "home": "Tyler Mahle",
+    "away": "Cristopher Sánchez"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4934,
+     "count": 7
+    },
+    "away": {
+     "burden": 0.4621,
+     "count": 5
+    }
+   },
+   "weather": {
+    "tempF": 83.9,
+    "windMph": 7.1,
+    "gustMph": 9.4,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 2
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 2
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Bryce Elder roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated RHP Bryce Elder from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "LF Lane Thomas roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP JR Ritchie roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Atlanta Braves designated RHP Ricky Vanasco for assignment.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Philadelphia Phillies activated LHP Jesús Luzardo from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Designated for Assignment",
+      "detail": "Philadelphia Phillies designated RHP José Urquidy for assignment.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled RF Gabriel Rincones Jr. from Lehigh Valley IronPigs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled RHP Andrew Hoffmann from Lehigh Valley IronPigs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled RHP Moisés Chace from Reading Fightin Phils.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0015649999999999998
+    }
+   ],
+   "baseProbability": 0.5257,
+   "brainProbability": 0.5257,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.134,
+    "inputs": {
+     "injuryGap": -0.031299999999999994,
+     "formWinRate": 0.09999999999999998
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4836,
+    "awayWinProbability": 0.5164,
+    "homeAmericanOdds": -102,
+    "awayAmericanOdds": -117,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34746392"
+   },
+   "anchoredProbability": 0.4941
+  },
+  {
+   "gameId": "849846",
+   "gameTimeUtc": "2026-09-30T21:00:00Z",
+   "home": "Houston Astros",
+   "away": "Chicago White Sox",
+   "probables": {
+    "home": "Hunter Brown",
+    "away": "Sean Burke"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.5983,
+     "count": 8
+    },
+    "away": {
+     "burden": 0.537,
+     "count": 7
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 2
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 2
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Houston Astros recalled 2B Raynel Delgado from Sugar Land Space Cowboys.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Houston Astros activated LHP Steven Okert from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Houston Astros recalled C Collin Price from Sugar Land Space Cowboys.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Houston Astros recalled RHP Kai-Wei Teng from Sugar Land Space Cowboys.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Houston Astros recalled LF Zach Dezenzo from Sugar Land Space Cowboys.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated C Jake Rogers from the paternity list.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated C Joey Bart from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago White Sox recalled RF Rikuu Nishida from Charlotte Knights.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago White Sox recalled LHP Tyler Schweitzer from Charlotte Knights.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago White Sox recalled RHP Shane Smith from Charlotte Knights.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0030650000000000013
+    }
+   ],
+   "baseProbability": 0.515,
+   "brainProbability": 0.515,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.078,
+    "inputs": {
+     "injuryGap": -0.06130000000000002,
+     "formWinRate": -0.19999999999999996
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5692,
+    "awayWinProbability": 0.4308,
+    "homeAmericanOdds": -147,
+    "awayAmericanOdds": 122,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34746408"
+   },
+   "anchoredProbability": 0.5558
+  },
+  {
+   "gameId": "849848",
+   "gameTimeUtc": "2026-10-01T00:00:00Z",
+   "home": "New York Yankees",
+   "away": "Boston Red Sox",
+   "probables": {
+    "home": "Max Fried",
+    "away": "Sonny Gray"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.2517,
+     "count": 3
+    },
+    "away": {
+     "burden": 0.6306,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 4
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 2
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "RF Aaron Judge roster status changed by New York Yankees.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Ryan Weathers roster status changed by New York Yankees.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "New York Yankees recalled C J.C. Escarra from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "New York Yankees recalled RF Jasson Domínguez from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "New York Yankees recalled RHP Elmer Rodríguez from Scranton/Wilkes-Barre RailRiders.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox placed DH Mickey Gasper on the 10-day injured list retroactive to September 26, 2026. Right biceps strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox placed RHP Tyron Guerrero on the 15-day injured list retroactive to September 24, 2026. Right shoulder strain.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox transferred CF Eli White from the 10-day injured list to the 60-day injured list. Right foot ligament injury.",
+      "tags": [
+       "injury"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Boston Red Sox activated RHP Tanner Houck from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Boston Red Sox recalled RHP Wyatt Olds from Worcester Red Sox.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.018945000000000004
+    },
+    {
+     "kind": "form",
+     "homeLogit": 0.01
+    }
+   ],
+   "baseProbability": 0.5409,
+   "brainProbability": 0.5465,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.2134,
+    "inputs": {
+     "injuryGap": 0.37890000000000007,
+     "restDay": 2
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5511,
+    "awayWinProbability": 0.4489,
+    "homeAmericanOdds": -136,
+    "awayAmericanOdds": 113,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34746417"
+   },
+   "anchoredProbability": 0.55
+  },
+  {
+   "gameId": "849842",
+   "gameTimeUtc": "2026-10-01T02:00:00Z",
+   "home": "San Diego Padres",
+   "away": "Chicago Cubs",
+   "probables": {
+    "home": "Nick Pivetta",
+    "away": "Kevin Gausman"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.5084,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.6094,
+     "count": 9
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 2
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 2
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres activated DH Miguel Andujar from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres activated RHP Jeremiah Estrada from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Diego Padres recalled DH Will Wagner from El Paso Chihuahuas.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Diego Padres recalled 2B Mason McCoy from El Paso Chihuahuas.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "San Diego Padres recalled RHP Jhony Brito from El Paso Chihuahuas.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Recalled",
+      "detail": "Chicago Cubs recalled LHP Braxton Garrett from Iowa Cubs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Chicago Cubs activated RHP Trent Thornton from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Chicago Cubs activated RHP Edward Cabrera.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago Cubs recalled 3B BJ Murray Jr. from Iowa Cubs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Chicago Cubs recalled RHP Ethan Roberts from Iowa Cubs.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.005050000000000005
+    }
+   ],
+   "baseProbability": 0.5231,
+   "brainProbability": 0.5241,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1204,
+    "inputs": {
+     "injuryGap": 0.10100000000000009,
+     "formWinRate": 0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5734,
+    "awayWinProbability": 0.4266,
+    "homeAmericanOdds": -150,
+    "awayAmericanOdds": 124,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34746424"
+   },
+   "anchoredProbability": 0.5612
+  }
+ ]
+}
