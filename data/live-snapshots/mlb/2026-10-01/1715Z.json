@@ -1,0 +1,133 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-01",
+ "capturedAt": "2026-10-01T17:15:46.313Z",
+ "games": [
+  {
+   "gameId": "849844",
+   "gameTimeUtc": "2026-10-02T00:00:00Z",
+   "home": "Atlanta Braves",
+   "away": "Philadelphia Phillies",
+   "probables": {
+    "home": "Ray Kerr",
+    "away": "Aaron Nola"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4457,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.4621,
+     "count": 5
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 3
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated RHP Bryce Elder from the 15-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "LF Lane Thomas roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Reynaldo López roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Bryce Elder roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Atlanta Braves recalled RHP Blake Burkhalter from Gwinnett Stripers.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled RHP Grant Holman from Lehigh Valley IronPigs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled RF Colby Thomas from Lehigh Valley IronPigs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled CF Kameron Misner from Lehigh Valley IronPigs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled LHP Nestor Cortes from Lehigh Valley IronPigs.",
+      "tags": [
+       "call-up"
+      ]
+     },
+     {
+      "type": "Recalled",
+      "detail": "Philadelphia Phillies recalled RHP Andrew Hoffmann from Lehigh Valley IronPigs.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ]
+   },
+   "terms": [],
+   "baseProbability": 0.5257,
+   "brainProbability": 0.5257,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.134,
+    "inputs": {
+     "formWinRate": 0.09999999999999998
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4967,
+    "awayWinProbability": 0.5033,
+    "homeAmericanOdds": -108,
+    "awayAmericanOdds": -111,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34754610"
+   },
+   "anchoredProbability": 0.504
+  }
+ ]
+}

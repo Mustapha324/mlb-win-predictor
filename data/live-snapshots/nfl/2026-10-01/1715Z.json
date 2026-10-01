@@ -1,0 +1,145 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-01",
+ "capturedAt": "2026-10-01T17:15:47.034Z",
+ "games": [
+  {
+   "gameId": "401872964",
+   "gameTimeUtc": "2026-10-02T00:15Z",
+   "home": "Cleveland Browns",
+   "away": "Pittsburgh Steelers",
+   "injuries": {
+    "home": {
+     "burden": 0.9977,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Elgton Jenkins",
+       "position": "C",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Teven Jenkins",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tylan Wallace",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Elijah Chatman",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Kalia Davis",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9885,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Rico Dowdle",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cole Burgess",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jack Driscoll",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Gennings Dunker",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "DeShon Elliott",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Deshaun Watson",
+     "value": 1.206
+    },
+    "away": {
+     "starterName": "Aaron Rodgers",
+     "value": -0.042
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 3,
+     "streak": 2,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 3,
+     "streak": 1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "division",
+     "homeLogit": 0.058464327882181484
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.062400000000000004
+    }
+   ],
+   "baseProbability": 0.4621,
+   "brainProbability": 0.4829,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.22,
+    "inputs": {
+     "divisionDamp": 0.21653454771178327,
+     "qbValue": 1.248
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4279,
+    "awayWinProbability": 0.5721,
+    "homeAmericanOdds": 124,
+    "awayAmericanOdds": -148,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118083"
+   },
+   "anchoredProbability": 0.4415
+  }
+ ]
+}
