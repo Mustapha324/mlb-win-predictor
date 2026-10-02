@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-01",
+ "graded": [
+  {
+   "challengerProbability": 0.4798,
+   "challengerCorrect": false,
+   "gameId": "401872964",
+   "matchup": "Pittsburgh Steelers @ Cleveland Browns",
+   "capturedAt": "2026-10-01T22:58:54.409Z",
+   "baseProbability": 0.4621,
+   "brainProbability": 0.4829,
+   "homeWon": true,
+   "score": "24-27",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.4279,
+   "marketCorrect": false,
+   "anchoredProbability": 0.4415,
+   "anchoredCorrect": false
+  }
+ ]
+}

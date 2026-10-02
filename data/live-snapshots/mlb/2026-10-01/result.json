@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-01",
+ "graded": [
+  {
+   "challengerProbability": 0.5338,
+   "challengerCorrect": true,
+   "gameId": "849844",
+   "matchup": "Philadelphia Phillies @ Atlanta Braves",
+   "capturedAt": "2026-10-01T22:58:53.515Z",
+   "baseProbability": 0.5257,
+   "brainProbability": 0.5257,
+   "homeWon": true,
+   "score": "2-6",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5033,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5089,
+   "anchoredCorrect": true
+  }
+ ]
+}
