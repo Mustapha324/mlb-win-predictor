@@ -1,0 +1,326 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-03",
+ "capturedAt": "2026-10-03T19:40:07.641Z",
+ "games": [
+  {
+   "gameId": "849828",
+   "gameTimeUtc": "2026-10-03T20:00:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "Atlanta Braves",
+   "probables": {
+    "home": "Tarik Skubal",
+    "away": "Dylan Dodd"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4984,
+     "count": 7
+    },
+    "away": {
+     "burden": 0.4457,
+     "count": 6
+    }
+   },
+   "weather": {
+    "tempF": 102,
+    "windMph": 2.6,
+    "gustMph": 11,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 5
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 5
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "2B Alex Freeland roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Justin Wrobleski roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Jack Dreyer roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "LF Alex Call roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Declared Free Agency",
+      "detail": "RHP Elieser Hernández elected free agency.",
+      "tags": []
+     },
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Atlanta Braves signed free agent OF Will Henderson to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "CF DaShawn Keirsey Jr. roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "DH Dominic Smith roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated RHP AJ Smith-Shawver.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0026350000000000015
+    }
+   ],
+   "baseProbability": 0.5707,
+   "brainProbability": 0.5707,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3702,
+    "inputs": {
+     "injuryGap": -0.052700000000000025,
+     "formWinRate": 0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6497,
+    "awayWinProbability": 0.3503,
+    "homeAmericanOdds": -212,
+    "awayAmericanOdds": 173,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34761175"
+   },
+   "anchoredProbability": 0.6305
+  },
+  {
+   "gameId": "849835",
+   "gameTimeUtc": "2026-10-03T22:30:00Z",
+   "home": "Tampa Bay Rays",
+   "away": "New York Yankees",
+   "probables": {
+    "home": "Drew Rasmussen",
+    "away": "Gerrit Cole"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4401,
+     "count": 5
+    },
+    "away": {
+     "burden": 0.2517,
+     "count": 3
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 5
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 7
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Manuel Rodríguez roster status changed by Tampa Bay Rays.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Casey Legumina roster status changed by Tampa Bay Rays.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees activated LHP Ryan Weathers.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "3B Amed Rosario roster status changed by New York Yankees.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.009420000000000001
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.01
+    }
+   ],
+   "baseProbability": 0.5185,
+   "brainProbability": 0.5147,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.096,
+    "inputs": {
+     "injuryGap": -0.1884,
+     "restDay": -2
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5491,
+    "awayWinProbability": 0.4509,
+    "homeAmericanOdds": -135,
+    "awayAmericanOdds": 112,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34755533"
+   },
+   "anchoredProbability": 0.5405
+  },
+  {
+   "gameId": "849830",
+   "gameTimeUtc": "2026-10-04T00:30:00Z",
+   "home": "Milwaukee Brewers",
+   "away": "San Diego Padres",
+   "probables": {
+    "home": "Jacob Misiorowski",
+    "away": "Robbie Ray"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.3297,
+     "count": 4
+    },
+    "away": {
+     "burden": 0.5084,
+     "count": 6
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 5,
+     "restDays": 5
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 5
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Milwaukee Brewers signed free agent RHP Orlando Noguera to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Milwaukee Brewers activated 1B Andrew Vaughn from the 10-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "C Bo Naylor roster status changed by Milwaukee Brewers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Bryse Wilson roster status changed by Milwaukee Brewers.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "San Diego Padres signed free agent RHP Roel Ramírez to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres placed RHP Walker Buehler on the paternity list.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres activated RHP Randy Vásquez.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.008934999999999998
+    }
+   ],
+   "baseProbability": 0.5759,
+   "brainProbability": 0.5776,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3976,
+    "inputs": {
+     "injuryGap": 0.17869999999999997
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.647,
+    "awayWinProbability": 0.353,
+    "homeAmericanOdds": -209,
+    "awayAmericanOdds": 171,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34755534"
+   },
+   "anchoredProbability": 0.6301
+  }
+ ]
+}
