@@ -1,0 +1,145 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-04",
+ "capturedAt": "2026-10-04T23:48:28.188Z",
+ "games": [
+  {
+   "gameId": "401872978",
+   "gameTimeUtc": "2026-10-05T00:20Z",
+   "home": "Carolina Panthers",
+   "away": "Detroit Lions",
+   "injuries": {
+    "home": {
+     "burden": 0.998,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Jalen Coker",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Haynes King",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Damien Lewis",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Albert Reese IV",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ja'Tavion Sanders",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9987,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Ben Bartch",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tyler Conklin",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Bishop Fitzgerald",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ahmed Hassanein",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Devin White",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Bryce Young",
+     "value": 1.797
+    },
+    "away": {
+     "starterName": "Jared Goff",
+     "value": 1.515
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 3,
+     "streak": -1,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 3,
+     "streak": 1,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": -0.028333333333333335
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.0141
+    }
+   ],
+   "baseProbability": 0.4921,
+   "brainProbability": 0.4897,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0455,
+    "inputs": {
+     "formWinRate": -0.3333333333333333,
+     "qbValue": 0.282
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3425,
+    "awayWinProbability": 0.6575,
+    "homeAmericanOdds": 180,
+    "awayAmericanOdds": -218,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118032"
+   },
+   "anchoredProbability": 0.3777
+  }
+ ]
+}
