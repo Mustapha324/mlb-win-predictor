@@ -1,0 +1,699 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-04",
+ "capturedAt": "2026-10-04T19:53:37.362Z",
+ "games": [
+  {
+   "gameId": "401872974",
+   "gameTimeUtc": "2026-10-04T20:05Z",
+   "home": "Minnesota Vikings",
+   "away": "Miami Dolphins",
+   "injuries": {
+    "home": {
+     "burden": 0.9984,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Max Brosmer",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Justin Jefferson",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jeshaun Jones",
+       "position": "WR",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Charles Demmings",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jakobe Thomas",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9975,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "DJ Campbell",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brady Cook",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Caleb Douglas",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Chukwuebuka Godrick",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Justin Joly",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": {
+     "starterName": "Malik Willis",
+     "value": 0.959
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 3,
+     "streak": 3,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 3,
+     "streak": -3,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.085
+    }
+   ],
+   "baseProbability": 0.694,
+   "brainProbability": 0.7063,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 1.1872,
+    "inputs": {
+     "formWinRate": 1
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.8082,
+    "awayWinProbability": 0.1918,
+    "homeAmericanOdds": -535,
+    "awayAmericanOdds": 400,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118170"
+   },
+   "anchoredProbability": 0.7855
+  },
+  {
+   "gameId": "401872976",
+   "gameTimeUtc": "2026-10-04T20:25Z",
+   "home": "Las Vegas Raiders",
+   "away": "Kansas City Chiefs",
+   "injuries": {
+    "home": {
+     "burden": 0.9986,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Aidan O'Connell",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jackson Powers-Johnson",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jonah Laulu",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Darrell Luter Jr.",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tristin McCollum",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.998,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Garrett Nussmeier",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Diego Pounds",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Josh Simmons",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jared Wiley",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jadon Canady",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Kirk Cousins",
+     "value": 1.206
+    },
+    "away": {
+     "starterName": "Patrick Mahomes",
+     "value": 2.278
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 3,
+     "streak": 3,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 3,
+     "streak": 3,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "division",
+     "homeLogit": 0.07748225373878441
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.05360000000000001
+    }
+   ],
+   "baseProbability": 0.4493,
+   "brainProbability": 0.4534,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.2953,
+    "inputs": {
+     "divisionDamp": 0.28697131014364596,
+     "qbValue": -1.072
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3364,
+    "awayWinProbability": 0.6636,
+    "homeAmericanOdds": 185,
+    "awayAmericanOdds": -225,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118238"
+   },
+   "anchoredProbability": 0.3644
+  },
+  {
+   "gameId": "401872975",
+   "gameTimeUtc": "2026-10-04T20:25Z",
+   "home": "San Francisco 49ers",
+   "away": "Denver Broncos",
+   "injuries": {
+    "home": {
+     "burden": 0.9997,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Brandon Aiyuk",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Enrique Cruz Jr.",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jordan James",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kurtis Rourke",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tatum Bethune",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9989,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Dallen Bentley",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kage Casey",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Sam Ehlinger",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jonathon Cooper",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Tyler Onyedim",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Brock Purdy",
+     "value": 4.319
+    },
+    "away": {
+     "starterName": "Bo Nix",
+     "value": 0.058
+    }
+   },
+   "weather": {
+    "tempF": 84.5,
+    "windMph": 5,
+    "gustMph": 5.1,
+    "precipProbability": 0.01,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 3,
+     "streak": 3,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 3,
+     "streak": 2,
+     "restDays": 5
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.07333333333333333
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.2
+    }
+   ],
+   "baseProbability": 0.5827,
+   "brainProbability": 0.6277,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.4841,
+    "inputs": {
+     "formWinRate": 0.33333333333333337,
+     "restDay": 1,
+     "qbValue": 4
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5996,
+    "awayWinProbability": 0.4004,
+    "homeAmericanOdds": -166,
+    "awayAmericanOdds": 140,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118067"
+   },
+   "anchoredProbability": 0.6067
+  },
+  {
+   "gameId": "401872977",
+   "gameTimeUtc": "2026-10-04T20:25Z",
+   "home": "Seattle Seahawks",
+   "away": "Los Angeles Chargers",
+   "injuries": {
+    "home": {
+     "burden": 0.9997,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Montorie Foster Jr.",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Nick Kallerup",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jalen Milroe",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jadarian Price",
+       "position": "RB",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Terrion Arnold",
+       "position": "CB",
+       "status": "il_long",
+       "detail": "News"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9986,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Kayode Awosika",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Alex Harkey",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Charlie Kolar",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brenen Thompson",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "DJ Uiagalelei",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": {
+     "starterName": "Justin Herbert",
+     "value": 0.568
+    }
+   },
+   "weather": {
+    "tempF": 59.9,
+    "windMph": 4.2,
+    "gustMph": 4.3,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 3,
+     "streak": -1,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 3,
+     "streak": -3,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.05666666666666667
+    }
+   ],
+   "baseProbability": 0.6894,
+   "brainProbability": 0.6977,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 1.1564,
+    "inputs": {
+     "formWinRate": 0.6666666666666666
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7441,
+    "awayWinProbability": 0.2559,
+    "homeAmericanOdds": -345,
+    "awayAmericanOdds": 275,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118039"
+   },
+   "anchoredProbability": 0.7329
+  },
+  {
+   "gameId": "401872978",
+   "gameTimeUtc": "2026-10-05T00:20Z",
+   "home": "Carolina Panthers",
+   "away": "Detroit Lions",
+   "injuries": {
+    "home": {
+     "burden": 0.9926,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Damien Lewis",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Chris Brazzell II",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jonathon Brooks",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Brady Christensen",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Ikem Ekwonu",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9958,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Ben Bartch",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brian Branch",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Damone Clark",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Thomas Harper",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Kerby Joseph",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Bryce Young",
+     "value": 1.797
+    },
+    "away": {
+     "starterName": "Jared Goff",
+     "value": 1.515
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 3,
+     "streak": -1,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 3,
+     "streak": 1,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": 0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.028333333333333335
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.0141
+    }
+   ],
+   "baseProbability": 0.4921,
+   "brainProbability": 0.5499,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0455,
+    "inputs": {
+     "qbOut": 1,
+     "formWinRate": -0.3333333333333333,
+     "qbValue": 0.282
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3631,
+    "awayWinProbability": 0.6369,
+    "homeAmericanOdds": 164,
+    "awayAmericanOdds": -198,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118032"
+   },
+   "anchoredProbability": 0.4082
+  }
+ ]
+}

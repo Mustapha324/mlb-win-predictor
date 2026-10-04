@@ -1,0 +1,130 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-04",
+ "capturedAt": "2026-10-04T19:53:35.118Z",
+ "games": [
+  {
+   "gameId": "849823",
+   "gameTimeUtc": "2026-10-05T00:00:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "Atlanta Braves",
+   "probables": {
+    "home": "Blake Snell",
+    "away": "Ray Kerr"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4984,
+     "count": 7
+    },
+    "away": {
+     "burden": 0.4457,
+     "count": 6
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 6
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "2B Alex Freeland roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Paul Gervase roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Jack Dreyer roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Landon Knack roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Justin Wrobleski roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Atlanta Braves signed free agent OF Will Henderson to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated LF Lane Thomas.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated RHP JR Ritchie.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "SS Luke Williams roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated RHP AJ Smith-Shawver.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0026350000000000015
+    }
+   ],
+   "baseProbability": 0.5707,
+   "brainProbability": 0.5707,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3702,
+    "inputs": {
+     "injuryGap": -0.052700000000000025,
+     "formWinRate": 0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6497,
+    "awayWinProbability": 0.3503,
+    "homeAmericanOdds": -212,
+    "awayAmericanOdds": 173,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34770468"
+   },
+   "anchoredProbability": 0.6305
+  }
+ ]
+}
