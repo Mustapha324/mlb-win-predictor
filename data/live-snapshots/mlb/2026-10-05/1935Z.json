@@ -1,0 +1,195 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-05",
+ "capturedAt": "2026-10-05T19:35:10.209Z",
+ "games": [
+  {
+   "gameId": "849834",
+   "gameTimeUtc": "2026-10-05T21:00:00Z",
+   "home": "Cleveland Guardians",
+   "away": "Chicago White Sox",
+   "probables": {
+    "home": "Gavin Williams",
+    "away": "Anthony Kay"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0,
+     "count": 0
+    },
+    "away": {
+     "burden": 0.537,
+     "count": 7
+    }
+   },
+   "weather": {
+    "tempF": 61.7,
+    "windMph": 11.6,
+    "gustMph": 18.8,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 7
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 7
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Slade Cecconi roster status changed by Cleveland Guardians.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Chicago White Sox activated RHP Tyler Davis.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Huascar Brazobán roster status changed by Chicago White Sox.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.026850000000000002
+    }
+   ],
+   "baseProbability": 0.53,
+   "brainProbability": 0.5351,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1561,
+    "inputs": {
+     "injuryGap": 0.537,
+     "formWinRate": 0.10000000000000009
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5842,
+    "awayWinProbability": 0.4158,
+    "homeAmericanOdds": -157,
+    "awayAmericanOdds": 130,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34770901"
+   },
+   "anchoredProbability": 0.572
+  },
+  {
+   "gameId": "849839",
+   "gameTimeUtc": "2026-10-06T00:00:00Z",
+   "home": "Tampa Bay Rays",
+   "away": "New York Yankees",
+   "probables": {
+    "home": "Freddy Peralta",
+    "away": "Cam Schlittler"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4401,
+     "count": 5
+    },
+    "away": {
+     "burden": 0.2517,
+     "count": 3
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 7
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 9
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Casey Legumina roster status changed by Tampa Bay Rays.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Manuel Rodríguez roster status changed by Tampa Bay Rays.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "LF Max Schuemann roster status changed by New York Yankees.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "New York Yankees activated LHP Ryan Weathers.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "3B Amed Rosario roster status changed by New York Yankees.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.009420000000000001
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.01
+    }
+   ],
+   "baseProbability": 0.5185,
+   "brainProbability": 0.5147,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.096,
+    "inputs": {
+     "injuryGap": -0.1884,
+     "restDay": -2
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4687,
+    "awayWinProbability": 0.5313,
+    "homeAmericanOdds": 104,
+    "awayAmericanOdds": -125,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34770903"
+   },
+   "anchoredProbability": 0.4802
+  }
+ ]
+}
