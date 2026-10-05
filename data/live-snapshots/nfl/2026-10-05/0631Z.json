@@ -1,0 +1,142 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-05",
+ "capturedAt": "2026-10-05T06:31:59.719Z",
+ "games": [
+  {
+   "gameId": "401872979",
+   "gameTimeUtc": "2026-10-06T00:15Z",
+   "home": "New Orleans Saints",
+   "away": "Atlanta Falcons",
+   "injuries": {
+    "home": {
+     "burden": 0.9982,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Brock Rechsteiner",
+       "position": "WR",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Kaden Elliss",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Carl Granderson",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Anfernee Jennings",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kelvin Banks Jr.",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9942,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "James Pearce Jr.",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "JD Bertrand",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Beaux Collins",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Da'Shawn Hand",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "DeAngelo Malone",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Tyler Shough",
+     "value": 0.751
+    },
+    "away": null
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 1,
+     "lastTenGames": 3,
+     "streak": -1,
+     "restDays": 7
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 3,
+     "streak": 1,
+     "restDays": 9
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": -0.09
+    },
+    {
+     "kind": "division",
+     "homeLogit": -0.039192881337608516
+    }
+   ],
+   "baseProbability": 0.5252,
+   "brainProbability": 0.5029,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1462,
+    "inputs": {
+     "restDay": -2,
+     "divisionDamp": -0.14515881976892042
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5325,
+    "awayWinProbability": 0.4675,
+    "homeAmericanOdds": -125,
+    "awayAmericanOdds": 105,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118279"
+   },
+   "anchoredProbability": 0.5251
+  }
+ ]
+}
