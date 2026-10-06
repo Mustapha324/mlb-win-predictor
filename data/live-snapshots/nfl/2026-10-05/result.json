@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-05",
+ "graded": [
+  {
+   "challengerProbability": 0.4974,
+   "challengerCorrect": true,
+   "gameId": "401872979",
+   "matchup": "Atlanta Falcons @ New Orleans Saints",
+   "capturedAt": "2026-10-05T19:35:11.044Z",
+   "baseProbability": 0.5252,
+   "brainProbability": 0.5029,
+   "homeWon": false,
+   "score": "45-24",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.5261,
+   "marketCorrect": false,
+   "anchoredProbability": 0.5203,
+   "anchoredCorrect": false
+  }
+ ]
+}

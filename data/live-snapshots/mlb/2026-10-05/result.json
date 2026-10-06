@@ -1,0 +1,39 @@
+{
+ "date": "2026-10-05",
+ "graded": [
+  {
+   "challengerProbability": 0.5481,
+   "challengerCorrect": false,
+   "gameId": "849834",
+   "matchup": "Chicago White Sox @ Cleveland Guardians",
+   "capturedAt": "2026-10-05T19:35:10.209Z",
+   "baseProbability": 0.53,
+   "brainProbability": 0.5351,
+   "homeWon": false,
+   "score": "4-3",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.5842,
+   "marketCorrect": false,
+   "anchoredProbability": 0.572,
+   "anchoredCorrect": false
+  },
+  {
+   "challengerProbability": 0.5101,
+   "challengerCorrect": true,
+   "gameId": "849839",
+   "matchup": "New York Yankees @ Tampa Bay Rays",
+   "capturedAt": "2026-10-05T19:35:10.209Z",
+   "baseProbability": 0.5185,
+   "brainProbability": 0.5147,
+   "homeWon": true,
+   "score": "2-5",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.4687,
+   "marketCorrect": false,
+   "anchoredProbability": 0.4802,
+   "anchoredCorrect": false
+  }
+ ]
+}

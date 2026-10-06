@@ -1,0 +1,229 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-06",
+ "capturedAt": "2026-10-06T17:02:13.966Z",
+ "games": [
+  {
+   "gameId": "849819",
+   "gameTimeUtc": "2026-10-06T22:00:00Z",
+   "home": "Atlanta Braves",
+   "away": "Los Angeles Dodgers",
+   "probables": {
+    "home": "Chris Sale",
+    "away": "Yoshinobu Yamamoto"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4457,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.4984,
+     "count": 7
+    }
+   },
+   "weather": {
+    "tempF": 73.4,
+    "windMph": 5.7,
+    "gustMph": 12.8,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 8
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 8
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated LF Lane Thomas.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated RHP JR Ritchie.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "SS Luke Williams roster status changed by Atlanta Braves.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Atlanta Braves activated RHP AJ Smith-Shawver.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "CF DaShawn Keirsey Jr. roster status changed by Atlanta Braves.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "2B Alex Freeland roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Paul Gervase roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Jack Dreyer roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Landon Knack roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Justin Wrobleski roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0026350000000000015
+    }
+   ],
+   "baseProbability": 0.482,
+   "brainProbability": 0.4819,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0939,
+    "inputs": {
+     "injuryGap": 0.052700000000000025,
+     "formWinRate": -0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4892,
+    "awayWinProbability": 0.5108,
+    "homeAmericanOdds": -105,
+    "awayAmericanOdds": -115,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34778498"
+   },
+   "anchoredProbability": 0.4874
+  },
+  {
+   "gameId": "849826",
+   "gameTimeUtc": "2026-10-07T01:30:00Z",
+   "home": "San Diego Padres",
+   "away": "Milwaukee Brewers",
+   "probables": {
+    "home": "Nick Pivetta",
+    "away": "Dustin May"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.5084,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.3297,
+     "count": 4
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 2,
+     "restDays": 8
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 5,
+     "restDays": 8
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres placed RHP Walker Buehler on the paternity list.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "San Diego Padres activated RHP Randy Vásquez.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Bryse Wilson roster status changed by Milwaukee Brewers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Garrett Stallings roster status changed by Milwaukee Brewers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "C Bo Naylor roster status changed by Milwaukee Brewers.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.008934999999999998
+    }
+   ],
+   "baseProbability": 0.4767,
+   "brainProbability": 0.475,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.1213,
+    "inputs": {
+     "injuryGap": -0.17869999999999997
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5537,
+    "awayWinProbability": 0.4463,
+    "homeAmericanOdds": -138,
+    "awayAmericanOdds": 114,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34778499"
+   },
+   "anchoredProbability": 0.5341
+  }
+ ]
+}
