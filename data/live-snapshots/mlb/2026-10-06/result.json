@@ -1,0 +1,39 @@
+{
+ "date": "2026-10-06",
+ "graded": [
+  {
+   "challengerProbability": 0.4762,
+   "challengerCorrect": true,
+   "gameId": "849819",
+   "matchup": "Los Angeles Dodgers @ Atlanta Braves",
+   "capturedAt": "2026-10-06T17:02:13.966Z",
+   "baseProbability": 0.482,
+   "brainProbability": 0.4819,
+   "homeWon": false,
+   "score": "3-1",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.4892,
+   "marketCorrect": true,
+   "anchoredProbability": 0.4874,
+   "anchoredCorrect": true
+  },
+  {
+   "challengerProbability": 0.4669,
+   "challengerCorrect": false,
+   "gameId": "849826",
+   "matchup": "Milwaukee Brewers @ San Diego Padres",
+   "capturedAt": "2026-10-06T22:52:33.033Z",
+   "baseProbability": 0.4767,
+   "brainProbability": 0.475,
+   "homeWon": true,
+   "score": "3-4",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.5537,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5341,
+   "anchoredCorrect": true
+  }
+ ]
+}
