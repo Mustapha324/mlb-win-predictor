@@ -1,0 +1,72 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-08",
+ "capturedAt": "2026-10-08T06:58:58.841Z",
+ "games": [
+  {
+   "gameId": "849832",
+   "gameTimeUtc": "2026-10-09T00:00:00Z",
+   "home": "Chicago White Sox",
+   "away": "Cleveland Guardians",
+   "probables": {
+    "home": "Hagen Smith",
+    "away": "Parker Messick"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.537,
+     "count": 7
+    },
+    "away": {
+     "burden": 0,
+     "count": 0
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 10
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 10
+    }
+   },
+   "news": {
+    "home": [],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.026850000000000002
+    }
+   ],
+   "baseProbability": 0.5231,
+   "brainProbability": 0.5179,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1202,
+    "inputs": {
+     "injuryGap": -0.537,
+     "formWinRate": -0.10000000000000009
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4848,
+    "awayWinProbability": 0.5152,
+    "homeAmericanOdds": -103,
+    "awayAmericanOdds": -117,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34793502"
+   },
+   "anchoredProbability": 0.4931
+  }
+ ]
+}

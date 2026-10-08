@@ -1,0 +1,73 @@
+{
+ "date": "2026-10-07",
+ "graded": [
+  {
+   "challengerProbability": 0.5212,
+   "challengerCorrect": false,
+   "gameId": "849833",
+   "matchup": "Cleveland Guardians @ Chicago White Sox",
+   "capturedAt": "2026-10-07T17:39:53.385Z",
+   "baseProbability": 0.5231,
+   "brainProbability": 0.5179,
+   "homeWon": false,
+   "score": "9-3",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.5333,
+   "marketCorrect": false,
+   "anchoredProbability": 0.5295,
+   "anchoredCorrect": false
+  },
+  {
+   "challengerProbability": 0.477,
+   "challengerCorrect": true,
+   "gameId": "849822",
+   "matchup": "Los Angeles Dodgers @ Atlanta Braves",
+   "capturedAt": "2026-10-07T17:39:53.385Z",
+   "baseProbability": 0.482,
+   "brainProbability": 0.4829,
+   "homeWon": false,
+   "score": "4-1",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.4191,
+   "marketCorrect": true,
+   "anchoredProbability": 0.4349,
+   "anchoredCorrect": true
+  },
+  {
+   "challengerProbability": 0.5574,
+   "challengerCorrect": false,
+   "gameId": "849838",
+   "matchup": "Tampa Bay Rays @ New York Yankees",
+   "capturedAt": "2026-10-07T23:26:20.930Z",
+   "baseProbability": 0.5346,
+   "brainProbability": 0.539,
+   "homeWon": false,
+   "score": "4-3",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.6145,
+   "marketCorrect": false,
+   "anchoredProbability": 0.596,
+   "anchoredCorrect": false
+  },
+  {
+   "challengerProbability": 0.4669,
+   "challengerCorrect": true,
+   "gameId": "849827",
+   "matchup": "Milwaukee Brewers @ San Diego Padres",
+   "capturedAt": "2026-10-07T23:26:20.930Z",
+   "baseProbability": 0.4767,
+   "brainProbability": 0.475,
+   "homeWon": false,
+   "score": "3-1",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5055,
+   "marketCorrect": false,
+   "anchoredProbability": 0.4979,
+   "anchoredCorrect": true
+  }
+ ]
+}
