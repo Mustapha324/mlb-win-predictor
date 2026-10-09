@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-08",
+ "graded": [
+  {
+   "challengerProbability": 0.6191,
+   "challengerCorrect": false,
+   "gameId": "401872980",
+   "matchup": "Tampa Bay Buccaneers @ Dallas Cowboys",
+   "capturedAt": "2026-10-08T23:37:42.124Z",
+   "baseProbability": 0.6117,
+   "brainProbability": 0.6186,
+   "homeWon": false,
+   "score": "24-16",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.8,
+   "marketCorrect": false,
+   "anchoredProbability": 0.7614,
+   "anchoredCorrect": false
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-08",
+ "graded": [
+  {
+   "challengerProbability": 0.5211,
+   "challengerCorrect": false,
+   "gameId": "849832",
+   "matchup": "Cleveland Guardians @ Chicago White Sox",
+   "capturedAt": "2026-10-08T23:37:41.273Z",
+   "baseProbability": 0.5231,
+   "brainProbability": 0.5179,
+   "homeWon": false,
+   "score": "9-5",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.4848,
+   "marketCorrect": true,
+   "anchoredProbability": 0.4931,
+   "anchoredCorrect": true
+  }
+ ]
+}
