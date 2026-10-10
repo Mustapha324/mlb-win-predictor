@@ -1,0 +1,84 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-10",
+ "capturedAt": "2026-10-10T20:27:29.721Z",
+ "games": [
+  {
+   "gameId": "849831",
+   "gameTimeUtc": "2026-10-11T00:00:00Z",
+   "home": "Cleveland Guardians",
+   "away": "Chicago White Sox",
+   "probables": {
+    "home": "Gavin Williams",
+    "away": "Sean Burke"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0,
+     "count": 0
+    },
+    "away": {
+     "burden": 0.4934,
+     "count": 6
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 12
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 12
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Cleveland Guardians signed free agent RHP Anthony Alcantara to a minor league contract.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Luis Castillo roster status changed by Chicago White Sox.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.02467
+    }
+   ],
+   "baseProbability": 0.53,
+   "brainProbability": 0.5347,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1561,
+    "inputs": {
+     "injuryGap": 0.4934,
+     "formWinRate": 0.10000000000000009
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5631,
+    "awayWinProbability": 0.4369,
+    "homeAmericanOdds": -143,
+    "awayAmericanOdds": 119,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34800399"
+   },
+   "anchoredProbability": 0.556
+  }
+ ]
+}
