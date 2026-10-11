@@ -1,0 +1,110 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-11",
+ "capturedAt": "2026-10-11T20:47:11.914Z",
+ "games": [
+  {
+   "gameId": "849809",
+   "gameTimeUtc": "2026-10-12T00:00:00Z",
+   "home": "Milwaukee Brewers",
+   "away": "Los Angeles Dodgers",
+   "probables": {
+    "home": "Jacob Misiorowski",
+    "away": "Tarik Skubal"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.3297,
+     "count": 4
+    },
+    "away": {
+     "burden": 0.4512,
+     "count": 6
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 5,
+     "restDays": 13
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 13
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Recalled",
+      "detail": "Milwaukee Brewers recalled LHP Colton Gordon from Biloxi Shuckers.",
+      "tags": [
+       "call-up"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Los Angeles Dodgers signed free agent RHP Maikol Lora to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Recalled",
+      "detail": "Los Angeles Dodgers recalled RHP Kyle Hurt from Oklahoma City Comets.",
+      "tags": [
+       "injury",
+       "call-up"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Blake Treinen roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "SS Hyeseong Kim roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated LHP Justin Wrobleski.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0060750000000000005
+    }
+   ],
+   "baseProbability": 0.5484,
+   "brainProbability": 0.5495,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.2523,
+    "inputs": {
+     "injuryGap": 0.1215
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4945,
+    "awayWinProbability": 0.5055,
+    "homeAmericanOdds": -107,
+    "awayAmericanOdds": -112,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34795376"
+   },
+   "anchoredProbability": 0.5083
+  }
+ ]
+}

@@ -1,0 +1,151 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-11",
+ "capturedAt": "2026-10-11T20:47:12.823Z",
+ "games": [
+  {
+   "gameId": "401872993",
+   "gameTimeUtc": "2026-10-12T00:20Z",
+   "home": "Atlanta Falcons",
+   "away": "Baltimore Ravens",
+   "injuries": {
+    "home": {
+     "burden": 0.9915,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "James Pearce Jr.",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Za'Darius Smith",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Yasir Abdullah",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "JD Bertrand",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Beaux Collins",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9982,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Lamar Jackson",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cam Jurgens",
+       "position": "C",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Trey Hendrickson",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jovaughn Gwyn",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Bilhal Kone",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Michael Penix Jr.",
+     "value": 4.395
+    },
+    "away": {
+     "starterName": "Lamar Jackson",
+     "value": 4.215
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 4,
+     "streak": 2,
+     "restDays": 4
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 4,
+     "streak": 2,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": 0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.11125
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.009
+    }
+   ],
+   "baseProbability": 0.4896,
+   "brainProbability": 0.5323,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0604,
+    "inputs": {
+     "qbOut": 1,
+     "formWinRate": -0.25,
+     "restDay": -2,
+     "qbValue": 0.18
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6092,
+    "awayWinProbability": 0.3908,
+    "homeAmericanOdds": -175,
+    "awayAmericanOdds": 145,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118099"
+   },
+   "anchoredProbability": 0.5903
+  }
+ ]
+}
