@@ -1,0 +1,146 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-11",
+ "capturedAt": "2026-10-12T00:12:13.174Z",
+ "games": [
+  {
+   "gameId": "401872993",
+   "gameTimeUtc": "2026-10-12T00:20Z",
+   "home": "Atlanta Falcons",
+   "away": "Baltimore Ravens",
+   "injuries": {
+    "home": {
+     "burden": 0.9995,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Ethan Onianwa",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cooper Rush",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jack Strand",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Yasir Abdullah",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Malcolm DeWalt IV",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9992,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Jovaughn Gwyn",
+       "position": "G",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Lamar Jackson",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cam Jurgens",
+       "position": "C",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ethan Pocic",
+       "position": "C",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Elijah Sarratt",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Michael Penix Jr.",
+     "value": 4.395
+    },
+    "away": {
+     "starterName": "Lamar Jackson",
+     "value": 4.215
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 4,
+     "streak": 2,
+     "restDays": 4
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 4,
+     "streak": 2,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": -0.11125
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.009
+    }
+   ],
+   "baseProbability": 0.4896,
+   "brainProbability": 0.472,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0604,
+    "inputs": {
+     "formWinRate": -0.25,
+     "restDay": -2,
+     "qbValue": 0.18
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6092,
+    "awayWinProbability": 0.3908,
+    "homeAmericanOdds": -175,
+    "awayAmericanOdds": 145,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118099"
+   },
+   "anchoredProbability": 0.5756
+  }
+ ]
+}
