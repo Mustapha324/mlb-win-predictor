@@ -1,0 +1,180 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-12",
+ "capturedAt": "2026-10-12T20:06:10.850Z",
+ "games": [
+  {
+   "gameId": "849812",
+   "gameTimeUtc": "2026-10-12T21:00:00Z",
+   "home": "Milwaukee Brewers",
+   "away": "Los Angeles Dodgers",
+   "probables": {
+    "home": "Logan Henderson",
+    "away": "Yoshinobu Yamamoto"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.3297,
+     "count": 4
+    },
+    "away": {
+     "burden": 0.4512,
+     "count": 6
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 5,
+     "restDays": 14
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 14
+    }
+   },
+   "news": {
+    "home": [],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Blake Treinen roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "SS Hyeseong Kim roster status changed by Los Angeles Dodgers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Los Angeles Dodgers activated LHP Justin Wrobleski.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.0060750000000000005
+    }
+   ],
+   "baseProbability": 0.5484,
+   "brainProbability": 0.5495,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.2523,
+    "inputs": {
+     "injuryGap": 0.1215
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4576,
+    "awayWinProbability": 0.5424,
+    "homeAmericanOdds": 109,
+    "awayAmericanOdds": -131,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34812526"
+   },
+   "anchoredProbability": 0.4805
+  },
+  {
+   "gameId": "849820",
+   "gameTimeUtc": "2026-10-13T00:00:00Z",
+   "home": "Tampa Bay Rays",
+   "away": "Cleveland Guardians",
+   "probables": {
+    "home": "Drew Rasmussen",
+    "away": "Foster Griffin"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4401,
+     "count": 5
+    },
+    "away": {
+     "burden": 0,
+     "count": 0
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 14
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 14
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Tampa Bay Rays activated RHP Brody Hopkins.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Garrett Cleavinger roster status changed by Tampa Bay Rays.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Cleveland Guardians activated RHP Slade Cecconi.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "CF Daniel Schneemann roster status changed by Cleveland Guardians.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.022005
+    }
+   ],
+   "baseProbability": 0.5616,
+   "brainProbability": 0.5575,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3222,
+    "inputs": {
+     "injuryGap": -0.4401,
+     "formWinRate": -0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6048,
+    "awayWinProbability": 0.3952,
+    "homeAmericanOdds": -172,
+    "awayAmericanOdds": 142,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34810347"
+   },
+   "anchoredProbability": 0.5931
+  }
+ ]
+}

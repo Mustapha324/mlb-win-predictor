@@ -1,0 +1,150 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-12",
+ "capturedAt": "2026-10-12T20:06:12.496Z",
+ "games": [
+  {
+   "gameId": "401872994",
+   "gameTimeUtc": "2026-10-13T00:15Z",
+   "home": "Los Angeles Rams",
+   "away": "Buffalo Bills",
+   "injuries": {
+    "home": {
+     "burden": 0.9813,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Matthew Caldwell",
+       "position": "QB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Justin Dedich",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Terrance Ferguson",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Myles Garrett",
+       "position": "DE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Zech McPhearson",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9973,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Joshua Palmer",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ed Oliver",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Zane Durant",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jordan Hancock",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Tyrell Shavers",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Matthew Stafford",
+     "value": 1.049
+    },
+    "away": {
+     "starterName": "Josh Allen",
+     "value": 2.435
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 4,
+     "streak": 1,
+     "restDays": 7
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 4,
+     "streak": -1,
+     "restDays": 7
+    }
+   },
+   "pythag": {
+    "home": null,
+    "away": null
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": 0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.02125
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.0693
+    }
+   ],
+   "baseProbability": 0.5034,
+   "brainProbability": 0.548,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.02,
+    "inputs": {
+     "qbOut": 1,
+     "formWinRate": -0.25,
+     "qbValue": -1.386
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6092,
+    "awayWinProbability": 0.3908,
+    "homeAmericanOdds": -175,
+    "awayAmericanOdds": 145,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118101"
+   },
+   "anchoredProbability": 0.5941
+  }
+ ]
+}
