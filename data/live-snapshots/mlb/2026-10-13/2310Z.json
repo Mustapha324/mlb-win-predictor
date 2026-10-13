@@ -1,0 +1,98 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-13",
+ "capturedAt": "2026-10-13T23:10:57.819Z",
+ "games": [
+  {
+   "gameId": "849813",
+   "gameTimeUtc": "2026-10-14T00:00:00Z",
+   "home": "Tampa Bay Rays",
+   "away": "Cleveland Guardians",
+   "probables": {
+    "home": "Freddy Peralta",
+    "away": "Parker Messick"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.4401,
+     "count": 5
+    },
+    "away": {
+     "burden": 0,
+     "count": 0
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 15
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 15
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Tampa Bay Rays activated RHP Brody Hopkins.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "LHP Garrett Cleavinger roster status changed by Tampa Bay Rays.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "CF Daniel Schneemann roster status changed by Cleveland Guardians.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Cleveland Guardians activated RHP Slade Cecconi.",
+      "tags": [
+       "activation"
+      ]
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.022005
+    }
+   ],
+   "baseProbability": 0.5616,
+   "brainProbability": 0.5575,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3222,
+    "inputs": {
+     "injuryGap": -0.4401,
+     "formWinRate": -0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.553,
+    "awayWinProbability": 0.447,
+    "homeAmericanOdds": -137,
+    "awayAmericanOdds": 114,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34817298"
+   },
+   "anchoredProbability": 0.5541
+  }
+ ]
+}
