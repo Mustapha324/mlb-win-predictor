@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-12",
+ "graded": [
+  {
+   "challengerProbability": 0.5265,
+   "challengerCorrect": false,
+   "gameId": "401872994",
+   "matchup": "Buffalo Bills @ Los Angeles Rams",
+   "capturedAt": "2026-10-12T20:06:12.496Z",
+   "baseProbability": 0.5034,
+   "brainProbability": 0.548,
+   "homeWon": false,
+   "score": "37-34",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.6092,
+   "marketCorrect": false,
+   "anchoredProbability": 0.5941,
+   "anchoredCorrect": false
+  }
+ ]
+}
