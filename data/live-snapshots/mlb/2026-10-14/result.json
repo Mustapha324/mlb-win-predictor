@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-14",
+ "graded": [
+  {
+   "challengerProbability": 0.504,
+   "challengerCorrect": false,
+   "gameId": "849811",
+   "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+   "capturedAt": "2026-10-14T20:26:01.024Z",
+   "baseProbability": 0.5046,
+   "brainProbability": 0.5035,
+   "homeWon": false,
+   "score": "6-2",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.6174,
+   "marketCorrect": false,
+   "anchoredProbability": 0.5896,
+   "anchoredCorrect": false
+  }
+ ]
+}
