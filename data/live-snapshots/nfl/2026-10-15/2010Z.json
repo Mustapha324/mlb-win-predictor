@@ -1,0 +1,145 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-15",
+ "capturedAt": "2026-10-15T20:10:28.896Z",
+ "games": [
+  {
+   "gameId": "401872995",
+   "gameTimeUtc": "2026-10-16T00:15Z",
+   "home": "Denver Broncos",
+   "away": "Seattle Seahawks",
+   "injuries": {
+    "home": {
+     "burden": 0.9925,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Jonathon Cooper",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Talanoa Hufanga",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Pat Surtain II",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Levelle Bailey",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Pat Bryant",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9983,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Jadarian Price",
+       "position": "RB",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Terrion Arnold",
+       "position": "CB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Chazz Surratt",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Drake Thomas",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jake Bobo",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Bo Nix",
+     "value": -0.538
+    },
+    "away": {
+     "starterName": "Sam Darnold",
+     "value": 1.242
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 5,
+     "streak": 1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 5,
+     "streak": -1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": 0.42079235224216927,
+    "away": 0.6406057634108894
+   },
+   "terms": [
+    {
+     "kind": "pythag",
+     "homeLogit": -0.151662
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.08900000000000001
+    }
+   ],
+   "baseProbability": 0.4822,
+   "brainProbability": 0.441,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.103,
+    "inputs": {
+     "pythag": -0.2198,
+     "qbValue": -1.78
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4365,
+    "awayWinProbability": 0.5635,
+    "homeAmericanOdds": 120,
+    "awayAmericanOdds": -142,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118277"
+   },
+   "anchoredProbability": 0.4376
+  }
+ ]
+}

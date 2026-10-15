@@ -1,0 +1,71 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-15",
+ "capturedAt": "2026-10-15T20:10:27.814Z",
+ "games": [
+  {
+   "gameId": "849810",
+   "gameTimeUtc": "2026-10-16T00:00:00Z",
+   "home": "Los Angeles Dodgers",
+   "away": "Milwaukee Brewers",
+   "probables": {
+    "home": "Tyler Glasnow",
+    "away": "Shane Drohan"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4512,
+     "count": 6
+    },
+    "away": {
+     "burden": 0.3297,
+     "count": 4
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 3,
+     "restDays": 17
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 5,
+     "restDays": 17
+    }
+   },
+   "news": {
+    "home": [],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.0060750000000000005
+    }
+   ],
+   "baseProbability": 0.5046,
+   "brainProbability": 0.5035,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.024,
+    "inputs": {
+     "injuryGap": -0.1215
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5842,
+    "awayWinProbability": 0.4158,
+    "homeAmericanOdds": -157,
+    "awayAmericanOdds": 130,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34832090"
+   },
+   "anchoredProbability": 0.5643
+  }
+ ]
+}
