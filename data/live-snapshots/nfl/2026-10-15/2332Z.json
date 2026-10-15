@@ -1,0 +1,145 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-15",
+ "capturedAt": "2026-10-15T23:32:26.301Z",
+ "games": [
+  {
+   "gameId": "401872995",
+   "gameTimeUtc": "2026-10-16T00:15Z",
+   "home": "Denver Broncos",
+   "away": "Seattle Seahawks",
+   "injuries": {
+    "home": {
+     "burden": 0.9987,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Dallen Bentley",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kage Casey",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Sam Ehlinger",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jonathon Cooper",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Talanoa Hufanga",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9996,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Montorie Foster Jr.",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Robert Henry Jr.",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jalen Milroe",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jadarian Price",
+       "position": "RB",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Terrion Arnold",
+       "position": "CB",
+       "status": "il_long",
+       "detail": "News"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Bo Nix",
+     "value": -0.538
+    },
+    "away": {
+     "starterName": "Sam Darnold",
+     "value": 1.242
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 5,
+     "streak": 1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 5,
+     "streak": -1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": 0.42079235224216927,
+    "away": 0.6406057634108894
+   },
+   "terms": [
+    {
+     "kind": "pythag",
+     "homeLogit": -0.151662
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.08900000000000001
+    }
+   ],
+   "baseProbability": 0.4822,
+   "brainProbability": 0.441,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.103,
+    "inputs": {
+     "pythag": -0.2198,
+     "qbValue": -1.78
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4279,
+    "awayWinProbability": 0.5721,
+    "homeAmericanOdds": 124,
+    "awayAmericanOdds": -148,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118277"
+   },
+   "anchoredProbability": 0.4312
+  }
+ ]
+}
