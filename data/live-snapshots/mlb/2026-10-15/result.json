@@ -1,0 +1,39 @@
+{
+ "date": "2026-10-15",
+ "graded": [
+  {
+   "challengerProbability": 0.4973,
+   "challengerCorrect": false,
+   "gameId": "849818",
+   "matchup": "Tampa Bay Rays @ Cleveland Guardians",
+   "capturedAt": "2026-10-15T15:29:10.691Z",
+   "baseProbability": 0.4912,
+   "brainProbability": 0.4954,
+   "homeWon": true,
+   "score": "2-3",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.5404,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5292,
+   "anchoredCorrect": true
+  },
+  {
+   "challengerProbability": 0.5039,
+   "challengerCorrect": false,
+   "gameId": "849810",
+   "matchup": "Milwaukee Brewers @ Los Angeles Dodgers",
+   "capturedAt": "2026-10-15T23:32:24.973Z",
+   "baseProbability": 0.5046,
+   "brainProbability": 0.5035,
+   "homeWon": false,
+   "score": "6-4",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.584,
+   "marketCorrect": false,
+   "anchoredProbability": 0.5641,
+   "anchoredCorrect": false
+  }
+ ]
+}

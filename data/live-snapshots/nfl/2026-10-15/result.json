@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-15",
+ "graded": [
+  {
+   "challengerProbability": 0.4225,
+   "challengerCorrect": false,
+   "gameId": "401872995",
+   "matchup": "Seattle Seahawks @ Denver Broncos",
+   "capturedAt": "2026-10-15T23:32:26.301Z",
+   "baseProbability": 0.4822,
+   "brainProbability": 0.441,
+   "homeWon": true,
+   "score": "14-17",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.4279,
+   "marketCorrect": false,
+   "anchoredProbability": 0.4312,
+   "anchoredCorrect": false
+  }
+ ]
+}
