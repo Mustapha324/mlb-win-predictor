@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-17",
+ "graded": [
+  {
+   "challengerProbability": 0.4975,
+   "challengerCorrect": true,
+   "gameId": "849816",
+   "matchup": "Tampa Bay Rays @ Cleveland Guardians",
+   "capturedAt": "2026-10-17T21:13:16.947Z",
+   "baseProbability": 0.4912,
+   "brainProbability": 0.4954,
+   "homeWon": false,
+   "score": "7-3",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.4945,
+   "marketCorrect": true,
+   "anchoredProbability": 0.4947,
+   "anchoredCorrect": true
+  }
+ ]
+}
