@@ -1,0 +1,156 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-18",
+ "capturedAt": "2026-10-18T21:14:25.909Z",
+ "games": [
+  {
+   "gameId": "401873007",
+   "gameTimeUtc": "2026-10-19T00:20Z",
+   "home": "Green Bay Packers",
+   "away": "Dallas Cowboys",
+   "injuries": {
+    "home": {
+     "burden": 0.9974,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Josh Jacobs",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Benjamin St-Juste",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Zach Bako-Bewele",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Johnathan Baldwin II",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Warren Brinson",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9922,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Drew Shelton",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cobie Durant",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "DeMarvion Overshown",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jonathan Bullard",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Malik Davis",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Jordan Love",
+     "value": 1.536
+    },
+    "away": {
+     "starterName": "Dak Prescott",
+     "value": 0.994
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 5,
+     "streak": 2,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 5,
+     "streak": -1,
+     "restDays": 8
+    }
+   },
+   "pythag": {
+    "home": 0.4562035546001034,
+    "away": 0.5086489258707351
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": -0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.073
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": -0.036156
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.027100000000000003
+    }
+   ],
+   "baseProbability": 0.5917,
+   "brainProbability": 0.5323,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.5379,
+    "inputs": {
+     "qbOut": -1,
+     "formWinRate": 0.19999999999999996,
+     "restDay": -2,
+     "pythag": -0.0524,
+     "qbValue": 0.542
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5043,
+    "awayWinProbability": 0.4957,
+    "homeAmericanOdds": -112,
+    "awayAmericanOdds": -108,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118185"
+   },
+   "anchoredProbability": 0.5113
+  }
+ ]
+}
