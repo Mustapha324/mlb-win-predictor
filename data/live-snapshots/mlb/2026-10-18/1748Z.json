@@ -1,0 +1,78 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-18",
+ "capturedAt": "2026-10-18T17:48:26.876Z",
+ "games": [
+  {
+   "gameId": "849817",
+   "gameTimeUtc": "2026-10-18T21:08:00Z",
+   "home": "Cleveland Guardians",
+   "away": "Tampa Bay Rays",
+   "probables": {
+    "home": "Parker Messick",
+    "away": "Drew Rasmussen"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0,
+     "count": 0
+    },
+    "away": {
+     "burden": 0.4401,
+     "count": 5
+    }
+   },
+   "weather": {
+    "tempF": 60.4,
+    "windMph": 8.7,
+    "gustMph": 14.5,
+    "precipProbability": 0,
+    "snowfall": false
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 20
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 20
+    }
+   },
+   "news": {
+    "home": [],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.022005
+    }
+   ],
+   "baseProbability": 0.4912,
+   "brainProbability": 0.4954,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0458,
+    "inputs": {
+     "injuryGap": 0.4401,
+     "formWinRate": 0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.4556,
+    "awayWinProbability": 0.5444,
+    "homeAmericanOdds": 110,
+    "awayAmericanOdds": -132,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34848446"
+   },
+   "anchoredProbability": 0.4655
+  }
+ ]
+}
