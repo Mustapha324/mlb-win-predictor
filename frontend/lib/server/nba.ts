@@ -43,7 +43,7 @@ async function fetchEvents(period: string, historical: boolean): Promise<Event[]
 
 function monthsBetween(start: string, end: string): string[] {
   const result: string[] = [];
-  let cursor = new Date(`${start.slice(0, 7)}-01T12:00:00Z`);
+  const cursor = new Date(`${start.slice(0, 7)}-01T12:00:00Z`);
   const last = new Date(`${end.slice(0, 7)}-01T12:00:00Z`);
   while (cursor <= last) {
     result.push(`${cursor.getUTCFullYear()}${String(cursor.getUTCMonth() + 1).padStart(2, "0")}`);
