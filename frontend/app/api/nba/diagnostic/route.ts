@@ -1,5 +1,5 @@
 export async function GET(): Promise<Response> {
-  const checks = await Promise.all(["20251001-20251030", "20260101-20260130", "20260301-20260330"].map(async (dates) => {
+  const checks = await Promise.all(["20251021", "20251021-20251022", "202510", "2025", "2026"].map(async (dates) => {
     try {
       const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard?dates=${dates}&limit=1000`, { cache: "no-store", signal: AbortSignal.timeout(12_000) });
       const payload = response.ok ? await response.json() as { events?: Array<{ season?: { type?: number }; status?: { type?: { completed?: boolean } }; competitions?: Array<{ competitors?: Array<{ team?: { id?: string } }> }> }> } : null;
