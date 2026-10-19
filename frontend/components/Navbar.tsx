@@ -40,8 +40,7 @@ export function Navbar() {
   const navigationItems = isNba ? [
     { href: "/nba", label: "Games" },
     { href: "/leaderboard", label: "Leaderboard" },
-    { href: "/friends", label: "Friends" },
-    { href: "/model", label: "Model" }
+    { href: "/friends", label: "Friends" }
   ] : [
     { href: config.homeHref, label: "Games" },
     { href: `${config.homeHref}#player-picks`, label: "Player Picks" },

@@ -30,9 +30,8 @@ const BASE = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/score
 const compact = (date: string) => date.replaceAll("-", "");
 const toDate = (value: Date) => value.toISOString().slice(0, 10);
 
-async function fetchEvents(start: string, end: string, historical: boolean): Promise<Event[]> {
-  const dates = start === end ? compact(start) : `${compact(start)}-${compact(end)}`;
-  const response = await fetch(`${BASE}?dates=${dates}&limit=1000`, {
+async function fetchEvents(period: string, historical: boolean): Promise<Event[]> {
+  const response = await fetch(`${BASE}?dates=${period}&limit=1000`, {
     next: { revalidate: historical ? 86_400 : 120 },
     headers: { Accept: "application/json", "User-Agent": "SportIQ/2.0 (NBA predictions)" },
     signal: AbortSignal.timeout(12_000)
@@ -42,18 +41,13 @@ async function fetchEvents(start: string, end: string, historical: boolean): Pro
   return payload.events ?? [];
 }
 
-function ranges(start: string, end: string): Array<[string, string]> {
-  const result: Array<[string, string]> = [];
-  let cursor = new Date(`${start}T12:00:00Z`);
-  const last = new Date(`${end}T12:00:00Z`);
+function monthsBetween(start: string, end: string): string[] {
+  const result: string[] = [];
+  const cursor = new Date(`${start.slice(0, 7)}-01T12:00:00Z`);
+  const last = new Date(`${end.slice(0, 7)}-01T12:00:00Z`);
   while (cursor <= last) {
-    const from = toDate(cursor);
-    const next = new Date(cursor);
-    next.setUTCDate(next.getUTCDate() + 29);
-    const through = toDate(next < last ? next : last);
-    result.push([from, through]);
-    cursor = new Date(`${through}T12:00:00Z`);
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
+    result.push(`${cursor.getUTCFullYear()}${String(cursor.getUTCMonth() + 1).padStart(2, "0")}`);
+    cursor.setUTCMonth(cursor.getUTCMonth() + 1);
   }
   return result;
 }
@@ -76,7 +70,7 @@ function seasonStart(date: string): number {
 }
 
 export async function getNbaSlate(date: string): Promise<{ date: string; updatedAt: string; games: NbaGame[]; note: string }> {
-  const slate = await fetchEvents(date, date, false);
+  const slate = await fetchEvents(compact(date), false);
   const now = new Date().toISOString();
   const note = "Pregame prices are converted to no-vig probabilities when available. Otherwise, a conservative rating estimate uses completed prior games only. No live or final result is presented as a pregame call.";
   if (!slate.length) return { date, updatedAt: now, games: [], note };
@@ -87,9 +81,9 @@ export async function getNbaSlate(date: string): Promise<{ date: string; updated
   const yesterday = new Date(`${date}T12:00:00Z`);
   yesterday.setUTCDate(yesterday.getUTCDate() - 1);
   const historyEnd = toDate(yesterday);
-  const historyRanges = [...ranges(priorStart, priorEnd), ...(historyEnd >= currentStart ? ranges(currentStart, historyEnd) : [])];
+  const historyPeriods = [...monthsBetween(priorStart, priorEnd), ...(historyEnd >= currentStart ? monthsBetween(currentStart, historyEnd) : [])];
   const history = slate.some((event) => event.status?.type?.state === "pre")
-    ? await Promise.allSettled(historyRanges.map(([start, end]) => fetchEvents(start, end, true)))
+    ? await Promise.allSettled(historyPeriods.map((period) => fetchEvents(period, true)))
     : [];
   // Partial history can skew ratings. Withhold the model if any range failed.
   const completeHistory = history.every((entry) => entry.status === "fulfilled");

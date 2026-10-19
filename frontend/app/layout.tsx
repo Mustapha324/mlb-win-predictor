@@ -12,19 +12,19 @@ export async function generateMetadata(): Promise<Metadata> {
   const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost:3000";
   const protocol = requestHeaders.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
   const origin = `${protocol}://${host}`;
-  const description = "Transparent MLB and NFL pregame predictions, live probability movement, market consensus, and verified final results.";
+  const description = "Transparent MLB, NFL, and NBA pregame predictions, live scores, market context, and verified final results.";
   return {
     metadataBase: new URL(origin),
-    title: { default: `${APP_NAME} — MLB & NFL Predictions`, template: `%s | ${APP_NAME}` },
+    title: { default: `${APP_NAME} — MLB, NFL & NBA Predictions`, template: `%s | ${APP_NAME}` },
     description,
     openGraph: {
-      title: `${APP_NAME} — MLB & NFL Predictions`,
+      title: `${APP_NAME} — MLB, NFL & NBA Predictions`,
       description,
       type: "website"
     },
     twitter: {
       card: "summary_large_image",
-      title: `${APP_NAME} — MLB & NFL Predictions`,
+      title: `${APP_NAME} — MLB, NFL & NBA Predictions`,
       description
     }
   };
