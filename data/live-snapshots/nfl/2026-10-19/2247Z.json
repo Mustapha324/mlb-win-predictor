@@ -1,0 +1,155 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-19",
+ "capturedAt": "2026-10-19T22:47:53.664Z",
+ "games": [
+  {
+   "gameId": "401873008",
+   "gameTimeUtc": "2026-10-20T00:15Z",
+   "home": "San Francisco 49ers",
+   "away": "Washington Commanders",
+   "injuries": {
+    "home": {
+     "burden": 0.999,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Christian Kirk",
+       "position": "WR",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Deebo Samuel Sr.",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Nick Bosa",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Dre Greenlaw",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Marques Sigle",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9987,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Jacory Croskey-Merritt",
+       "position": "RB",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Jaylin Lane",
+       "position": "WR",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Marcus Mariota",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Javontae Jean-Baptiste",
+       "position": "LB",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Charles Omenihu",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Brock Purdy",
+     "value": 2.91
+    },
+    "away": {
+     "starterName": "Jayden Daniels",
+     "value": -0.043
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 5,
+     "streak": 5,
+     "restDays": 7
+    },
+    "away": {
+     "lastTenWins": 1,
+     "lastTenGames": 5,
+     "streak": -2,
+     "restDays": 7
+    }
+   },
+   "pythag": {
+    "home": 0.7676906330695904,
+    "away": 0.3511783628957199
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": 0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": 0.068
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.28738499999999995
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.14765
+    }
+   ],
+   "baseProbability": 0.7791,
+   "brainProbability": 0.8178,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 1.8274,
+    "inputs": {
+     "qbOut": 1,
+     "formWinRate": 0.8,
+     "pythag": 0.4165,
+     "qbValue": 2.953
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7715,
+    "awayWinProbability": 0.2285,
+    "homeAmericanOdds": -410,
+    "awayAmericanOdds": 320,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118064"
+   },
+   "anchoredProbability": 0.7838
+  }
+ ]
+}

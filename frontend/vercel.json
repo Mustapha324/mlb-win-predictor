@@ -3,5 +3,11 @@
     "deploymentEnabled": {
       "live-snapshots": false
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/cron/daily-refresh",
+      "schedule": "5 9 * * *"
+    }
+  ]
 }
