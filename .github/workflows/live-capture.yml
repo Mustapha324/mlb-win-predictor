@@ -44,6 +44,10 @@ jobs:
             git worktree add --orphan -b live-snapshots ../snapshots
           fi
           mkdir -p ../snapshots/data/live-snapshots
+          # This branch contains data, but Vercel's Root Directory is frontend.
+          # Keep the minimal branch config there so data commits never start previews.
+          mkdir -p ../snapshots/frontend
+          cp frontend/vercel.json ../snapshots/frontend/vercel.json
           ln -sfn "$(realpath ../snapshots/data)" data
 
       - name: Capture today's slates and grade yesterday
@@ -54,7 +58,7 @@ jobs:
         run: |
           git config user.name "sport-iq-live-capture"
           git config user.email "actions@users.noreply.github.com"
-          git add -f data/live-snapshots
+          git add -f data/live-snapshots frontend/vercel.json
           if git diff --cached --quiet; then
             echo "nothing new to commit"
           else
