@@ -36,7 +36,13 @@ export function Navbar() {
   }, [pathname]);
   const sport = sportFromPath(pathname);
   const config = SPORTS[sport];
-  const navigationItems = [
+  const isNba = pathname === "/nba" || pathname.startsWith("/nba/");
+  const navigationItems = isNba ? [
+    { href: "/nba", label: "Games" },
+    { href: "/leaderboard", label: "Leaderboard" },
+    { href: "/friends", label: "Friends" },
+    { href: "/model", label: "Model" }
+  ] : [
     { href: config.homeHref, label: "Games" },
     { href: `${config.homeHref}#player-picks`, label: "Player Picks" },
     { href: config.historyHref, label: "Results" },
@@ -49,7 +55,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-white/[0.08] bg-black/85 backdrop-blur-xl">
       <nav aria-label="Primary" className="mx-auto flex min-h-16 max-w-[1480px] items-center justify-between gap-2 px-3 sm:gap-4 sm:px-7">
-        <Link href={config.homeHref} className="group flex shrink-0 items-center gap-3" aria-label={`${APP_NAME} home`}>
+        <Link href={isNba ? "/nba" : config.homeHref} className="group flex shrink-0 items-center gap-3" aria-label={`${APP_NAME} home`}>
           <span className="relative h-10 w-14 overflow-hidden rounded-xl border border-white/15 bg-black shadow-[0_0_22px_rgba(14,165,233,0.14)]">
             <Image
               src="/sport-iq-logo.png"
@@ -68,9 +74,9 @@ export function Navbar() {
         </Link>
 
         <div className="hidden items-center rounded-full border border-white/[0.09] bg-white/[0.035] p-1 md:flex" aria-label="Choose sport">
-          {(["mlb", "nfl"] as const).map((item) => (
-            <Link key={item} href={SPORTS[item].homeHref} aria-current={sport === item ? "page" : undefined} className={`grid min-h-10 place-items-center rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] transition ${sport === item ? item === "mlb" ? "bg-cyan-300 text-black" : "bg-lime-300 text-black" : "text-neutral-400 hover:text-white"}`}>
-              {SPORTS[item].shortName}
+          {(["mlb", "nfl", "nba"] as const).map((item) => (
+            <Link key={item} href={item === "nba" ? "/nba" : SPORTS[item].homeHref} aria-current={item === "nba" ? isNba ? "page" : undefined : !isNba && sport === item ? "page" : undefined} className={`grid min-h-10 place-items-center rounded-full px-4 py-2 text-[10px] font-black uppercase tracking-[0.14em] transition ${item === "nba" && isNba ? "bg-orange-300 text-black" : !isNba && sport === item ? item === "mlb" ? "bg-cyan-300 text-black" : "bg-lime-300 text-black" : "text-neutral-400 hover:text-white"}`}>
+              {item === "nba" ? "NBA" : SPORTS[item].shortName}
             </Link>
           ))}
         </div>
@@ -96,7 +102,7 @@ export function Navbar() {
 
       <nav aria-label="Mobile navigation" className="mobile-nav-scroll overflow-x-auto border-t border-white/[0.05] px-3 xl:hidden">
         <div className="flex min-w-max items-center gap-1 py-1.5">
-          {(["mlb", "nfl"] as const).map((item) => <Link key={item} href={SPORTS[item].homeHref} aria-current={sport === item ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-3 text-[10px] font-black ${sport === item ? item === "mlb" ? "bg-cyan-300 text-black" : "bg-lime-300 text-black" : "text-neutral-400"}`}>{SPORTS[item].shortName}</Link>)}
+          {(["mlb", "nfl", "nba"] as const).map((item) => <Link key={item} href={item === "nba" ? "/nba" : SPORTS[item].homeHref} aria-current={item === "nba" ? isNba ? "page" : undefined : !isNba && sport === item ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-3 text-[10px] font-black ${item === "nba" && isNba ? "bg-orange-300 text-black" : !isNba && sport === item ? item === "mlb" ? "bg-cyan-300 text-black" : "bg-lime-300 text-black" : "text-neutral-400"}`}>{item === "nba" ? "NBA" : SPORTS[item].shortName}</Link>)}
           <span className="mx-1 h-6 w-px bg-white/10" aria-hidden="true" />
           {navigationItems.map((item) => <Link key={item.href} href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-3 text-[10px] font-bold uppercase tracking-[0.08em] ${isCurrent(item.href) ? "bg-white/[0.07] text-white" : "text-neutral-400"}`}>{item.label}</Link>)}
         </div>

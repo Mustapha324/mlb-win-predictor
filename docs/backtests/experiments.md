@@ -103,3 +103,15 @@ Paired bootstrap (3,000 resamples): closing market vs v2 production −0.0379 lo
 **Rejected:** v2⊕brain in the served path — +2.0pp over all seasons but −0.7pp on the 2025 holdout (P = 37%), and the anchor leaves the model only 25% of the logit anyway; the brain stays in shadow (`/api/game-brain`). Brain-lite (record-only factors) — P = 36% on the holdout.
 
 **MLB caveat:** no free historical odds archive exists, so the MLB anchor ships on the NFL evidence plus the well-documented efficiency of MLB closing lines, and is measured forward: `scripts/capture-live.mjs` now archives the ESPN DraftKings moneyline with every capture and the ledger grades `market` and `anchored` picks beside the brain. Revisit once the ledger holds a season.
+
+## 2026-10-19 — NBA initial rating and market policy
+
+Source: [Fixture Download 2024–25 results](https://fixturedownload.com/results/nba-2024) and [2025–26 results](https://fixturedownload.com/results/nba-2025), 1,231 completed rows per season. Games were replayed in timestamp order; ratings updated only after each final. The first 150 games of 2024–25 warmed up team ratings. K = {10, 20, 30}, home Elo edge = {40, 55, 65, 80}, and rating multiplier = {0.5, 0.65, 0.8, 1} were compared on the remaining 1,081 training games by log loss. The selected K = 30, home edge = 40, multiplier = 1 was frozen before evaluating 2025–26.
+
+| Policy | 2024–25 selection (1,081) | 2025–26 holdout (1,231) |
+| --- | --- | --- |
+| Selected NBA Elo | 66.2% accuracy · 0.6132 log loss · 0.2128 Brier | 68.1% accuracy · 0.6099 log loss · 0.2104 Brier |
+| Constant home rate (54.35% from 2024–25) | — | 55.5% accuracy · 0.6874 log loss · 0.2471 Brier |
+| Initial K = 20, home edge = 65, multiplier = 0.65 | 63.5% accuracy · 0.6335 log loss · 0.2217 Brier | 66.3% accuracy · 0.6188 log loss · 0.2145 Brier |
+
+**Decision:** use a current no-vig sportsbook moneyline as the served NBA probability when available; otherwise use the selected Elo rating. The market policy is conservative because this test did not include historical NBA odds, so it does not establish model versus market performance. The rating is a fallback, not a betting edge claim. The live ESPN adapter reads completed regular and postseason games before the selected day, excludes preseason games, and never serves a refreshed live/final price as the original pregame call. No NBA player props or social picks are offered until separate validation and persistence exist.

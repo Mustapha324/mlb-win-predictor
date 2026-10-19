@@ -1,4 +1,9 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "live-snapshots": false
+    }
+  },
   "crons": [
     {
       "path": "/api/cron/daily-refresh",
