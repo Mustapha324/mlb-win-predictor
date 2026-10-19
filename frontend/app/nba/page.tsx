@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getNbaSlate } from "@/lib/server/nba";
 
-export const metadata = { title: "NBA predictions | Sport IQ", description: "NBA game slate and transparent pregame win probabilities." };
+export const metadata = { title: "NBA predictions", description: "NBA game slate and transparent pregame win probabilities." };
 export const dynamic = "force-dynamic";
 
 function easternToday(): string {
