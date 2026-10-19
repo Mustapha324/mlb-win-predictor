@@ -1,0 +1,72 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-19",
+ "capturedAt": "2026-10-19T17:19:13.465Z",
+ "games": [
+  {
+   "gameId": "849815",
+   "gameTimeUtc": "2026-10-20T00:08:00Z",
+   "home": "Tampa Bay Rays",
+   "away": "Cleveland Guardians",
+   "probables": {
+    "home": "Freddy Peralta",
+    "away": "Shawn Armstrong"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4401,
+     "count": 5
+    },
+    "away": {
+     "burden": 0,
+     "count": 0
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 21
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 21
+    }
+   },
+   "news": {
+    "home": [],
+    "away": []
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.022005
+    }
+   ],
+   "baseProbability": 0.5616,
+   "brainProbability": 0.5575,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3222,
+    "inputs": {
+     "injuryGap": -0.4401,
+     "formWinRate": -0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5842,
+    "awayWinProbability": 0.4158,
+    "homeAmericanOdds": -157,
+    "awayAmericanOdds": 130,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34860409"
+   },
+   "anchoredProbability": 0.5776
+  }
+ ]
+}
