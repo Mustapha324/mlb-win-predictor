@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-19",
+ "graded": [
+  {
+   "challengerProbability": 0.5715,
+   "challengerCorrect": true,
+   "gameId": "849815",
+   "matchup": "Cleveland Guardians @ Tampa Bay Rays",
+   "capturedAt": "2026-10-19T22:47:52.156Z",
+   "baseProbability": 0.5616,
+   "brainProbability": 0.5575,
+   "homeWon": true,
+   "score": "3-7",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5848,
+   "marketCorrect": true,
+   "anchoredProbability": 0.578,
+   "anchoredCorrect": true
+  }
+ ]
+}

@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-19",
+ "graded": [
+  {
+   "challengerProbability": 0.8178,
+   "challengerCorrect": true,
+   "gameId": "401873008",
+   "matchup": "Washington Commanders @ San Francisco 49ers",
+   "capturedAt": "2026-10-19T22:47:53.664Z",
+   "baseProbability": 0.7791,
+   "brainProbability": 0.8178,
+   "homeWon": true,
+   "score": "17-23",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.7715,
+   "marketCorrect": true,
+   "anchoredProbability": 0.7838,
+   "anchoredCorrect": true
+  }
+ ]
+}
