@@ -57,12 +57,15 @@ export function noVigPair(homeOdds: number, awayOdds: number): { home: number; a
 
 /** Parses "-170", "+142", "−112" (unicode minus), "EVEN"; null when unreadable. */
 export function parseAmerican(value: unknown): number | null {
-  if (typeof value === "number") return Number.isFinite(value) && value !== 0 ? value : null;
+  if (typeof value === "number") return Number.isFinite(value) && Math.abs(value) >= 100 ? value : null;
   if (typeof value !== "string") return null;
   const trimmed = value.trim().replace(/−/g, "-");
   if (/^(even|ev|pk)$/i.test(trimmed)) return 100;
-  const parsed = Number(trimmed.replace(/[^\d.+-]/g, ""));
-  return Number.isFinite(parsed) && parsed !== 0 ? parsed : null;
+  // Reject spread/total labels and suspended prices rather than extracting
+  // digits from arbitrary text and treating them as a moneyline.
+  if (!/^[+-]?\d+(?:\.\d+)?$/.test(trimmed)) return null;
+  const parsed = Number(trimmed);
+  return Number.isFinite(parsed) && Math.abs(parsed) >= 100 ? parsed : null;
 }
 
 export function logit(probability: number): number {

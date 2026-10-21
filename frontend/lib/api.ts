@@ -1,5 +1,5 @@
 import { apiUrl } from "@/lib/apiConfig";
-import type { Sport } from "@/lib/sports";
+import type { Sport, PlayerSport } from "@/lib/sports";
 
 export type TeamIdentity = {
   id: number;
@@ -115,7 +115,8 @@ export type ModelMetricsResponse = {
 };
 
 export type PredictionHistoryItem = {
-  sport?: Sport;
+  historySource?: string;
+  sport?: PlayerSport;
   gameId: string;
   date: string;
   awayTeam: TeamIdentity;
@@ -131,7 +132,7 @@ export type PredictionHistoryItem = {
 
 export type PlayerPick = {
   id: string;
-  sport: Sport;
+  sport: PlayerSport;
   rank: number;
   gameId: string;
   playerId: string;
@@ -206,7 +207,7 @@ export type PlayerPickPerformance = {
 };
 
 export type PlayerPicksResponse = {
-  sport: Sport;
+  sport: PlayerSport;
   date: string;
   updatedAt: string;
   totalPicks: number;
@@ -273,7 +274,7 @@ export function getModelMetrics(sport: Sport = "mlb"): Promise<ModelMetricsRespo
   return fetchJson<ModelMetricsResponse>(withQuery("/metrics", { sport }));
 }
 
-export function getPredictionHistory(limit = 80, sport: Sport = "mlb"): Promise<PredictionHistoryItem[]> {
+export function getPredictionHistory(limit = 80, sport: PlayerSport = "mlb"): Promise<PredictionHistoryItem[]> {
   return fetchJson<PredictionHistoryItem[]>(withQuery("/predictions/history", { limit, sport }));
 }
 
@@ -281,7 +282,7 @@ export function getGamePrediction(gameId: string, sport: Sport = "mlb"): Promise
   return fetchJson<TeamPrediction>(withQuery(`/games/${encodeURIComponent(gameId)}`, { sport }));
 }
 
-export function getPlayerPicks(date?: string, sport: Sport = "mlb"): Promise<PlayerPicksResponse> {
+export function getPlayerPicks(date?: string, sport: PlayerSport = "mlb"): Promise<PlayerPicksResponse> {
   return fetchJson<PlayerPicksResponse>(withQuery("/player-picks", { date, sport }));
 }
 

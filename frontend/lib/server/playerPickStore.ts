@@ -1,7 +1,7 @@
 import "server-only";
 import type { PlayerPick } from "@/lib/api";
 import { createSupabaseAdminClient, hasSupabaseAdminCredentials } from "@/lib/supabase/admin";
-import type { Sport } from "@/lib/sports";
+import type { PlayerSport as Sport } from "@/lib/sports";
 
 type PlayerPickRow = {
   pick_key: string;

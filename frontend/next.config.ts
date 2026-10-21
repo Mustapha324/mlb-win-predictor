@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     remotePatterns: [
+      { protocol: "https", hostname: "a.espncdn.com", pathname: "/i/headshots/nba/players/**" },
       { protocol: "https", hostname: "a.espncdn.com", pathname: "/i/headshots/nfl/players/**" },
       { protocol: "https", hostname: "img.mlbstatic.com", pathname: "/mlb-photos/image/upload/**" }
     ]

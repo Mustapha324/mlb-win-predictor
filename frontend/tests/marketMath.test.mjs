@@ -42,6 +42,11 @@ test("anchorToMarket blends in logit space and respects the weight ends", () => 
   assert.ok(mid > 0.5 && mid < 0.6, `expected the market to dominate, got ${mid}`);
 });
 
+test("all sports reject malformed or non-moneyline prices", () => {
+  for (const value of ["Over 225.5", "OFF -110", "Home -150", "-7.5", 50, Infinity, NaN]) assert.equal(parseAmerican(value), null);
+  assert.equal(parseEspnMoneyline({ moneyline: { home: { close: { odds: "OFF -150" } }, away: { close: { odds: "+130" } } } }, "Home", "Away", "now"), null);
+});
+
 test("ESPN odds blocks become no-vig quotes with the DraftKings event id decoded from the link", () => {
   const quote = parseEspnMoneyline(
     {

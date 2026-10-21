@@ -1,4 +1,5 @@
 import modelSnapshotJson from "@/data/model-snapshot.json";
+import { pregamePitchingQuery } from "@/lib/modelDataQuality";
 import { getMarketConsensus, type MarketConsensus } from "@/lib/server/marketOdds";
 import { pickOutcome, serveProbability, withMarketFactor } from "@/lib/servingPolicy";
 
@@ -330,12 +331,12 @@ function parseInnings(value: unknown): number {
   return Number(innings) + Number(outs) / 3;
 }
 
-async function fetchPitcherStats(pitcherId: number | undefined, season: number): Promise<PitcherStats> {
+async function fetchPitcherStats(pitcherId: number | undefined, date: string): Promise<PitcherStats> {
   if (!pitcherId) return null;
   try {
     const payload = await fetchMlb<{ stats?: Array<{ splits?: Array<{ stat?: Record<string, unknown> }> }> }>(
       `/people/${pitcherId}/stats`,
-      { stats: "season", group: "pitching", season }
+      pregamePitchingQuery(date)
     );
     const stat = payload.stats?.[0]?.splits?.[0]?.stat;
     if (!stat) return null;
@@ -430,7 +431,7 @@ export async function getPredictions(dateValue = easternToday()): Promise<TodayP
     if (homeId) pitcherIds.add(homeId);
     if (awayId) pitcherIds.add(awayId);
   }
-  const pitcherPairs = await Promise.all([...pitcherIds].map(async (id) => [id, await fetchPitcherStats(id, season)] as const));
+  const pitcherPairs = await Promise.all([...pitcherIds].map(async (id) => [id, await fetchPitcherStats(id, dateValue)] as const));
   const pitchers = new Map(pitcherPairs);
 
   // Pregame sportsbook lines first: the served probability is anchored to them (see lib/servingPolicy.ts).

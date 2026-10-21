@@ -6,6 +6,9 @@ import { recordModelRefresh } from "@/lib/server/modelRefresh";
 import type { Sport } from "@/lib/sports";
 import { refreshSocialPickResults } from "@/lib/server/social";
 import { hasValidBearer } from "@/lib/server/requestSecurity";
+import { getNbaPlayerPicks, refreshNbaPlayerResults } from "@/lib/server/nbaPlayerPicks";
+import { getNbaSlate } from "@/lib/server/nba";
+import { getNbaHistory } from "@/lib/server/nbaHistory";
 
 export const maxDuration = 60;
 
@@ -29,7 +32,16 @@ async function refreshSport(sport: Sport) {
 
 export async function GET(request: Request): Promise<Response> {
   if (!hasValidBearer(request, process.env.CRON_SECRET)) return Response.json({ error: "Unauthorized" }, { status: 401 });
-  const results = await Promise.all([refreshSport("mlb"), refreshSport("nfl")]);
+  const nbaRefresh = async () => {
+    try {
+      const date = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+      const gradedPlayerPicks = await refreshNbaPlayerResults(date);
+      const board = await getNbaPlayerPicks(date);
+      await Promise.all([getNbaSlate(date), getNbaHistory(100)]);
+      return { sport: "nba", ok: true, playerPicks: board.totalPicks, gradedPlayerPicks };
+    } catch { return { sport: "nba", ok: false, error: "NBA player refresh failed." }; }
+  };
+  const results = await Promise.all([refreshSport("mlb"), refreshSport("nfl"), nbaRefresh()]);
   const ok = results.every((result) => result.ok);
   return Response.json({ ok, ranAt: new Date().toISOString(), results }, { status: ok ? 200 : 207 });
 }

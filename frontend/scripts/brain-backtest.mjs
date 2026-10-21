@@ -43,6 +43,11 @@ import {
 } from "../lib/server/brain/brainScoring.ts";
 import { NFL_DIVISIONS, NFL_STADIUMS } from "../lib/server/brain/nflStadiums.ts";
 
+if (process.argv.includes("nba")) {
+  await import("./nba-backtest.mjs");
+  process.exit(0);
+}
+
 const here = path.dirname(fileURLToPath(import.meta.url));
 const CACHE_DIR = path.join(here, ".brain-backtest-cache");
 const OUT_DIR = path.join(here, "..", "..", "docs", "backtests");

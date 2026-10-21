@@ -10,12 +10,14 @@
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
     "backtest": "node --experimental-strip-types scripts/brain-backtest.mjs",
     "capture": "node --experimental-strip-types scripts/capture-live.mjs",
-    "test:ui": "playwright test"
+    "test:ui": "playwright test",
+    "prebuild": "node scripts/migrate-nba.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.112.3",
     "next": "^16.3.5",
+    "pg": "^8.23.1",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },

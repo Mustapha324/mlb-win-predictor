@@ -44,7 +44,7 @@ export type LivePace = {
 };
 
 /** Share of the game completed from the slate's status label ("Bottom 7th", "Q3 05:14", "Halftime"). */
-export function gameProgress(sport: "mlb" | "nfl", status: PlayerPickStatus, statusLabel: string): number {
+export function gameProgress(sport: "mlb" | "nfl" | "nba", status: PlayerPickStatus, statusLabel: string): number {
   if (status === "final") return 1;
   if (status !== "live") return 0;
   const clamp = (value: number) => Math.max(0.02, Math.min(0.98, value));
@@ -55,10 +55,11 @@ export function gameProgress(sport: "mlb" | "nfl", status: PlayerPickStatus, sta
   }
   if (/halftime/i.test(statusLabel)) return 0.5;
   if (/\bOT\b/i.test(statusLabel)) return 0.97;
-  const quarter = Number(statusLabel.match(/Q(\d)/i)?.[1] ?? 1);
+  const quarter = Number(statusLabel.match(/Q(\d)/i)?.[1] ?? statusLabel.match(/(\d)(?:st|nd|rd|th)/i)?.[1] ?? 1);
   const clock = statusLabel.match(/(\d{1,2}):(\d{2})/);
-  const secondsLeft = clock ? Number(clock[1]) * 60 + Number(clock[2]) : 900;
-  return clamp(((Math.max(1, quarter) - 1) * 900 + (900 - Math.min(900, secondsLeft))) / 3600);
+  const quarterLength = sport === "nba" ? 720 : 900;
+  const secondsLeft = clock ? Number(clock[1]) * 60 + Number(clock[2]) : quarterLength;
+  return clamp(((Math.max(1, quarter) - 1) * quarterLength + (quarterLength - Math.min(quarterLength, secondsLeft))) / (4 * quarterLength));
 }
 
 /** How a pick is doing right now: cleared/busted are settled, on-pace/behind extrapolate the current rate. */

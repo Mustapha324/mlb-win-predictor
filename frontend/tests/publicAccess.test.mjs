@@ -80,6 +80,7 @@ test("player board route serves all ranks and live summaries without account dep
   const board = { picks: Array.from({ length: 40 }, (_, rank) => ({ rank: rank + 1 })), topFiveLive: { leading: 4 }, liveSummary: { active: 40 } };
   const { GET } = await loadModule("../app/api/player-picks/route.ts", {
     ...validators,
+    "@/lib/server/nbaPlayerPicks": { getNbaPlayerPicks: async () => { calls++; if (fail) throw new Error("Feed unavailable"); return { ...board, sport: "nba" }; } },
     "@/lib/server/playerPicks": { getPlayerPicks: async () => { calls++; if (fail) throw new Error("Feed unavailable"); return board; } }
   });
   const response = await GET(new Request("http://localhost/api/player-picks?sport=nfl&date=2026-09-14"));
@@ -87,6 +88,10 @@ test("player board route serves all ranks and live summaries without account dep
   assert.deepEqual(await response.json(), board);
   assert.equal((await GET(new Request("http://localhost/api/player-picks?date=2026-02-30"))).status, 400);
   assert.equal(calls, 1);
+  const nba = await GET(new Request("http://localhost/api/player-picks?sport=nba&date=2026-10-20"));
+  assert.equal(nba.status, 200);
+  assert.deepEqual(await nba.json(), { ...board, sport: "nba" });
+  assert.equal((await GET(new Request("http://localhost/api/player-picks?sport=invalid"))).status, 400);
   fail = true;
   const unavailable = await GET(new Request("http://localhost/api/player-picks?date=2026-09-14"));
   assert.equal(unavailable.status, 503);
