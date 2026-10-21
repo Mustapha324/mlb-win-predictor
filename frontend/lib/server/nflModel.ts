@@ -1,4 +1,5 @@
 import "server-only";
+import { validDecisiveScores } from "@/lib/modelDataQuality";
 import { getMarketConsensus, type MarketConsensus } from "@/lib/server/marketOdds";
 import { pickOutcome, serveProbability, withMarketFactor } from "@/lib/servingPolicy";
 import type { ModelMetricsResponse, PredictionHistoryItem, TeamIdentity, TeamPrediction, TodayPredictionsResponse } from "@/lib/api";
@@ -225,7 +226,7 @@ function eloProbability(state: ModelState, game: ParsedGame): number {
 }
 
 function updateState(state: ModelState, game: ParsedGame): void {
-  if (game.homeScore === null || game.awayScore === null || game.homeScore === game.awayScore) return;
+  if (game.homeScore === null || game.awayScore === null || !validDecisiveScores(game.homeScore, game.awayScore)) return;
   const homeKey = teamKey(game.home);
   const awayKey = teamKey(game.away);
   const homeWon = Number(game.homeScore > game.awayScore);
@@ -253,7 +254,7 @@ function updateState(state: ModelState, game: ParsedGame): void {
 function replay(games: ParsedGame[], state: ModelState, evaluate = false): Evaluation {
   const evaluation: Evaluation = { games: 0, correct: 0, brier: 0, logLoss: 0, homeWins: 0 };
   for (const game of games) {
-    if (!game.completed || game.homeScore === null || game.awayScore === null || game.homeScore === game.awayScore) continue;
+    if (!game.completed || game.homeScore === null || game.awayScore === null || !validDecisiveScores(game.homeScore, game.awayScore)) continue;
     const probability = winProbability(state, game);
     const homeWon = Number(game.homeScore > game.awayScore);
     if (evaluate) {

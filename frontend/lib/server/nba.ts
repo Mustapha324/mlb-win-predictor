@@ -2,6 +2,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { parseEspnMoneyline, type EspnOddsLike } from "@/lib/marketMath";
 import { modelProbability, ratingsBefore, type NbaResult } from "@/lib/nbaPrediction";
+import { preserveNbaCalls } from "@/lib/server/nbaSnapshots";
 
 type Team = { id?: string; displayName?: string; abbreviation?: string; color?: string; logo?: string };
 type Competitor = { homeAway?: "home" | "away"; score?: string; team?: Team; leaders?: Array<{ name?: string; leaders?: Array<{ displayValue?: string; athlete?: { id?: string; displayName?: string; headshot?: string } }> }>; records?: Array<{ type?: string; summary?: string }> };
@@ -76,12 +77,22 @@ function resultOf(event: Event): NbaResult | null {
   const homeScore = Number(home.score);
   const awayScore = Number(away?.score);
   if (!home?.team?.id || !away?.team?.id || !Number.isFinite(homeScore) || !Number.isFinite(awayScore)) return null;
-  return { id: event.id, date: event.date, homeId: home.team.id, awayId: away.team.id, homeScore, awayScore };
+  return { id: event.id, date: event.date, homeId: home.team.id, awayId: away.team.id, homeScore, awayScore, homeName: home.team.displayName, awayName: away.team.displayName, homeAbbreviation: home.team.abbreviation, awayAbbreviation: away.team.abbreviation };
 }
 
 // Monthly provider payloads exceed Next's 2 MB fetch-cache limit. Cache the
 // compact completed-game rows instead of repeatedly downloading full events.
-const historicalResults = unstable_cache(async (period: string) => (await fetchEvents(period, true)).map(resultOf).filter((item): item is NbaResult => item !== null), ["nba-result-history-v1"], { revalidate: 86400 });
+const loadResults = async (period: string) => (await fetchEvents(period, true)).map(resultOf).filter((item): item is NbaResult => item !== null);
+const closedMonthResults = unstable_cache(loadResults, ["nba-closed-month-results-v2"], { revalidate: 86400 });
+const currentMonthResults = unstable_cache(loadResults, ["nba-current-month-results-v2"], { revalidate: 120 });
+const historicalResults = (period: string) => period >= new Date().toISOString().slice(0,7).replace("-", "") ? currentMonthResults(period) : closedMonthResults(period);
+
+export async function nbaCompletedResults(date: string): Promise<NbaResult[]> {
+  const year = seasonStart(date);
+  const periods = [...monthsBetween(`${year - 1}-10-01`, `${year}-06-30`), ...monthsBetween(`${year}-10-01`, date)];
+  const rows = (await Promise.all(periods.map(historicalResults))).flat();
+  return [...new Map(rows.filter(row => Date.parse(row.date) < Date.now()).map(row => [row.id, row])).values()].sort((a,b) => Date.parse(a.date) - Date.parse(b.date));
+}
 
 function seasonStart(date: string): number {
   const [year, month] = date.split("-").map(Number);
@@ -138,6 +149,7 @@ export async function getNbaSlate(date: string): Promise<{ date: string; updated
   await Promise.all(games.filter(game => game.state === "pre" && date >= today && !game.players.length).map(async game => {
     game.players = (await Promise.all([rosterPreview(game.away.id), rosterPreview(game.home.id)])).flat();
   }));
+  await preserveNbaCalls(games);
   return {
     date,
     updatedAt: now,

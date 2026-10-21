@@ -1,5 +1,5 @@
 /** Pure NBA pregame rating math. Ratings are updated only after completed games. */
-export type NbaResult = { id: string; date: string; homeId: string; awayId: string; homeScore: number; awayScore: number };
+export type NbaResult = { id: string; date: string; homeId: string; awayId: string; homeScore: number; awayScore: number; homeName?: string; awayName?: string; homeAbbreviation?: string; awayAbbreviation?: string };
 
 const BASE = 1500;
 // Selected on 2024-25, frozen for 2025-26. See the experiment ledger.

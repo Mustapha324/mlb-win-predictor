@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { TeamBadge } from "@/components/TeamBadge";
 import { getErrorMessage, getPredictionHistory, type PredictionHistoryItem } from "@/lib/api";
-import type { Sport } from "@/lib/sports";
+import type { PlayerSport as Sport } from "@/lib/sports";
 
 type FilterStatus = "all" | "correct" | "incorrect";
 
@@ -22,12 +22,12 @@ export function HistoryView({ sport }: { sport: Sport }) {
 
   const filtered = useMemo(() => history.filter((item) => statusFilter === "all" || (statusFilter === "correct" ? item.wasCorrect : !item.wasCorrect)), [history, statusFilter]);
   const accuracy = history.length ? history.filter((item) => item.wasCorrect).length / history.length : 0;
-  const accent = sport === "nfl" ? "text-lime-300" : "text-cyan-300";
+  const accent = sport === "nba" ? "text-orange-300" : sport === "nfl" ? "text-lime-300" : "text-cyan-300";
 
   return (
     <main>
       <header className="flex flex-col gap-6 border-b border-white/[0.08] pb-8 lg:flex-row lg:items-end lg:justify-between">
-        <div><p className={`text-xs font-black uppercase tracking-[0.22em] ${accent}`}>{sport.toUpperCase()} accountability ledger</p><h1 className="mt-2 text-4xl font-black tracking-[-0.055em] text-white sm:text-6xl">The call versus reality.</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-500">Every probability is reconstructed from information available before kickoff or first pitch. Live movement and final scores never rewrite the original pick.</p></div>
+        <div><p className={`text-xs font-black uppercase tracking-[0.22em] ${accent}`}>{sport.toUpperCase()} accountability ledger</p><h1 className="mt-2 text-4xl font-black tracking-[-0.055em] text-white sm:text-6xl">The call versus reality.</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-neutral-500">Every probability uses information available before the game. NBA rows distinguish captured pregame picks from rating replays; live movement and final scores never rewrite a captured pick.</p></div>
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.025] px-5 py-4"><p className="eyebrow">Last {history.length || "—"}</p><p className="mt-1 font-mono text-2xl font-black text-white">{history.length ? `${(accuracy * 100).toFixed(1)}%` : "—"}</p></div>
       </header>
 
@@ -45,7 +45,7 @@ export function HistoryView({ sport }: { sport: Sport }) {
                 <article key={item.gameId} className="grid gap-4 px-5 py-4 transition hover:bg-white/[0.025] md:grid-cols-[100px_1fr_1fr_1fr_100px_90px] md:items-center">
                   <p className="text-xs text-neutral-500">{new Date(`${item.date}T12:00:00Z`).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" })}</p>
                   <div className="flex items-center gap-2"><TeamBadge team={item.awayTeam} size="sm" /><span className="text-xs font-bold text-neutral-300">{item.awayTeam.abbreviation} @ {item.homeTeam.abbreviation}</span><TeamBadge team={item.homeTeam} size="sm" /></div>
-                  <p className="text-xs font-bold text-white">{pickTeam.name}</p><p className="text-xs text-neutral-400">{item.actualWinner}<span className="mt-1 block text-[10px] text-neutral-600">{item.awayTeam.abbreviation} {item.awayScore} · {item.homeTeam.abbreviation} {item.homeScore}</span></p>
+                  <p className="text-xs font-bold text-white">{pickTeam.name}{item.historySource ? <span className="mt-1 block text-[10px] text-neutral-500">{item.historySource}</span> : null}</p><p className="text-xs text-neutral-400">{item.actualWinner}<span className="mt-1 block text-[10px] text-neutral-600">{item.awayTeam.abbreviation} {item.awayScore} · {item.homeTeam.abbreviation} {item.homeScore}</span></p>
                   <p className="font-mono text-sm font-black text-white">{Math.round(pickProbability * 100)}%</p><span className={`w-fit rounded-full px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.1em] ${item.wasCorrect ? "bg-emerald-300/10 text-emerald-200" : "bg-rose-300/10 text-rose-200"}`}>{item.wasCorrect ? "Correct" : "Miss"}</span>
                 </article>
               );

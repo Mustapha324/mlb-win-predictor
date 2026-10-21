@@ -17,4 +17,16 @@ test("NBA snapshot migration preserves private access and admits basketball rows
     assert.equal((await db.query("select has_table_privilege($1,'public.player_pick_snapshots','select') as allowed", [role])).rows[0].allowed, false);
     assert.equal((await db.query("select has_table_privilege($1,'public.player_pick_snapshots','insert') as allowed", [role])).rows[0].allowed, false);
   }
+  await db.exec(await readFile(new URL("202608240001_player_pick_market_odds.sql", migrations), "utf8"));
+  const launch = JSON.parse(await readFile(new URL("../scripts/nba-launch-snapshot.json", import.meta.url), "utf8"));
+  const script = await readFile(new URL("../scripts/migrate-nba.mjs", import.meta.url), "utf8");
+  const seedLoop = script.slice(script.indexOf("for (const pick of launch.picks)"), script.indexOf('    await client.query("commit")'));
+  const seed = new Function("client", "launch", `return (async()=>{${seedLoop}})()`);
+  await seed(db, launch);
+  const record = (await db.query("select count(*)::int as total,count(*) filter(where result='correct')::int as wins,count(*) filter(where result='incorrect')::int as losses from public.player_pick_snapshots where slate_date='2026-10-20' and pick_key <> 'nba-test'")).rows[0];
+  assert.deepEqual(record, { total:40, wins:22, losses:18 });
+  const originalLine = launch.picks[0].line;
+  launch.picks[0].line = 999;
+  await seed(db, launch);
+  assert.equal((await db.query("select line from public.player_pick_snapshots where pick_key=$1",[launch.picks[0].id])).rows[0].line, originalLine);
 });

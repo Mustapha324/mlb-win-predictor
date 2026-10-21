@@ -77,7 +77,7 @@ async function grade(picks: PlayerPick[], events: Event[]): Promise<PlayerPick[]
   });
 }
 
-export async function getNbaPlayerPicks(date: string): Promise<PlayerPicksResponse> {
+export async function getNbaPlayerPicks(date: string, refreshRecent = true): Promise<PlayerPicksResponse> {
   const schedule = await json<{ events?: Event[] }>(`${SITE}/scoreboard?dates=${date.replaceAll("-", "")}&limit=1000`, 60);
   if (!schedule) throw new Error("NBA schedule unavailable");
   const events = schedule.events ?? [];
@@ -96,6 +96,7 @@ export async function getNbaPlayerPicks(date: string): Promise<PlayerPicksRespon
   memoryBoards.set(date, picks);
   while (memoryBoards.size > 7) memoryBoards.delete(memoryBoards.keys().next().value!);
   await updatePlayerPickResults(date, picks);
+  if (refreshRecent) await refreshNbaPlayerResults(date, 1);
   const history = await loadRecentPlayerPickResults("nba");
   const persisted = additions.length ? await loadPlayerPickSnapshots("nba", date) : saved;
   const trackingAvailable = persisted !== null && picks.every(pick => persisted.some(row => row.id === pick.id));
@@ -103,8 +104,8 @@ export async function getNbaPlayerPicks(date: string): Promise<PlayerPicksRespon
   return { sport: "nba", date, updatedAt: new Date().toISOString(), totalPicks: picks.length, topFiveCount: picks.filter(pick => pick.isTopFive).length, hasLiveGames: picks.some(pick => pick.status === "live"), trackingAvailable, performance: calculatePerformance(recentResults), slatePerformance: calculatePerformance(picks), liveSummary: summarizeLive(picks), topFiveLive: summarizeLive(picks.filter(pick => pick.isTopFive)), lineProvider: picks.length ? "DraftKings via ESPN" : null, recentResults, picks };
 }
 
-export async function refreshNbaPlayerResults(today: string) {
-  const dates = await loadPendingPlayerPickDates("nba", today, 3);
-  for (const date of dates) await getNbaPlayerPicks(date);
+export async function refreshNbaPlayerResults(today: string, limit = 3) {
+  const dates = await loadPendingPlayerPickDates("nba", today, limit);
+  await Promise.all(dates.map(date => getNbaPlayerPicks(date, false)));
   return { checkedDates: dates.length };
 }

@@ -115,7 +115,8 @@ export type ModelMetricsResponse = {
 };
 
 export type PredictionHistoryItem = {
-  sport?: Sport;
+  historySource?: string;
+  sport?: PlayerSport;
   gameId: string;
   date: string;
   awayTeam: TeamIdentity;
@@ -273,7 +274,7 @@ export function getModelMetrics(sport: Sport = "mlb"): Promise<ModelMetricsRespo
   return fetchJson<ModelMetricsResponse>(withQuery("/metrics", { sport }));
 }
 
-export function getPredictionHistory(limit = 80, sport: Sport = "mlb"): Promise<PredictionHistoryItem[]> {
+export function getPredictionHistory(limit = 80, sport: PlayerSport = "mlb"): Promise<PredictionHistoryItem[]> {
   return fetchJson<PredictionHistoryItem[]>(withQuery("/predictions/history", { limit, sport }));
 }
 

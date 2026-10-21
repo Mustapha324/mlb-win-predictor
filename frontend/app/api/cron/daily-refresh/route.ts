@@ -7,6 +7,8 @@ import type { Sport } from "@/lib/sports";
 import { refreshSocialPickResults } from "@/lib/server/social";
 import { hasValidBearer } from "@/lib/server/requestSecurity";
 import { getNbaPlayerPicks, refreshNbaPlayerResults } from "@/lib/server/nbaPlayerPicks";
+import { getNbaSlate } from "@/lib/server/nba";
+import { getNbaHistory } from "@/lib/server/nbaHistory";
 
 export const maxDuration = 60;
 
@@ -35,6 +37,7 @@ export async function GET(request: Request): Promise<Response> {
       const date = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
       const gradedPlayerPicks = await refreshNbaPlayerResults(date);
       const board = await getNbaPlayerPicks(date);
+      await Promise.all([getNbaSlate(date), getNbaHistory(100)]);
       return { sport: "nba", ok: true, playerPicks: board.totalPicks, gradedPlayerPicks };
     } catch { return { sport: "nba", ok: false, error: "NBA player refresh failed." }; }
   };

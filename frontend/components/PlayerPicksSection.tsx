@@ -156,11 +156,11 @@ function TopPickCard({ pick, sport, priority }: { pick: PlayerPick; sport: Sport
   );
 }
 
-export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string }) {
+export function PlayerPicksSection({ sport, date, initialView = "board" }: { sport: Sport; date: string; initialView?: View }) {
   const preferences = useUiPreferences();
   const [data, setData] = useState<PlayerPicksResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<View>("board");
+  const [view, setView] = useState<View>(initialView);
   const [query, setQuery] = useState("");
   const [market, setMarket] = useState("all");
   const [status, setStatus] = useState<StatusFilter>("all");
