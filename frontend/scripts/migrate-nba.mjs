@@ -15,7 +15,7 @@ if (process.env.VERCEL_ENV === "production") {
     await client.query("begin");
     await client.query("set local lock_timeout = '10s'");
     await client.query("select pg_advisory_xact_lock(20261021)");
-    for (const name of ["202610200001_nba_player_picks.sql", "202610210001_nba_game_results.sql"]) {
+    for (const name of ["202608240001_player_pick_market_odds.sql", "202610200001_nba_player_picks.sql", "202610210001_nba_game_results.sql"]) {
       await client.query(await fs.readFile(new URL(`../../supabase/migrations/${name}`, import.meta.url), "utf8"));
     }
     // Recover the complete set of original pregame preview calls, including losses.
