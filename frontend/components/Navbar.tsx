@@ -39,6 +39,8 @@ export function Navbar() {
   const isNba = pathname === "/nba" || pathname.startsWith("/nba/");
   const navigationItems = isNba ? [
     { href: "/nba", label: "Games" },
+    { href: "/nba#player-picks", label: "Player Picks" },
+    { href: "/nba/history", label: "Results" },
     { href: "/leaderboard", label: "Leaderboard" },
     { href: "/friends", label: "Friends" }
   ] : [

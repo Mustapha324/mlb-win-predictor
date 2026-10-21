@@ -1,4 +1,4 @@
-import type { Sport } from "@/lib/sports";
+import type { PlayerSport as Sport } from "@/lib/sports";
 // Relative `.ts` imports on purpose: this module is pure and runs under `node --test`, which has no `@/` alias.
 import { normalizePlayerName } from "./playerPropOdds.ts";
 import { americanToImplied, parseAmerican } from "./marketMath.ts";
@@ -26,6 +26,10 @@ export type SportsbookLine = {
 
 /** ESPN propBets `type.id` -> app market name. */
 export const ESPN_PROP_TYPES: Record<Sport, Record<string, string>> = {
+  nba: {
+    "1": "Points", "2": "Assists", "3": "Rebounds", "4": "3-pointers",
+    "87": "Points+Assists", "88": "Points+Rebounds", "89": "Rebounds+Assists", "90": "Points+Rebounds+Assists"
+  },
   nfl: {
     "8": "Passing yards",
     "9": "Completions",

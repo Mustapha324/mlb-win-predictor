@@ -1,4 +1,5 @@
 import { getPlayerPicks } from "@/lib/server/playerPicks";
+import { getNbaPlayerPicks } from "@/lib/server/nbaPlayerPicks";
 import { isValidPickDate } from "@/lib/server/playerPickScoring";
 import { isSport } from "@/lib/sports";
 
@@ -9,12 +10,12 @@ function easternToday(): string {
 export async function GET(request: Request): Promise<Response> {
   const query = new URL(request.url).searchParams;
   const requestedSport = query.get("sport") ?? "mlb";
-  if (!isSport(requestedSport)) return Response.json({ error: "Unsupported sport." }, { status: 400 });
+  if (!isSport(requestedSport) && requestedSport !== "nba") return Response.json({ error: "Unsupported sport." }, { status: 400 });
   const sport = requestedSport;
   const date = query.get("date") ?? easternToday();
   if (!isValidPickDate(date)) return Response.json({ error: "Use a valid date in YYYY-MM-DD format." }, { status: 400 });
   try {
-    return Response.json(await getPlayerPicks(sport, date), {
+    return Response.json(await (sport === "nba" ? getNbaPlayerPicks(date) : getPlayerPicks(sport, date)), {
       headers: { "Cache-Control": "no-store" }
     });
   } catch {

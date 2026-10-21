@@ -1,4 +1,5 @@
 export type Sport = "mlb" | "nfl";
+export type PlayerSport = Sport | "nba";
 
 export type SportConfig = {
   id: Sport;

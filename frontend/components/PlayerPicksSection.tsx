@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { getErrorMessage, getPlayerPicks, type LivePaceInfo, type PlayerPick, type PlayerPicksResponse } from "@/lib/api";
-import type { Sport } from "@/lib/sports";
+import type { PlayerSport as Sport } from "@/lib/sports";
+import PersonalPlayerPick from "@/components/PersonalPlayerPick";
 import { useUiPreferences } from "@/lib/uiPreferences";
 
 type View = "board" | "results" | "model";
@@ -109,7 +110,7 @@ function PlayerImage({ pick, priority = false }: { pick: PlayerPick; priority?: 
 
 function ConfidenceRing({ value, sport }: { value: number | null; sport: Sport }) {
   const degrees = Math.round((value ?? 0) * 360);
-  const color = sport === "nfl" ? "#bef264" : "#67e8f9";
+  const color = sport === "nba" ? "#fdba74" : sport === "nfl" ? "#bef264" : "#67e8f9";
   return (
     <div className="grid h-14 w-14 shrink-0 place-items-center rounded-full p-[3px]" style={{ background: `conic-gradient(${color} ${degrees}deg, rgba(255,255,255,.08) 0)` } as CSSProperties} aria-label={`${percent(value)} confidence`}>
       <span className="grid h-full w-full place-items-center rounded-full bg-[#0b0b0b] font-mono text-xs font-black text-white">{percent(value)}</span>
@@ -130,10 +131,10 @@ function PickPrice({ pick }: { pick: PlayerPick }) {
 }
 
 function TopPickCard({ pick, sport, priority }: { pick: PlayerPick; sport: Sport; priority: boolean }) {
-  const accent = sport === "nfl" ? "text-lime-300" : "text-cyan-300";
+  const accent = sport === "nba" ? "text-orange-300" : sport === "nfl" ? "text-lime-300" : "text-cyan-300";
   return (
-    <article className={`relative flex min-h-52 overflow-hidden rounded-[22px] border bg-[#0a0a0a] px-4 pt-4 ${pick.rank === 1 ? sport === "nfl" ? "border-lime-300/40" : "border-cyan-300/40" : "border-white/[0.1]"}`}>
-      <span className={`absolute left-3 top-3 z-10 grid h-7 min-w-7 place-items-center rounded-lg border px-1 font-mono text-xs font-black ${pick.rank === 1 ? sport === "nfl" ? "border-lime-300/30 bg-lime-300/15 text-lime-200" : "border-cyan-300/30 bg-cyan-300/15 text-cyan-200" : "border-white/10 bg-white/[0.06] text-neutral-400"}`}>{pick.rank}</span>
+    <article className={`relative flex min-h-52 overflow-hidden rounded-[22px] border bg-[#0a0a0a] px-4 pt-4 ${pick.rank === 1 ? sport === "nba" ? "border-orange-300/40" : sport === "nfl" ? "border-lime-300/40" : "border-cyan-300/40" : "border-white/[0.1]"}`}>
+      <span className={`absolute left-3 top-3 z-10 grid h-7 min-w-7 place-items-center rounded-lg border px-1 font-mono text-xs font-black ${pick.rank === 1 ? sport === "nba" ? "border-orange-300/30 bg-orange-300/15 text-orange-200" : sport === "nfl" ? "border-lime-300/30 bg-lime-300/15 text-lime-200" : "border-cyan-300/30 bg-cyan-300/15 text-cyan-200" : "border-white/10 bg-white/[0.06] text-neutral-400"}`}>{pick.rank}</span>
       <div className="flex w-full items-end gap-3">
         <PlayerImage pick={pick} priority={priority} />
         <div className="min-w-0 flex-1 self-stretch pb-4 pt-1">
@@ -148,6 +149,7 @@ function TopPickCard({ pick, sport, priority }: { pick: PlayerPick; sport: Sport
             <span className={`rounded-full border px-2 py-1 text-[8px] font-black uppercase tracking-[0.1em] ${resultTone(pick.result)}`}>{statusLabel(pick)}</span>
           </div>
           <PaceMeter pick={pick} />
+          <PersonalPlayerPick pick={pick} />
         </div>
       </div>
     </article>
@@ -204,8 +206,8 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
     );
   }, [data, market, query, status]);
   const markets = [...new Set(data?.picks.map((pick) => pick.market) ?? [])].sort();
-  const accent = sport === "nfl" ? "text-lime-300" : "text-cyan-300";
-  const accentButton = sport === "nfl" ? "border-lime-300/25 bg-lime-300/10 text-lime-200" : "border-cyan-300/25 bg-cyan-300/10 text-cyan-200";
+  const accent = sport === "nba" ? "text-orange-300" : sport === "nfl" ? "text-lime-300" : "text-cyan-300";
+  const accentButton = sport === "nba" ? "border-orange-300/25 bg-orange-300/10 text-orange-200" : sport === "nfl" ? "border-lime-300/25 bg-lime-300/10 text-lime-200" : "border-cyan-300/25 bg-cyan-300/10 text-cyan-200";
 
   return (
     <section id="player-picks" className="mt-9 scroll-mt-28 border-t border-white/[0.08] pt-8" aria-labelledby={`${sport}-player-picks-heading`}>
@@ -213,12 +215,13 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
         <div>
           <div className="flex flex-wrap items-center gap-2"><p className={`text-[10px] font-black uppercase tracking-[0.2em] ${accent}`}>{sport.toUpperCase()} player model</p>{data?.lineProvider ? <span className="rounded-md border border-emerald-300/25 bg-emerald-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-emerald-200">{data.lineProvider} lines</span> : null}{data?.hasLiveGames ? <span className="rounded-full border border-rose-300/20 bg-rose-300/10 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-rose-200">● Live</span> : null}</div>
           <h2 id={`${sport}-player-picks-heading`} className="mt-2 text-3xl font-black tracking-[-0.045em] text-white sm:text-5xl">Player Picks</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-400">Pregame player calls on real sportsbook lines with their payout multipliers, live pace toward the line while games run, and a permanent final result. Picks lock daily; live games refresh every 30 seconds when enabled.</p>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-neutral-400">{sport === "nba" ? "Points, rebounds, assists, threes and combo picks on real sportsbook lines. Compare projections, save your own side, and track original calls through the final box score." : "Pregame player calls on real sportsbook lines with their payout multipliers, live pace toward the line while games run, and a permanent final result. Picks lock daily; live games refresh every 30 seconds when enabled."}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <div className="flex rounded-xl border border-white/[0.09] bg-white/[0.025] p-1" aria-label="Choose sport">
             <Link href="/#player-picks" aria-current={sport === "mlb" ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${sport === "mlb" ? "bg-cyan-300 text-black" : "text-neutral-400 hover:text-white"}`}>MLB</Link>
             <Link href="/nfl#player-picks" aria-current={sport === "nfl" ? "page" : undefined} className={`grid min-h-11 place-items-center rounded-lg px-4 py-2 text-[10px] font-black uppercase tracking-[0.12em] ${sport === "nfl" ? "bg-lime-300 text-black" : "text-neutral-400 hover:text-white"}`}>NFL</Link>
+            <Link href="/nba#player-picks" className="grid min-h-11 place-items-center rounded-lg px-4 py-2 text-[10px] font-black uppercase text-orange-200">NBA</Link>
           </div>
         </div>
       </header>
@@ -230,6 +233,8 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
 
       <p className="sr-only" aria-live="polite">{refreshing ? "Refreshing player picks" : error ? error : data ? `${data.totalPicks} player picks loaded` : "Loading player picks"}</p>
 
+      {sport === "nba" ? <p className="mt-4 text-xs leading-5 text-orange-200/80">Experimental NBA player model · recent game form against real book lines. Confidence is a smoothed recent hit rate, not a calibrated probability. Injured players and small samples are withheld.</p> : null}
+      {sport === "nba" && data && !data.trackingAvailable ? <p className="mt-3 text-xs text-amber-200">Permanent result history is unavailable. Current calls last only while this server is running; personal selections stay on this device.</p> : null}
       {loading ? <div className="mt-6 h-[430px] animate-pulse rounded-[24px] border border-white/[0.07] bg-white/[0.025]" /> : null}
       {error && !loading ? <div className="mt-6 rounded-2xl border border-amber-300/15 bg-amber-300/[0.05] p-5 text-sm text-amber-100">{error}<button type="button" onClick={() => void load()} className="ml-3 font-black underline">Try again</button></div> : null}
 
@@ -237,7 +242,7 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
         <>
           <LiveStrip data={data} />
           <div className="mt-6 flex flex-wrap items-end justify-between gap-3"><div><p className="eyebrow">Top-ranked board</p><h3 className="mt-1 text-lg font-black text-white">★ Today&apos;s Top 5</h3></div><p className={`text-xs ${topFiveLiveLabel(data) ? "font-bold text-lime-200" : "text-neutral-600"}`}>{topFiveLiveLabel(data) ?? "Ranked before game time · never rewritten"}</p></div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {topPicks.map((pick, index) => <TopPickCard key={pick.id} pick={pick} sport={sport} priority={index === 0} />)}
           </div>
 
@@ -258,7 +263,7 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
               {boardPicks.map((pick) => <article key={pick.id} className="grid gap-3 px-5 py-4 transition hover:bg-white/[0.02] lg:grid-cols-[48px_1.1fr_.8fr_.62fr_.62fr_.72fr_1.1fr] lg:items-center lg:gap-4">
                 <span className={`font-mono text-sm font-black ${accent}`}><span className="mr-2 text-[9px] uppercase text-neutral-500 lg:hidden">Rank</span>{String(pick.rank).padStart(2, "0")}</span>
                 <div className="flex items-center gap-3"><div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-xl bg-white/[0.05]">{pick.headshotUrl ? <Image src={pick.headshotUrl} alt="" fill sizes="44px" className="object-contain object-bottom" /> : null}</div><div className="min-w-0"><p className="truncate text-sm font-black text-white">{pick.playerName}</p><p className="mt-1 truncate text-[9px] font-bold uppercase tracking-[0.1em] text-neutral-600">{pick.position ? `${pick.position} · ` : ""}{pick.team} vs {pick.opponent}</p></div></div>
-                <div><p className="eyebrow lg:hidden">Pick & captured price</p><p className="mt-1 text-sm font-black text-white">{pick.selection} {pick.line}</p><p className="mt-1 text-[10px] text-neutral-400">{pick.market}</p><PickPrice pick={pick} /></div>
+                <div><p className="eyebrow lg:hidden">Pick & captured price</p><p className="mt-1 text-sm font-black text-white">{pick.selection} {pick.line}</p><p className="mt-1 text-[10px] text-neutral-400">{pick.market}</p><PickPrice pick={pick} /><PersonalPlayerPick pick={pick} /></div>
                 <p className="font-mono text-sm font-bold text-neutral-300"><span className="mr-2 font-sans text-[9px] font-black uppercase tracking-[0.12em] text-neutral-500 lg:hidden">Projection</span>{pick.projection ?? "—"}</p>
                 <p className={`font-mono text-sm font-black ${accent}`}><span className="mr-2 font-sans text-[9px] font-black uppercase tracking-[0.12em] text-neutral-500 lg:hidden">Confidence</span>{percent(pick.confidence)}</p>
                 <div><span className={`inline-flex rounded-full border px-2 py-1 text-[8px] font-black uppercase tracking-[0.09em] ${resultTone(pick.result)}`}>{statusLabel(pick)}</span>{pick.live && pick.status === "live" ? <PaceMeter pick={pick} compact /> : pick.actualValue !== null ? <p className="mt-1 text-[10px] text-neutral-500">Final: <span className="font-mono text-white">{pick.actualValue}</span> / {pick.line}</p> : null}</div>
@@ -281,8 +286,8 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
             ].map(([label, value]) => <div key={label} className="rounded-[20px] border border-white/[0.08] bg-white/[0.025] p-5"><p className="eyebrow">{label}</p><p className="mt-2 font-mono text-2xl font-black text-white">{value}</p></div>)}
           </div>
           <div className="mt-5 grid gap-5 xl:grid-cols-[1.5fr_.8fr]">
-            <section className="overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#090909]" aria-labelledby="recent-player-results"><div className="border-b border-white/[0.08] px-5 py-4"><h3 id="recent-player-results" className="font-black text-white">Recent graded picks</h3><p className="mt-1 text-xs text-neutral-600">Original line and projection beside the verified final stat.</p></div><div className="divide-y divide-white/[0.055]">{data.recentResults.map((pick) => <article key={`${pick.id}-${pick.resultUpdatedAt}`} className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_.8fr_.55fr_auto] sm:items-center"><div><p className="text-sm font-black text-white">{pick.playerName}</p><p className="mt-1 text-[10px] text-neutral-600">{pick.team} vs {pick.opponent} · {pick.market}</p></div><p className="text-xs font-bold text-neutral-300">{pick.selection} {pick.line}</p><p className="font-mono text-xs text-white">Final {pick.actualValue ?? "—"}</p><span className={`w-fit rounded-full border px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.1em] ${resultTone(pick.result)}`}>{statusLabel(pick)}</span></article>)}{data.recentResults.length === 0 ? <p className={`p-7 text-sm ${data.trackingAvailable ? "text-neutral-600" : "text-amber-200"}`}>{data.trackingAvailable ? "Results will appear as tracked games become final." : "Current-slate finals can still appear here, but permanent result history needs the server-side Supabase secret configured."}</p> : null}</div></section>
-            <section className="rounded-[24px] border border-white/[0.08] bg-[#090909] p-5"><h3 className="font-black text-white">Performance by market</h3><div className="mt-4 space-y-4">{data.performance.byMarket.map((item) => <div key={item.market}><div className="flex items-center justify-between text-xs"><span className="text-neutral-400">{item.market}</span><span className="font-mono font-black text-white">{percent(item.accuracy)} · {item.graded}</span></div><div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]"><div className={`h-full rounded-full ${sport === "nfl" ? "bg-lime-300" : "bg-cyan-300"}`} style={{ width: `${item.accuracy * 100}%` }} /></div></div>)}{data.performance.byMarket.length === 0 ? <p className="text-sm leading-6 text-neutral-600">Market splits need at least one correct or incorrect final result.</p> : null}</div></section>
+            <section className="overflow-hidden rounded-[24px] border border-white/[0.08] bg-[#090909]" aria-labelledby="recent-player-results"><div className="border-b border-white/[0.08] px-5 py-4"><h3 id="recent-player-results" className="font-black text-white">Recent graded picks</h3><p className="mt-1 text-xs text-neutral-600">Original line and projection beside the verified final stat.</p></div><div className="divide-y divide-white/[0.055]">{data.recentResults.map((pick) => <article key={`${pick.id}-${pick.resultUpdatedAt}`} className="grid gap-3 px-5 py-4 sm:grid-cols-[1fr_.8fr_.55fr_auto] sm:items-center"><div><p className="text-sm font-black text-white">{pick.playerName}</p><p className="mt-1 text-[10px] text-neutral-600">{pick.team} vs {pick.opponent} · {pick.market}</p><PersonalPlayerPick pick={pick} /></div><p className="text-xs font-bold text-neutral-300">{pick.selection} {pick.line}</p><p className="font-mono text-xs text-white">Final {pick.actualValue ?? "—"}</p><span className={`w-fit rounded-full border px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.1em] ${resultTone(pick.result)}`}>{statusLabel(pick)}</span></article>)}{data.recentResults.length === 0 ? <p className={`p-7 text-sm ${data.trackingAvailable ? "text-neutral-600" : "text-amber-200"}`}>{data.trackingAvailable ? "Results will appear as tracked games become final." : "Current-slate finals can still appear here, but permanent result history needs the server-side Supabase secret configured."}</p> : null}</div></section>
+            <section className="rounded-[24px] border border-white/[0.08] bg-[#090909] p-5"><h3 className="font-black text-white">Performance by market</h3><div className="mt-4 space-y-4">{data.performance.byMarket.map((item) => <div key={item.market}><div className="flex items-center justify-between text-xs"><span className="text-neutral-400">{item.market}</span><span className="font-mono font-black text-white">{percent(item.accuracy)} · {item.graded}</span></div><div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white/[0.06]"><div className={`h-full rounded-full ${sport === "nba" ? "bg-orange-300" : sport === "nfl" ? "bg-lime-300" : "bg-cyan-300"}`} style={{ width: `${item.accuracy * 100}%` }} /></div></div>)}{data.performance.byMarket.length === 0 ? <p className="text-sm leading-6 text-neutral-600">Market splits need at least one correct or incorrect final result.</p> : null}</div></section>
           </div>
         </div>
       ) : null}
@@ -290,12 +295,12 @@ export function PlayerPicksSection({ sport, date }: { sport: Sport; date: string
       {!loading && !error && data && view === "model" ? (
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
           {[
-            ["01", "Pregame-only inputs", sport === "mlb" ? "Season rates, last-10 form, probable starters, opponent history, and the team model are captured before first pitch." : "Only games completed before kickoff feed the rolling three-game player form, role, team strength, and matchup context."],
-            ["02", "Calibrated confidence", "Confidence is capped for small samples and volatile markets. It describes model separation from the line—not certainty or a guarantee."],
+            ["01", "Pregame-only inputs", sport === "nba" ? "Up to 20 completed NBA games before tipoff. At least 10 appearances and 20 average minutes; prior-season history fills early-season samples." : sport === "mlb" ? "Season rates, last-10 form, probable starters, opponent history, and the team model are captured before first pitch." : "Only games completed before kickoff feed the rolling three-game player form, role, team strength, and matchup context."],
+            ["02", sport === "nba" ? "Experimental form confidence" : "Calibrated confidence", "Confidence is capped for small samples and volatile markets. It describes model separation from the line—not certainty or a guarantee."],
             ["03", "Real lines, real payouts", "Every pick is built on the DraftKings line posted for that exact market, with its payout multiplier shown. Top-five slots require a price no heavier than -160, and the model only surfaces a side when it still likes it against the market."],
-            ["04", "Starters only, tracked live", sport === "nfl" ? "Current rosters, injury designations, and depth charts gate every NFL pick, so backups and inactive players are never propositions. During games each pick shows its pace toward the line; the saved pick never changes and grades only once the game is final." : "Active rosters, posted lineups, probable starters, and playing-time share gate every pick. During games each pick shows its pace toward the line; the saved pick never changes and grades only once the game is final."]
+            ["04", "Eligibility and live tracking", sport === "nba" ? "Book-listed players must be active and clear of injury flags, with a substantial recent minutes sample. Eligibility does not confirm a starting lineup. Saved lines never change; explicit DNPs void, missing stats stay pending." : sport === "nfl" ? "Current rosters, injury designations, and depth charts gate every NFL pick, so backups and inactive players are never propositions. During games each pick shows its pace toward the line; the saved pick never changes and grades only once the game is final." : "Active rosters, posted lineups, probable starters, and playing-time share gate every pick. During games each pick shows its pace toward the line; the saved pick never changes and grades only once the game is final."]
           ].map(([number, title, copy]) => <article key={number} className="rounded-[24px] border border-white/[0.08] bg-[#090909] p-6"><span className={`font-mono text-xs font-black ${accent}`}>{number}</span><h3 className="mt-4 text-lg font-black text-white">{title}</h3><p className="mt-3 text-sm leading-6 text-neutral-400">{copy}</p></article>)}
-          <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-6 md:col-span-2 xl:col-span-4"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow">Current release</p><p className="mt-2 font-mono text-sm font-black text-white">{sport === "mlb" ? "mlb-player-board-v3+book-v1" : "nfl-player-board-v3+book-v1"}</p><p className="mt-2 text-xs text-neutral-400">Daily locked snapshot · optional 30-second live polling · official final grading</p></div><span className={`w-fit rounded-full border px-3 py-2 text-[9px] font-black uppercase tracking-[0.12em] ${accentButton}`}>Audit trail active</span></div></div>
+          <div className="rounded-[24px] border border-white/[0.08] bg-white/[0.02] p-6 md:col-span-2 xl:col-span-4"><div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"><div><p className="eyebrow">Current release</p><p className="mt-2 font-mono text-sm font-black text-white">{sport === "nba" ? "nba-player-form-v1-experimental" : sport === "mlb" ? "mlb-player-board-v3+book-v1" : "nfl-player-board-v3+book-v1"}</p><p className="mt-2 text-xs text-neutral-400">Pregame snapshots · optional 30-second live polling · official final grading</p></div><span className={`w-fit rounded-full border px-3 py-2 text-[9px] font-black uppercase tracking-[0.12em] ${accentButton}`}>{data.trackingAvailable ? "Audit trail active" : "Session tracking only"}</span></div></div>
         </div>
       ) : null}
     </section>
