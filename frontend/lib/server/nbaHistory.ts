@@ -24,6 +24,7 @@ export async function getNbaHistory(limit = 100): Promise<PredictionHistoryItem[
     const away: TeamIdentity = { id: Number(row.awayId), name: row.awayName, abbreviation: row.awayAbbreviation ?? row.awayName, primary: "#fdba74", accent: "#ffffff", record: "" };
     const predictedWinner = snapshot?.pregame_predicted_winner ?? (probability >= 0.5 ? home.name : away.name);
     const actualWinner = row.homeScore > row.awayScore ? home.name : away.name;
-    return [{ sport: "nba" as const, gameId: row.id, date: row.date.slice(0,10), homeTeam: home, awayTeam: away, predictedWinner, actualWinner, homeWinProbability: probability, awayWinProbability: snapshot?.pregame_away_win_probability ?? 1-probability, wasCorrect: predictedWinner === actualWinner, homeScore: row.homeScore, awayScore: row.awayScore, historySource: snapshot ? "Captured pregame" : "Rating replay" }];
+    const date = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(row.date));
+    return [{ sport: "nba" as const, gameId: row.id, date, homeTeam: home, awayTeam: away, predictedWinner, actualWinner, homeWinProbability: probability, awayWinProbability: snapshot?.pregame_away_win_probability ?? 1-probability, wasCorrect: predictedWinner === actualWinner, homeScore: row.homeScore, awayScore: row.awayScore, historySource: snapshot ? "Captured pregame" : "Rating replay" }];
   }).reverse();
 }
