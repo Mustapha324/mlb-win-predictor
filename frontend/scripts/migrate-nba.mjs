@@ -1,10 +1,15 @@
 // Only production releases apply these additive compatibility migrations.
 import fs from "node:fs/promises";
+import { rootCertificates } from "node:tls";
 if (process.env.VERCEL_ENV === "production") {
   const connectionString = process.env.POSTGRES_URL_NON_POOLING ?? process.env.POSTGRES_URL;
   if (!connectionString) throw new Error("Production NBA release needs the configured PostgreSQL connection.");
   const { Client } = await import("pg");
-  const client = new Client({ connectionString, connectionTimeoutMillis: 15000 });
+  // URL SSL options otherwise override pg's explicit trust configuration.
+  const databaseUrl = new URL(connectionString);
+  for (const key of ["sslmode", "sslrootcert", "sslcert", "sslkey", "uselibpqcompat"]) databaseUrl.searchParams.delete(key);
+  const supabaseRoot = await fs.readFile(new URL("./supabase-root.crt", import.meta.url), "utf8");
+  const client = new Client({ connectionString: databaseUrl.toString(), connectionTimeoutMillis: 15000, ssl: { ca: [...rootCertificates, supabaseRoot], rejectUnauthorized: true } });
   try {
     await client.connect();
     await client.query("begin");
