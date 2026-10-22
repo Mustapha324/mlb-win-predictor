@@ -1,0 +1,145 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-22",
+ "capturedAt": "2026-10-22T23:52:39.514Z",
+ "games": [
+  {
+   "gameId": "401873010",
+   "gameTimeUtc": "2026-10-23T00:15Z",
+   "home": "Chicago Bears",
+   "away": "New England Patriots",
+   "injuries": {
+    "home": {
+     "burden": 0.9985,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Case Keenum",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jordan McFadden",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kyle Monangai",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "T.J. Edwards",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jayden Loving",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9983,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Ben Brown",
+       "position": "C",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Behren Morton",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Channing Canada",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Carlton Davis III",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Joshua Farmer",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Caleb Williams",
+     "value": 1.341
+    },
+    "away": {
+     "starterName": "Drake Maye",
+     "value": 1.676
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 6,
+     "streak": 1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 4,
+     "lastTenGames": 6,
+     "streak": 3,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": 0.6338299756517901,
+    "away": 0.6080404941330568
+   },
+   "terms": [
+    {
+     "kind": "pythag",
+     "homeLogit": 0.017802
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.01675
+    }
+   ],
+   "baseProbability": 0.4841,
+   "brainProbability": 0.4843,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.0924,
+    "inputs": {
+     "pythag": 0.0258,
+     "qbValue": -0.335
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.583,
+    "awayWinProbability": 0.417,
+    "homeAmericanOdds": -155,
+    "awayAmericanOdds": 130,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118033"
+   },
+   "anchoredProbability": 0.5586
+  }
+ ]
+}
