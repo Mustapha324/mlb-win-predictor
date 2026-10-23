@@ -1,0 +1,104 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-23",
+ "capturedAt": "2026-10-23T23:44:22.586Z",
+ "games": [
+  {
+   "gameId": "849805",
+   "gameTimeUtc": "2026-10-24T00:00:00Z",
+   "home": "Milwaukee Brewers",
+   "away": "Tampa Bay Rays",
+   "probables": {
+    "home": "Jacob Misiorowski",
+    "away": "Nick Martinez"
+   },
+   "lineupsPosted": true,
+   "injuries": {
+    "home": {
+     "burden": 0.2592,
+     "count": 3
+    },
+    "away": {
+     "burden": 0.4401,
+     "count": 5
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 5,
+     "restDays": 25
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 25
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "RHP Chad Patrick roster status changed by Milwaukee Brewers.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Milwaukee Brewers activated RHP Brandon Woodruff from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     }
+    ],
+    "away": [
+     {
+      "type": "Signed as Free Agent",
+      "detail": "Tampa Bay Rays signed free agent LHP Zair Tromp to a minor league contract.",
+      "tags": []
+     },
+     {
+      "type": "Status Change",
+      "detail": "Tampa Bay Rays activated LHP Garrett Cleavinger.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Brody Hopkins roster status changed by Tampa Bay Rays.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": 0.009045000000000001
+    }
+   ],
+   "baseProbability": 0.5738,
+   "brainProbability": 0.5755,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.3866,
+    "inputs": {
+     "injuryGap": 0.1809,
+     "formWinRate": 0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6328,
+    "awayWinProbability": 0.3672,
+    "homeAmericanOdds": -186,
+    "awayAmericanOdds": 165,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34865951"
+   },
+   "anchoredProbability": 0.6188
+  }
+ ]
+}
