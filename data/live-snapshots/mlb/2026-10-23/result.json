@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-23",
+ "graded": [
+  {
+   "challengerProbability": 0.5995,
+   "challengerCorrect": true,
+   "gameId": "849805",
+   "matchup": "Tampa Bay Rays @ Milwaukee Brewers",
+   "capturedAt": "2026-10-23T23:44:22.586Z",
+   "baseProbability": 0.5738,
+   "brainProbability": 0.5755,
+   "homeWon": true,
+   "score": "2-3",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.6328,
+   "marketCorrect": true,
+   "anchoredProbability": 0.6188,
+   "anchoredCorrect": true
+  }
+ ]
+}
