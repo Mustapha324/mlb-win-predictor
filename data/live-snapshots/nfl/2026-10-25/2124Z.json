@@ -1,0 +1,151 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-25",
+ "capturedAt": "2026-10-25T21:24:21.802Z",
+ "games": [
+  {
+   "gameId": "401873022",
+   "gameTimeUtc": "2026-10-26T00:20Z",
+   "home": "Seattle Seahawks",
+   "away": "Kansas City Chiefs",
+   "injuries": {
+    "home": {
+     "burden": 0.9992,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Zach Charbonnet",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jadarian Price",
+       "position": "RB",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Terrion Arnold",
+       "position": "CB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Chazz Surratt",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Drake Thomas",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9846,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Jaylon Moore",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Rashee Rice",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jeff Caldwell",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Ethan Downs",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "John Michael Gyllenborg",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Sam Darnold",
+     "value": 0.591
+    },
+    "away": {
+     "starterName": "Patrick Mahomes",
+     "value": 2.133
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 6,
+     "streak": -2,
+     "restDays": 8
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 5,
+     "streak": 5,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": 0.6125071485743485,
+    "away": 0.775396920609362
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.047499999999999994
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": -0.11240099999999999
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.0771
+    }
+   ],
+   "baseProbability": 0.5666,
+   "brainProbability": 0.5425,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.3889,
+    "inputs": {
+     "formWinRate": -0.5,
+     "restDay": 2,
+     "pythag": -0.1629,
+     "qbValue": -1.542
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.583,
+    "awayWinProbability": 0.417,
+    "homeAmericanOdds": -155,
+    "awayAmericanOdds": 130,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118035"
+   },
+   "anchoredProbability": 0.573
+  }
+ ]
+}
