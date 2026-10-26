@@ -1,0 +1,99 @@
+{
+ "sport": "mlb",
+ "date": "2026-10-26",
+ "capturedAt": "2026-10-26T05:53:09.047Z",
+ "games": [
+  {
+   "gameId": "849804",
+   "gameTimeUtc": "2026-10-27T00:00:00Z",
+   "home": "Tampa Bay Rays",
+   "away": "Milwaukee Brewers",
+   "probables": {
+    "home": "Freddy Peralta",
+    "away": "Robert Gasser"
+   },
+   "lineupsPosted": false,
+   "injuries": {
+    "home": {
+     "burden": 0.4401,
+     "count": 5
+    },
+    "away": {
+     "burden": 0.2592,
+     "count": 3
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 28
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 5,
+     "restDays": 28
+    }
+   },
+   "news": {
+    "home": [
+     {
+      "type": "Status Change",
+      "detail": "Tampa Bay Rays activated LHP Garrett Cleavinger.",
+      "tags": [
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Brody Hopkins roster status changed by Tampa Bay Rays.",
+      "tags": []
+     }
+    ],
+    "away": [
+     {
+      "type": "Status Change",
+      "detail": "Milwaukee Brewers activated RHP Brandon Woodruff from the 60-day injured list.",
+      "tags": [
+       "injury",
+       "activation"
+      ]
+     },
+     {
+      "type": "Status Change",
+      "detail": "RHP Chad Patrick roster status changed by Milwaukee Brewers.",
+      "tags": []
+     }
+    ]
+   },
+   "terms": [
+    {
+     "kind": "injury",
+     "homeLogit": -0.009045000000000001
+    }
+   ],
+   "baseProbability": 0.4788,
+   "brainProbability": 0.4771,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.1103,
+    "inputs": {
+     "injuryGap": -0.1809,
+     "formWinRate": -0.30000000000000004
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5205,
+    "awayWinProbability": 0.4795,
+    "homeAmericanOdds": -120,
+    "awayAmericanOdds": -101,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34893091"
+   },
+   "anchoredProbability": 0.5097
+  }
+ ]
+}
