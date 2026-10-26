@@ -1,0 +1,147 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-26",
+ "capturedAt": "2026-10-26T23:00:56.989Z",
+ "games": [
+  {
+   "gameId": "401873009",
+   "gameTimeUtc": "2026-10-27T00:15Z",
+   "home": "Philadelphia Eagles",
+   "away": "Dallas Cowboys",
+   "injuries": {
+    "home": {
+     "burden": 0.9986,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Lane Johnson",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jake Majors",
+       "position": "C",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cole Payton",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "DeVonta Smith",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Dontayvion Wicks",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9979,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Emari Demercado",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Drew Shelton",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "KaVontae Turpin",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tyrus Wheat",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Dee Winters",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": {
+     "starterName": "Dak Prescott",
+     "value": 0.517
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 2,
+     "lastTenGames": 6,
+     "streak": -4,
+     "restDays": 7
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 6,
+     "streak": -2,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": 0.3525146146205554,
+    "away": 0.469450662917088
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.045
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": -0.080661
+    },
+    {
+     "kind": "division",
+     "homeLogit": -0.10556750040415615
+    }
+   ],
+   "baseProbability": 0.5707,
+   "brainProbability": 0.5467,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.413,
+    "inputs": {
+     "restDay": 1,
+     "pythag": -0.1169,
+     "divisionDamp": -0.3909907422376153
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3364,
+    "awayWinProbability": 0.6636,
+    "homeAmericanOdds": 185,
+    "awayAmericanOdds": -225,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118071"
+   },
+   "anchoredProbability": 0.3863
+  }
+ ]
+}
