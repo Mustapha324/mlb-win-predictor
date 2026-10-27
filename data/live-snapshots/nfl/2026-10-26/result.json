@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-26",
+ "graded": [
+  {
+   "challengerProbability": 0.5495,
+   "challengerCorrect": false,
+   "gameId": "401873009",
+   "matchup": "Dallas Cowboys @ Philadelphia Eagles",
+   "capturedAt": "2026-10-26T23:00:56.989Z",
+   "baseProbability": 0.5707,
+   "brainProbability": 0.5467,
+   "homeWon": false,
+   "score": "38-21",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.3364,
+   "marketCorrect": true,
+   "anchoredProbability": 0.3863,
+   "anchoredCorrect": true
+  }
+ ]
+}
