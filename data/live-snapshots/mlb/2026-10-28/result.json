@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-28",
+ "graded": [
+  {
+   "challengerProbability": 0.4682,
+   "challengerCorrect": true,
+   "gameId": "849799",
+   "matchup": "Milwaukee Brewers @ Tampa Bay Rays",
+   "capturedAt": "2026-10-28T21:33:56.840Z",
+   "baseProbability": 0.4788,
+   "brainProbability": 0.4771,
+   "homeWon": false,
+   "score": "4-1",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.4284,
+   "marketCorrect": true,
+   "anchoredProbability": 0.4405,
+   "anchoredCorrect": true
+  }
+ ]
+}

@@ -1,0 +1,151 @@
+{
+ "sport": "nfl",
+ "date": "2026-10-29",
+ "capturedAt": "2026-10-29T17:17:53.338Z",
+ "games": [
+  {
+   "gameId": "401873023",
+   "gameTimeUtc": "2026-10-30T00:15Z",
+   "home": "Green Bay Packers",
+   "away": "Carolina Panthers",
+   "injuries": {
+    "home": {
+     "burden": 0.9974,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Travis Glover",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Sean Rhyan",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Zaire Franklin",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Zach Bako-Bewele",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Johnathan Baldwin II",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.992,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Damien Lewis",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Torricelli Simpkins III",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jaelan Phillips",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Chris Brazzell II",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jonathon Brooks",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Jordan Love",
+     "value": 1.097
+    },
+    "away": {
+     "starterName": "Bryce Young",
+     "value": 1.277
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 7,
+     "streak": -1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 6,
+     "streak": -1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": 0.495899729531153,
+    "away": 0.47449513098076684
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": -0.35
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.014765999999999998
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.009
+    }
+   ],
+   "baseProbability": 0.5803,
+   "brainProbability": 0.5216,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.4697,
+    "inputs": {
+     "qbOut": -1,
+     "formWinRate": 0.0714285714285714,
+     "pythag": 0.0214,
+     "qbValue": -0.18
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6309,
+    "awayWinProbability": 0.3691,
+    "homeAmericanOdds": -192,
+    "awayAmericanOdds": 160,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118182"
+   },
+   "anchoredProbability": 0.6044
+  }
+ ]
+}
