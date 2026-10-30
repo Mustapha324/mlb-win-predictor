@@ -1,7 +1,7 @@
 {
- "games": 106,
- "baseWins": 61,
- "brainWins": 62,
+ "games": 107,
+ "baseWins": 62,
+ "brainWins": 63,
  "days": [
   {
    "date": "2026-09-09",
@@ -222,11 +222,21 @@
    "marketGames": 1,
    "marketWins": 1,
    "anchoredWins": 1
+  },
+  {
+   "date": "2026-10-29",
+   "games": 1,
+   "baseWins": 1,
+   "brainWins": 1,
+   "challengerWins": 1,
+   "marketGames": 1,
+   "marketWins": 1,
+   "anchoredWins": 1
   }
  ],
- "challengerWins": 64,
- "challengerGames": 106,
- "marketWins": 67,
- "marketGames": 106,
- "anchoredWins": 67
+ "challengerWins": 65,
+ "challengerGames": 107,
+ "marketWins": 68,
+ "marketGames": 107,
+ "anchoredWins": 68
 }

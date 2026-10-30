@@ -1,0 +1,22 @@
+{
+ "date": "2026-10-29",
+ "graded": [
+  {
+   "challengerProbability": 0.5847,
+   "challengerCorrect": true,
+   "gameId": "401873023",
+   "matchup": "Carolina Panthers @ Green Bay Packers",
+   "capturedAt": "2026-10-29T23:05:30.604Z",
+   "baseProbability": 0.5803,
+   "brainProbability": 0.5813,
+   "homeWon": true,
+   "score": "19-27",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.6164,
+   "marketCorrect": true,
+   "anchoredProbability": 0.6077,
+   "anchoredCorrect": true
+  }
+ ]
+}
