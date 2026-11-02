@@ -1,0 +1,151 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-02",
+ "capturedAt": "2026-11-02T20:37:26.511Z",
+ "games": [
+  {
+   "gameId": "401873036",
+   "gameTimeUtc": "2026-11-03T01:15Z",
+   "home": "Seattle Seahawks",
+   "away": "Chicago Bears",
+   "injuries": {
+    "home": {
+     "burden": 0.9993,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Charles Cross",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Velus Jones Jr.",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Rashid Shaheed",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Terrion Arnold",
+       "position": "CB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Uchenna Nwosu",
+       "position": "LB",
+       "status": "doubtful",
+       "detail": "Doubtful"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9899,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Kyle Monangai",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brittain Brown",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Coby Bryant",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Tony Fields II",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Dallis Flowers",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Sam Darnold",
+     "value": 1.008
+    },
+    "away": {
+     "starterName": "Caleb Williams",
+     "value": 1.835
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 7,
+     "streak": 1,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 7,
+     "streak": 2,
+     "restDays": 9
+    }
+   },
+   "pythag": {
+    "home": 0.668340974308619,
+    "away": 0.6330597922033161
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": -0.14714285714285716
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.024356999999999997
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.04135
+    }
+   ],
+   "baseProbability": 0.5724,
+   "brainProbability": 0.5445,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.4231,
+    "inputs": {
+     "formWinRate": -0.1428571428571429,
+     "restDay": -3,
+     "pythag": 0.0353,
+     "qbValue": -0.827
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6092,
+    "awayWinProbability": 0.3908,
+    "homeAmericanOdds": -175,
+    "awayAmericanOdds": 145,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118031"
+   },
+   "anchoredProbability": 0.5933
+  }
+ ]
+}
