@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-02",
+ "graded": [
+  {
+   "challengerProbability": 0.541,
+   "challengerCorrect": false,
+   "gameId": "401873036",
+   "matchup": "Chicago Bears @ Seattle Seahawks",
+   "capturedAt": "2026-11-02T20:37:26.511Z",
+   "baseProbability": 0.5724,
+   "brainProbability": 0.5445,
+   "homeWon": false,
+   "score": "34-17",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.6092,
+   "marketCorrect": false,
+   "anchoredProbability": 0.5933,
+   "anchoredCorrect": false
+  }
+ ]
+}
