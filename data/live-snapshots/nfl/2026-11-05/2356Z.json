@@ -1,0 +1,147 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-05",
+ "capturedAt": "2026-11-05T23:56:03.945Z",
+ "games": [
+  {
+   "gameId": "401873037",
+   "gameTimeUtc": "2026-11-06T01:15Z",
+   "home": "Baltimore Ravens",
+   "away": "Jacksonville Jaguars",
+   "injuries": {
+    "home": {
+     "burden": 0.9953,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Elijah Sarratt",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jaylinn Hawkins",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Aeneas Peebles",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Nate Wiggins",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tyler Huntley",
+       "position": "QB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9987,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "CJ Williams",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Alijah Huzzie",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cam'Ron Silmon-Craig",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Wesley Williams",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jared Bartlett",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": null,
+    "away": {
+     "starterName": "Trevor Lawrence",
+     "value": 3.326
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 8,
+     "streak": -3,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 5,
+     "lastTenGames": 7,
+     "streak": 1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": 0.4259990804833421,
+    "away": 0.7937280029751422
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": 0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.018214285714285718
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": -0.253713
+    }
+   ],
+   "baseProbability": 0.3863,
+   "brainProbability": 0.3991,
+   "tier": "B",
+   "learn": {
+    "baseLogit": -0.6713,
+    "inputs": {
+     "qbOut": 1,
+     "formWinRate": -0.2142857142857143,
+     "pythag": -0.3677
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.1918,
+    "awayWinProbability": 0.8082,
+    "homeAmericanOdds": 400,
+    "awayAmericanOdds": -535,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118164"
+   },
+   "anchoredProbability": 0.2349
+  }
+ ]
+}
