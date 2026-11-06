@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-05",
+ "graded": [
+  {
+   "challengerProbability": 0.3855,
+   "challengerCorrect": true,
+   "gameId": "401873037",
+   "matchup": "Jacksonville Jaguars @ Baltimore Ravens",
+   "capturedAt": "2026-11-05T23:56:03.945Z",
+   "baseProbability": 0.3863,
+   "brainProbability": 0.3991,
+   "homeWon": false,
+   "score": "33-10",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.1918,
+   "marketCorrect": true,
+   "anchoredProbability": 0.2349,
+   "anchoredCorrect": true
+  }
+ ]
+}
