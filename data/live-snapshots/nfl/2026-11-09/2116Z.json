@@ -1,0 +1,145 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-09",
+ "capturedAt": "2026-11-09T21:16:58.388Z",
+ "games": [
+  {
+   "gameId": "401873051",
+   "gameTimeUtc": "2026-11-10T01:15Z",
+   "home": "Minnesota Vikings",
+   "away": "Buffalo Bills",
+   "injuries": {
+    "home": {
+     "burden": 0.9967,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Demond Claiborne",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jauan Jennings",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kyler Murray",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jamal Adams",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Tyler Batty",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.997,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Joshua Palmer",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Sam Franklin Jr.",
+       "position": "S",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Zane Durant",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jordan Hancock",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Tyrell Shavers",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Kyler Murray",
+     "value": 0.394
+    },
+    "away": {
+     "starterName": "Josh Allen",
+     "value": 2.606
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 7,
+     "streak": -1,
+     "restDays": 7
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 7,
+     "streak": 3,
+     "restDays": 7
+    }
+   },
+   "pythag": {
+    "home": 0.725006217589904,
+    "away": 0.6453183583562219
+   },
+   "terms": [
+    {
+     "kind": "pythag",
+     "homeLogit": 0.05499299999999999
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.11060000000000002
+    }
+   ],
+   "baseProbability": 0.4784,
+   "brainProbability": 0.4689,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.1251,
+    "inputs": {
+     "pythag": 0.0797,
+     "qbValue": -2.212
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3631,
+    "awayWinProbability": 0.6369,
+    "homeAmericanOdds": 164,
+    "awayAmericanOdds": -198,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118167"
+   },
+   "anchoredProbability": 0.3887
+  }
+ ]
+}
