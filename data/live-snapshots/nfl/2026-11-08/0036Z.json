@@ -1,0 +1,156 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-08",
+ "capturedAt": "2026-11-09T00:36:29.438Z",
+ "games": [
+  {
+   "gameId": "401873050",
+   "gameTimeUtc": "2026-11-09T01:20Z",
+   "home": "Chicago Bears",
+   "away": "Tampa Bay Buccaneers",
+   "injuries": {
+    "home": {
+     "burden": 0.9974,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Case Keenum",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kyle Monangai",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Keyshaun Elliott",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jayden Loving",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Malik Muhammad II",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9864,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Trevor Keegan",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Billy Schrauth",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "DeMonte Capehart",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Yaya Diaby",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ayden Garnes",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Caleb Williams",
+     "value": 1.668
+    },
+    "away": {
+     "starterName": "Baker Mayfield",
+     "value": -0.001
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 8,
+     "streak": 3,
+     "restDays": 4
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 8,
+     "streak": 2,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": 0.6657892091660769,
+    "away": 0.5962523190733829
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": -0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.058124999999999996
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.047955
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.08345000000000001
+    }
+   ],
+   "baseProbability": 0.6526,
+   "brainProbability": 0.6082,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.9141,
+    "inputs": {
+     "qbOut": -1,
+     "formWinRate": 0.375,
+     "restDay": -2,
+     "pythag": 0.0695,
+     "qbValue": 1.669
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.7002,
+    "awayWinProbability": 0.2998,
+    "homeAmericanOdds": -270,
+    "awayAmericanOdds": 220,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118027"
+   },
+   "anchoredProbability": 0.6783
+  }
+ ]
+}
