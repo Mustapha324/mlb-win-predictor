@@ -1,0 +1,155 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-12",
+ "capturedAt": "2026-11-12T18:40:44.552Z",
+ "games": [
+  {
+   "gameId": "401873052",
+   "gameTimeUtc": "2026-11-13T01:15Z",
+   "home": "New York Giants",
+   "away": "Washington Commanders",
+   "injuries": {
+    "home": {
+     "burden": 0.9982,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Cam Skattebo",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Colton Hood",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Paulson Adebo",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Calvin Austin III",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jarrick Bernard-Converse",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.996,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Treylon Burks",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Lucas Patrick",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Colson Yankoff",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Trey Amos",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Dyami Brown",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "J.J. McCarthy",
+     "value": 1.342
+    },
+    "away": {
+     "starterName": "Jayden Daniels",
+     "value": 0.681
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 8,
+     "streak": 2,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 8,
+     "streak": -1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": 0.5334335211395416,
+    "away": 0.4058778868691766
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.031875
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.08804399999999998
+    },
+    {
+     "kind": "division",
+     "homeLogit": -0.15519360899419424
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.03305
+    }
+   ],
+   "baseProbability": 0.611,
+   "brainProbability": 0.6107,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.6546,
+    "inputs": {
+     "formWinRate": 0.375,
+     "pythag": 0.1276,
+     "divisionDamp": -0.5747911444229415,
+     "qbValue": 0.661
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5514,
+    "awayWinProbability": 0.4486,
+    "homeAmericanOdds": -135,
+    "awayAmericanOdds": 114,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118102"
+   },
+   "anchoredProbability": 0.5664
+  }
+ ]
+}
