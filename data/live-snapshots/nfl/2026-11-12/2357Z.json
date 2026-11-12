@@ -1,0 +1,155 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-12",
+ "capturedAt": "2026-11-12T23:57:12.887Z",
+ "games": [
+  {
+   "gameId": "401873052",
+   "gameTimeUtc": "2026-11-13T01:15Z",
+   "home": "New York Giants",
+   "away": "Washington Commanders",
+   "injuries": {
+    "home": {
+     "burden": 0.9984,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "J.C. Davis",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Thomas Fidone II",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Josh Sills",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "CJ Okoye",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Nikko Reed",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.999,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Athan Kaliakmanis",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Lucas Patrick",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tanoa Togiai",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Colson Yankoff",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Ricky Barber",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "J.J. McCarthy",
+     "value": 1.342
+    },
+    "away": {
+     "starterName": "Jayden Daniels",
+     "value": 0.681
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 5,
+     "lastTenGames": 8,
+     "streak": 2,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 2,
+     "lastTenGames": 8,
+     "streak": -1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": 0.5334335211395416,
+    "away": 0.4058778868691766
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.031875
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.08804399999999998
+    },
+    {
+     "kind": "division",
+     "homeLogit": -0.15519360899419424
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.03305
+    }
+   ],
+   "baseProbability": 0.611,
+   "brainProbability": 0.6107,
+   "tier": "B",
+   "learn": {
+    "baseLogit": 0.6546,
+    "inputs": {
+     "formWinRate": 0.375,
+     "pythag": 0.1276,
+     "divisionDamp": -0.5747911444229415,
+     "qbValue": 0.661
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5325,
+    "awayWinProbability": 0.4675,
+    "homeAmericanOdds": -125,
+    "awayAmericanOdds": 105,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118102"
+   },
+   "anchoredProbability": 0.5524
+  }
+ ]
+}
