@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-12",
+ "graded": [
+  {
+   "challengerProbability": 0.6641,
+   "challengerCorrect": false,
+   "gameId": "401873052",
+   "matchup": "Washington Commanders @ New York Giants",
+   "capturedAt": "2026-11-12T23:57:12.887Z",
+   "baseProbability": 0.611,
+   "brainProbability": 0.6107,
+   "homeWon": false,
+   "score": "24-21",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.5325,
+   "marketCorrect": false,
+   "anchoredProbability": 0.5524,
+   "anchoredCorrect": false
+  }
+ ]
+}
