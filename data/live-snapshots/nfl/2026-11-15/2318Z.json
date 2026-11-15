@@ -1,0 +1,161 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-15",
+ "capturedAt": "2026-11-15T23:18:38.896Z",
+ "games": [
+  {
+   "gameId": "401873064",
+   "gameTimeUtc": "2026-11-16T01:20Z",
+   "home": "Cincinnati Bengals",
+   "away": "Pittsburgh Steelers",
+   "injuries": {
+    "home": {
+     "burden": 0.9959,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Kyle Dugger",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Erick All Jr.",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Swayze Bozeman",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jalen Davis",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Cashius Howell",
+       "position": "DE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9914,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Cole Burgess",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jack Driscoll",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Gennings Dunker",
+       "position": "G",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "DeShon Elliott",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Daequan Hardy",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Joe Burrow",
+     "value": 2.046
+    },
+    "away": {
+     "starterName": "Aaron Rodgers",
+     "value": 0.328
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 8,
+     "streak": 4,
+     "restDays": 6
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 8,
+     "streak": 4,
+     "restDays": 13
+    }
+   },
+   "pythag": {
+    "home": 0.6788673543859789,
+    "away": 0.6292149033463671
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": -0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": -0.135
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.034293
+    },
+    {
+     "kind": "division",
+     "homeLogit": -0.05297419195229849
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.0859
+    }
+   ],
+   "baseProbability": 0.5342,
+   "brainProbability": 0.474,
+   "tier": "C",
+   "learn": {
+    "baseLogit": 0.1988,
+    "inputs": {
+     "qbOut": -1,
+     "restDay": -3,
+     "pythag": 0.0497,
+     "divisionDamp": -0.19620071093443883,
+     "bye": -1,
+     "qbValue": 1.718
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6309,
+    "awayWinProbability": 0.3691,
+    "homeAmericanOdds": -192,
+    "awayAmericanOdds": 160,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118114"
+   },
+   "anchoredProbability": 0.5929
+  }
+ ]
+}
