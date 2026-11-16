@@ -1,0 +1,156 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-16",
+ "capturedAt": "2026-11-16T07:38:02.179Z",
+ "games": [
+  {
+   "gameId": "401873065",
+   "gameTimeUtc": "2026-11-17T01:15Z",
+   "home": "Baltimore Ravens",
+   "away": "Los Angeles Chargers",
+   "injuries": {
+    "home": {
+     "burden": 0.9966,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Gerad Lichtenhan",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jaylinn Hawkins",
+       "position": "S",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Tyler Huntley",
+       "position": "QB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Lamar Jackson",
+       "position": "QB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Bilhal Kone",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.999,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Ladd McConkey",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Trey Pipkins III",
+       "position": "OT",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      },
+      {
+       "playerName": "Branson Taylor",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brenen Thompson",
+       "position": "WR",
+       "status": "doubtful",
+       "detail": "Doubtful"
+      },
+      {
+       "playerName": "Isas Waxter",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Joe Fagnano",
+     "value": -3.302
+    },
+    "away": {
+     "starterName": "Justin Herbert",
+     "value": 0.163
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 4,
+     "lastTenGames": 9,
+     "streak": -4,
+     "restDays": 9
+    },
+    "away": {
+     "lastTenWins": 0,
+     "lastTenGames": 8,
+     "streak": -8,
+     "restDays": 7
+    }
+   },
+   "pythag": {
+    "home": 0.3713707064089859,
+    "away": 0.19685364771258765
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": 0.35
+    },
+    {
+     "kind": "form",
+     "homeLogit": 0.12777777777777777
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.12040499999999998
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.17325000000000002
+    }
+   ],
+   "baseProbability": 0.6118,
+   "brainProbability": 0.6674,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.6597,
+    "inputs": {
+     "qbOut": 1,
+     "formWinRate": 0.4444444444444444,
+     "restDay": 2,
+     "pythag": 0.1745,
+     "qbValue": -3.465
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.6636,
+    "awayWinProbability": 0.3364,
+    "homeAmericanOdds": -225,
+    "awayAmericanOdds": 185,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118177"
+   },
+   "anchoredProbability": 0.6646
+  }
+ ]
+}
