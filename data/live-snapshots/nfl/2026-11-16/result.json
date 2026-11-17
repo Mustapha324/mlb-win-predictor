@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-16",
+ "graded": [
+  {
+   "challengerProbability": 0.6973,
+   "challengerCorrect": false,
+   "gameId": "401873065",
+   "matchup": "Los Angeles Chargers @ Baltimore Ravens",
+   "capturedAt": "2026-11-16T20:47:29.380Z",
+   "baseProbability": 0.6118,
+   "brainProbability": 0.6674,
+   "homeWon": false,
+   "score": "23-20",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.6636,
+   "marketCorrect": false,
+   "anchoredProbability": 0.6646,
+   "anchoredCorrect": false
+  }
+ ]
+}
