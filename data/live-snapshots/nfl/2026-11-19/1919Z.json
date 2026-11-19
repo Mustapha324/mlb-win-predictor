@@ -1,0 +1,151 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-19",
+ "capturedAt": "2026-11-19T19:19:52.634Z",
+ "games": [
+  {
+   "gameId": "401873066",
+   "gameTimeUtc": "2026-11-20T01:15Z",
+   "home": "Houston Texans",
+   "away": "Indianapolis Colts",
+   "injuries": {
+    "home": {
+     "burden": 0.9975,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Marvin Harrison Jr.",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Brevin Jordan",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Woody Marks",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Danielle Hunter",
+       "position": "DE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jaylin Smith",
+       "position": "CB",
+       "status": "il_long",
+       "detail": "Injured Reserve"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9976,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Will Mallory",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Bernhard Raimann",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jalen Travis",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Jerry Tillery",
+       "position": "DT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Charvarius Ward",
+       "position": "CB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "C.J. Stroud",
+     "value": 1.758
+    },
+    "away": {
+     "starterName": "Daniel Jones",
+     "value": -1.247
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 9,
+     "streak": -1,
+     "restDays": 3
+    },
+    "away": {
+     "lastTenWins": 3,
+     "lastTenGames": 10,
+     "streak": 1,
+     "restDays": 3
+    }
+   },
+   "pythag": {
+    "home": 0.5366494356462359,
+    "away": 0.34817829927168803
+   },
+   "terms": [
+    {
+     "kind": "pythag",
+     "homeLogit": 0.130065
+    },
+    {
+     "kind": "division",
+     "homeLogit": -0.17834965123059535
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.15025
+    }
+   ],
+   "baseProbability": 0.6335,
+   "brainProbability": 0.6497,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.7938,
+    "inputs": {
+     "formWinRate": 0.033333333333333326,
+     "pythag": 0.1885,
+     "divisionDamp": -0.6605542638170198,
+     "qbValue": 3.005
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.8395,
+    "awayWinProbability": 0.1605,
+    "homeAmericanOdds": -690,
+    "awayAmericanOdds": 499,
+    "source": "DraftKings via ESPN",
+    "dkEventId": "34118011"
+   },
+   "anchoredProbability": 0.8014
+  }
+ ]
+}
