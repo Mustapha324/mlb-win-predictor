@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-19",
+ "graded": [
+  {
+   "challengerProbability": 0.7443,
+   "challengerCorrect": true,
+   "gameId": "401873066",
+   "matchup": "Indianapolis Colts @ Houston Texans",
+   "capturedAt": "2026-11-19T19:19:52.634Z",
+   "baseProbability": 0.6335,
+   "brainProbability": 0.6497,
+   "homeWon": true,
+   "score": "3-26",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.8395,
+   "marketCorrect": true,
+   "anchoredProbability": 0.8014,
+   "anchoredCorrect": true
+  }
+ ]
+}
