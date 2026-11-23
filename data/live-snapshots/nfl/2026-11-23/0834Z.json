@@ -1,0 +1,151 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-23",
+ "capturedAt": "2026-11-23T08:34:04.177Z",
+ "games": [
+  {
+   "gameId": "401873078",
+   "gameTimeUtc": "2026-11-24T01:15Z",
+   "home": "Washington Commanders",
+   "away": "Cincinnati Bengals",
+   "injuries": {
+    "home": {
+     "burden": 0.9946,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Trey Amos",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Dyami Brown",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Leo Chenal",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jacory Croskey-Merritt",
+       "position": "RB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Javon Kinlaw",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9961,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Dalton Risner",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Erick All Jr.",
+       "position": "TE",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Swayze Bozeman",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Oren Burks",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jalen Davis",
+       "position": "CB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Jayden Daniels",
+     "value": 1.097
+    },
+    "away": {
+     "starterName": "Joe Burrow",
+     "value": 2.392
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 3,
+     "lastTenGames": 9,
+     "streak": 1,
+     "restDays": 9
+    },
+    "away": {
+     "lastTenWins": 7,
+     "lastTenGames": 9,
+     "streak": 5,
+     "restDays": 6
+    }
+   },
+   "pythag": {
+    "home": 0.42412427805881847,
+    "away": 0.7036805287577048
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": 0.09722222222222222
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": -0.19292399999999998
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.06475
+    }
+   ],
+   "baseProbability": 0.3402,
+   "brainProbability": 0.3158,
+   "tier": "A",
+   "learn": {
+    "baseLogit": -0.9608,
+    "inputs": {
+     "formWinRate": -0.4444444444444445,
+     "restDay": 3,
+     "pythag": -0.2796,
+     "qbValue": -1.295
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.2818,
+    "awayWinProbability": 0.7182,
+    "homeAmericanOdds": 241,
+    "awayAmericanOdds": -296,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118063"
+   },
+   "anchoredProbability": 0.2901
+  }
+ ]
+}
