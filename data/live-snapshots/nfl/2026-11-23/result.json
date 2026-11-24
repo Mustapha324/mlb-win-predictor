@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-23",
+ "graded": [
+  {
+   "challengerProbability": 0.2306,
+   "challengerCorrect": false,
+   "gameId": "401873078",
+   "matchup": "Cincinnati Bengals @ Washington Commanders",
+   "capturedAt": "2026-11-23T22:26:31.353Z",
+   "baseProbability": 0.3402,
+   "brainProbability": 0.3158,
+   "homeWon": true,
+   "score": "20-22",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.2845,
+   "marketCorrect": false,
+   "anchoredProbability": 0.2921,
+   "anchoredCorrect": false
+  }
+ ]
+}
