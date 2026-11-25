@@ -1,0 +1,150 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-25",
+ "capturedAt": "2026-11-25T20:21:47.250Z",
+ "games": [
+  {
+   "gameId": "401873079",
+   "gameTimeUtc": "2026-11-26T01:00Z",
+   "home": "Los Angeles Rams",
+   "away": "Green Bay Packers",
+   "injuries": {
+    "home": {
+     "burden": 0.9951,
+     "qbOut": false,
+     "notable": [
+      {
+       "playerName": "Steve Avila",
+       "position": "G",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Alaric Jackson",
+       "position": "OT",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Coleman Shelton",
+       "position": "C",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Davante Adams",
+       "position": "WR",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Matthew Caldwell",
+       "position": "QB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.998,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Zach Bako-Bewele",
+       "position": "OT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Johnathan Baldwin II",
+       "position": "S",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Warren Brinson",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Edgerrin Cooper",
+       "position": "LB",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      },
+      {
+       "playerName": "Jonathan Ford",
+       "position": "DT",
+       "status": "day_to_day",
+       "detail": "Day-To-Day"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Matthew Stafford",
+     "value": 0.599
+    },
+    "away": {
+     "starterName": "Jordan Love",
+     "value": 1.93
+    }
+   },
+   "weather": null,
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": 4,
+     "restDays": 9
+    },
+    "away": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -1,
+     "restDays": 9
+    }
+   },
+   "pythag": {
+    "home": 0.661301315135245,
+    "away": 0.5132524817635072
+   },
+   "terms": [
+    {
+     "kind": "qb",
+     "homeLogit": 0.35
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": 0.10211999999999999
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": -0.06655
+    }
+   ],
+   "baseProbability": 0.5877,
+   "brainProbability": 0.6448,
+   "tier": "A",
+   "learn": {
+    "baseLogit": 0.5143,
+    "inputs": {
+     "qbOut": 1,
+     "pythag": 0.148,
+     "qbValue": -1.331
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.5628,
+    "awayWinProbability": 0.4372,
+    "homeAmericanOdds": -141,
+    "awayAmericanOdds": 120,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118092"
+   },
+   "anchoredProbability": 0.5838
+  }
+ ]
+}
