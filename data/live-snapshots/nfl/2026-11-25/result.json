@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-25",
+ "graded": [
+  {
+   "challengerProbability": 0.6816,
+   "challengerCorrect": true,
+   "gameId": "401873079",
+   "matchup": "Green Bay Packers @ Los Angeles Rams",
+   "capturedAt": "2026-11-25T20:21:47.250Z",
+   "baseProbability": 0.5877,
+   "brainProbability": 0.6448,
+   "homeWon": true,
+   "score": "13-26",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5628,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5838,
+   "anchoredCorrect": true
+  }
+ ]
+}
