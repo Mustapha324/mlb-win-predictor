@@ -1,0 +1,39 @@
+{
+ "date": "2026-11-26",
+ "graded": [
+  {
+   "challengerProbability": 0.6113,
+   "challengerCorrect": false,
+   "gameId": "401873080",
+   "matchup": "Philadelphia Eagles @ Dallas Cowboys",
+   "capturedAt": "2026-11-26T19:58:18.436Z",
+   "baseProbability": 0.5894,
+   "brainProbability": 0.5575,
+   "homeWon": false,
+   "score": "39-38",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.7892,
+   "marketCorrect": false,
+   "anchoredProbability": 0.7404,
+   "anchoredCorrect": false
+  },
+  {
+   "challengerProbability": 0.6508,
+   "challengerCorrect": true,
+   "gameId": "401873082",
+   "matchup": "Kansas City Chiefs @ Buffalo Bills",
+   "capturedAt": "2026-11-26T19:58:18.436Z",
+   "baseProbability": 0.6191,
+   "brainProbability": 0.6115,
+   "homeWon": true,
+   "score": "10-13",
+   "baseCorrect": true,
+   "brainCorrect": true,
+   "marketProbability": 0.5817,
+   "marketCorrect": true,
+   "anchoredProbability": 0.5892,
+   "anchoredCorrect": true
+  }
+ ]
+}

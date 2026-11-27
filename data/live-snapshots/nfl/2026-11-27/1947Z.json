@@ -1,0 +1,161 @@
+{
+ "sport": "nfl",
+ "date": "2026-11-27",
+ "capturedAt": "2026-11-27T19:47:16.747Z",
+ "games": [
+  {
+   "gameId": "401873083",
+   "gameTimeUtc": "2026-11-27T20:00Z",
+   "home": "Pittsburgh Steelers",
+   "away": "Denver Broncos",
+   "injuries": {
+    "home": {
+     "burden": 0.9986,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Drew Allar",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Eli Heidenreich",
+       "position": "RB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kaden Wetjen",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Alex Highsmith",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Cole Holcomb",
+       "position": "LB",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    },
+    "away": {
+     "burden": 0.9988,
+     "qbOut": true,
+     "notable": [
+      {
+       "playerName": "Dallen Bentley",
+       "position": "TE",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Kage Casey",
+       "position": "OT",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "J.K. Dobbins",
+       "position": "RB",
+       "status": "il_long",
+       "detail": "News"
+      },
+      {
+       "playerName": "Sam Ehlinger",
+       "position": "QB",
+       "status": "out",
+       "detail": "Out"
+      },
+      {
+       "playerName": "Lil'Jordan Humphrey",
+       "position": "WR",
+       "status": "out",
+       "detail": "Out"
+      }
+     ]
+    }
+   },
+   "qb": {
+    "home": {
+     "starterName": "Aaron Rodgers",
+     "value": 0.392
+    },
+    "away": {
+     "starterName": "Bo Nix",
+     "value": -0.472
+    }
+   },
+   "weather": {
+    "tempF": 36.7,
+    "windMph": 12.9,
+    "gustMph": 30.2,
+    "precipProbability": 0.42,
+    "snowfall": true
+   },
+   "form": {
+    "home": {
+     "lastTenWins": 6,
+     "lastTenGames": 10,
+     "streak": -2,
+     "restDays": 4
+    },
+    "away": {
+     "lastTenWins": 8,
+     "lastTenGames": 10,
+     "streak": 6,
+     "restDays": 4
+    }
+   },
+   "pythag": {
+    "home": 0.53706451491769,
+    "away": 0.5687214323302408
+   },
+   "terms": [
+    {
+     "kind": "form",
+     "homeLogit": -0.017000000000000008
+    },
+    {
+     "kind": "weather",
+     "homeLogit": 0.04125
+    },
+    {
+     "kind": "pythag",
+     "homeLogit": -0.021872999999999997
+    },
+    {
+     "kind": "qb-value",
+     "homeLogit": 0.0432
+    }
+   ],
+   "baseProbability": 0.4215,
+   "brainProbability": 0.4292,
+   "tier": "C",
+   "learn": {
+    "baseLogit": -0.459,
+    "inputs": {
+     "formWinRate": -0.20000000000000007,
+     "weatherHome": 0.75,
+     "pythag": -0.0317,
+     "qbValue": 0.864
+    }
+   },
+   "market": {
+    "homeWinProbability": 0.3225,
+    "awayWinProbability": 0.6775,
+    "homeAmericanOdds": 198,
+    "awayAmericanOdds": -239,
+    "source": "Draft Kings via ESPN",
+    "dkEventId": "34118077"
+   },
+   "anchoredProbability": 0.348
+  }
+ ]
+}
