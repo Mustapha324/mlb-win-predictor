@@ -1,0 +1,22 @@
+{
+ "date": "2026-11-27",
+ "graded": [
+  {
+   "challengerProbability": 0.4111,
+   "challengerCorrect": false,
+   "gameId": "401873083",
+   "matchup": "Denver Broncos @ Pittsburgh Steelers",
+   "capturedAt": "2026-11-27T19:47:16.747Z",
+   "baseProbability": 0.4215,
+   "brainProbability": 0.4292,
+   "homeWon": true,
+   "score": "5-27",
+   "baseCorrect": false,
+   "brainCorrect": false,
+   "marketProbability": 0.3225,
+   "marketCorrect": false,
+   "anchoredProbability": 0.348,
+   "anchoredCorrect": false
+  }
+ ]
+}
